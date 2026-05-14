@@ -1,0 +1,6 @@
+/build/
+.elastic-package/
+.tmp/
+*.zip
+.DS_Store
+node_modules/

@@ -1,0 +1,9 @@
+[
+  {
+    "event.module": "ai_sentinel",
+    "event.category": ["configuration"],
+    "event.severity": 47,
+    "event.risk_score": 55,
+    "ai_sentinel.extension.permissions": ["<all_urls>", "nativeMessaging"]
+  }
+]

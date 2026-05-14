@@ -1,0 +1,15 @@
+[rule]
+author = ["AI Sentinel"]
+description = "Detects ai browser extension with broad permissions from AI Sentinel findings."
+from = "now-5m"
+index = ["logs-ai_sentinel.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "AI Browser Extension With Broad Permissions"
+query = '''event.module: "ai_sentinel" and ai_sentinel.finding.type: "browser_extension" and ai_sentinel.extension.permissions: ("<all_urls>" or "scripting" or "webRequest" or "clipboardRead" or "nativeMessaging")'''
+references = []
+risk_score = 55
+rule_id = "ai_sentinel_004"
+severity = "medium"
+tags = ["AI Sentinel", "Elastic Security", "AI Security"]
+type = "query"

@@ -1,0 +1,18 @@
+[rule]
+author = ["AI Sentinel"]
+description = "Detects 10 or more untrusted AI API connection findings from the same host, process, and provider in five minutes."
+from = "now-5m"
+index = ["logs-ai_sentinel.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "Multiple AI API Connections From Same Process"
+query = '''event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_api_connection" and not ai_sentinel.allowed: true'''
+risk_score = 65
+rule_id = "ai_sentinel_008"
+severity = "medium"
+tags = ["AI Sentinel", "Elastic Security", "AI Security"]
+type = "threshold"
+
+[rule.threshold]
+field = ["host.name", "process.executable", "ai_sentinel.ai.provider"]
+value = 10

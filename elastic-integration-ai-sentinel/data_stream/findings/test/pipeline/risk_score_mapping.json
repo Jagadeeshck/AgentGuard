@@ -1,0 +1,8 @@
+[
+  {
+    "event.module": "ai_sentinel",
+    "event.category": ["network"],
+    "event.severity": 99,
+    "event.risk_score": 99
+  }
+]

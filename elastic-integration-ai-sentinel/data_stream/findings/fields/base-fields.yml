@@ -1,0 +1,15 @@
+- name: '@timestamp'
+  type: date
+  required: true
+  description: Event timestamp.
+- name: message
+  type: match_only_text
+  description: Original log message when available.
+- name: data_stream.type
+  type: constant_keyword
+  value: logs
+- name: data_stream.dataset
+  type: constant_keyword
+  value: ai_sentinel.findings
+- name: data_stream.namespace
+  type: constant_keyword

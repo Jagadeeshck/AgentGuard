@@ -1,0 +1,8 @@
+services:
+  elastic-package:
+    image: docker.elastic.co/elastic-package/elastic-package:latest
+    working_dir: /package
+    volumes:
+      - ./:/package
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["elastic-package"]

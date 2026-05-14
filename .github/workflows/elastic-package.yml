@@ -1,0 +1,29 @@
+name: elastic-package
+
+on:
+  push:
+    paths:
+      - 'elastic-integration-ai-sentinel/**'
+      - '.github/workflows/elastic-package.yml'
+  pull_request:
+    paths:
+      - 'elastic-integration-ai-sentinel/**'
+      - '.github/workflows/elastic-package.yml'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: elastic-integration-ai-sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: elastic/elastic-package@main
+      - run: elastic-package lint
+      - run: elastic-package format --check
+      - run: elastic-package build
+      - run: elastic-package stack up -d
+      - run: elastic-package test pipeline
+      - run: elastic-package test asset
+      - if: always()
+        run: elastic-package stack down
