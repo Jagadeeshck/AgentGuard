@@ -1,83 +1,121 @@
 - name: ecs.version
   type: keyword
+  description: ECS version used by the integration ingest pipeline.
 - name: event.module
   type: constant_keyword
   value: ai_sentinel
+  description: Elastic module name.
 - name: event.dataset
   type: constant_keyword
   value: ai_sentinel.findings
+  description: Elastic dataset name.
 - name: event.kind
   type: keyword
+  description: ECS event kind. AI Sentinel findings default to alert; malformed input is tagged as pipeline_error.
 - name: event.category
   type: keyword
+  description: ECS high-level event category derived from ai_sentinel.finding.type.
 - name: event.type
   type: keyword
+  description: ECS event type derived from ai_sentinel.finding.type.
 - name: event.action
   type: keyword
+  description: Finding type copied from ai_sentinel.finding.type.
 - name: event.outcome
   type: keyword
+  description: Pipeline-normalized outcome for successfully parsed findings.
 - name: event.severity
   type: long
+  description: Numeric severity derived from ai_sentinel.risk.level.
 - name: event.risk_score
   type: float
+  description: Risk score copied from ai_sentinel.risk.score.
 - name: event.original
   type: keyword
   index: false
   doc_values: false
+  description: Optional original event retained only when preserve_original_event is enabled for controlled debugging.
 - name: tags
   type: keyword
+  description: Tags added by Elastic Agent and the ingest pipeline.
 - name: observer.vendor
   type: constant_keyword
   value: AI Sentinel
+  description: Observer vendor.
 - name: observer.product
   type: constant_keyword
   value: AI Sentinel
+  description: Observer product.
 - name: observer.type
   type: constant_keyword
   value: endpoint
+  description: Observer type for endpoint-originated findings.
 - name: host.name
   type: keyword
+  description: Host name where the finding was observed.
 - name: host.id
   type: keyword
+  description: Stable host identifier when available.
 - name: host.os.type
   type: keyword
+  description: Operating system family.
 - name: process.name
   type: keyword
+  description: Process name associated with the finding.
 - name: process.executable
   type: keyword
+  description: Process executable path associated with the finding.
 - name: process.command_line
   type: wildcard
+  description: Process command line with common secret patterns redacted by the ingest pipeline.
 - name: process.pid
   type: long
+  description: Process identifier.
 - name: process.parent.name
   type: keyword
+  description: Parent process name.
 - name: user.name
   type: keyword
+  description: User name associated with the finding.
 - name: file.path
   type: keyword
+  description: File path associated with configuration or startup-item findings.
 - name: file.name
   type: keyword
+  description: File name associated with configuration or startup-item findings.
 - name: destination.ip
   type: ip
+  description: Destination IP for network findings when available.
 - name: destination.address
   type: keyword
+  description: Destination address for network findings.
 - name: destination.domain
   type: keyword
+  description: Destination domain for network findings.
 - name: destination.port
   type: long
+  description: Destination port for network findings.
 - name: source.ip
   type: ip
+  description: Source IP for network findings when available.
 - name: source.port
   type: long
+  description: Source port for network findings when available.
 - name: network.protocol
   type: keyword
+  description: Application protocol for network findings.
 - name: network.transport
   type: keyword
+  description: Transport protocol for network findings.
 - name: dns.question.name
   type: keyword
+  description: DNS question name when DNS visibility is available.
 - name: related.hosts
   type: keyword
+  description: Related host names populated by the ingest pipeline.
 - name: related.ip
   type: ip
+  description: Related IP addresses populated by the ingest pipeline.
 - name: related.user
   type: keyword
+  description: Related user names populated by the ingest pipeline.

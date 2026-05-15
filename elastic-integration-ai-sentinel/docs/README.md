@@ -2,7 +2,7 @@
 
 AI Sentinel is a defensive endpoint visibility product that emits ECS-compatible NDJSON findings about AI-related activity such as AI API connections, MCP server configuration, local LLM services, browser extensions, and startup items.
 
-This repository contains **only** the Elastic Fleet integration package. It does not include the AI Sentinel endpoint scanner, does not perform endpoint scanning, does not decrypt traffic, does not collect private prompt content, and does not store secrets.
+This repository contains **only** the Elastic Fleet integration package. It is not the AI Sentinel endpoint scanner and it does not include scanner collection logic. The package reads already-produced NDJSON findings from disk, parses them into ECS-compatible fields, and ships Elastic package assets such as fields, ingest pipelines, dashboards, and rules. It does not perform endpoint scanning, decrypt traffic, collect private prompt content, collect clipboard content, collect browsing history, or store secrets.
 
 ## Data streams
 
@@ -41,6 +41,10 @@ Configurable variables:
 - `processors`: optional Elastic Agent processors.
 - `timezone`: local timezone metadata for collectors that need it.
 - `data_stream.dataset`: defaults to `ai_sentinel.findings`.
+
+## Event schema
+
+The MVP event contract is documented in [event-schema-v0.1.md](event-schema-v0.1.md). Producers should emit one JSON object per line and keep all non-ECS custom fields under `ai_sentinel.*`. Supported MVP finding types are `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, and `local_llm_service`.
 
 ## ECS mapping model
 
@@ -94,7 +98,7 @@ elastic-package test pipeline
 elastic-package test asset
 ```
 
-Pipeline test fixtures live in `data_stream/findings/test/pipeline/` and cover valid AI API, MCP server, browser extension, redaction, missing optional fields, invalid JSON, risk score mapping, and event categorisation.
+Pipeline test fixtures live in `data_stream/findings/test/pipeline/` and cover `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, malformed JSON, redaction, missing optional fields, risk score mapping, and event categorisation. Each `.log` fixture has a matching expected `.json` output file for `elastic-package test pipeline`.
 
 ## Troubleshooting
 
