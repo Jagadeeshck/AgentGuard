@@ -44,7 +44,7 @@ Configurable variables:
 
 ## Event schema
 
-The MVP event contract is documented in [event-schema-v0.1.md](event-schema-v0.1.md). Producers should emit one JSON object per line and keep all non-ECS custom fields under `ai_sentinel.*`. Supported MVP finding types are `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, and `local_llm_service`.
+The MVP event contract is documented in [event-schema-v0.1.md](event-schema-v0.1.md). Producers should emit one JSON object per line and keep all non-ECS custom fields under `ai_sentinel.*`. Supported finding types are documented in [event-taxonomy.md](event-taxonomy.md), including base AI visibility findings and AI cyber-agent detection pack findings.
 
 ## ECS mapping model
 
@@ -72,9 +72,9 @@ The placeholders define stable IDs so maintainers can replace them with producti
 
 ## Detection rules
 
-Security detection rules are included under `kibana/security_rule/` for critical findings, untrusted MCP servers with shell/filesystem access, unknown AI API clients, risky AI browser extensions, exposed local LLM services, AI startup items, MCP config changes, and a threshold rule for multiple AI API connections from the same process.
+Security detection rules are included under `kibana/security_rule/` for critical findings, untrusted MCP servers with shell/filesystem access, unknown AI API clients, risky AI browser extensions, exposed local LLM services, AI startup items, MCP config changes, AI cyber-agent behavior, and a threshold rule for multiple AI API connections from the same process.
 
-Rules target `logs-ai_sentinel.findings-*` and use KQL against ECS and `ai_sentinel.*` fields.
+Rules target `logs-ai_sentinel.findings-*` and use KQL against ECS and `ai_sentinel.*` fields. The rule coverage plan is documented in [detection-rule-test-matrix.md](detection-rule-test-matrix.md).
 
 ## Local development and testing
 
@@ -86,6 +86,8 @@ make format
 make build
 make test-pipeline
 make test-asset
+make stack-up
+make stack-down
 ```
 
 Equivalent raw commands:
@@ -96,9 +98,24 @@ elastic-package format
 elastic-package build
 elastic-package test pipeline
 elastic-package test asset
+elastic-package stack up
+elastic-package stack down
 ```
 
-Pipeline test fixtures live in `data_stream/findings/test/pipeline/` and cover `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, malformed JSON, redaction, missing optional fields, risk score mapping, and event categorisation. Each `.log` fixture has a matching expected `.json` output file for `elastic-package test pipeline`.
+Pipeline test fixtures live in `data_stream/findings/test/pipeline/` and cover `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, cyber-agent pack examples, malformed JSON, redaction, missing optional fields, risk score mapping, and event categorisation. Each `.log` fixture has a matching expected `.json` output file for `elastic-package test pipeline`. The broader synthetic validation corpus lives in [sample_events.ndjson](sample_events.ndjson).
+
+## Validation pack documentation
+
+Version 0.3.0 adds an end-to-end validation pack so this Elastic integration can be tested independently before an endpoint scanner exists:
+
+- [Local Elastic Package Test Lab](local-elastic-package-test-lab.md)
+- [AgentGuard to Elastic Contract v0.1](agentguard-to-elastic-contract-v0.1.md)
+- [Event Taxonomy](event-taxonomy.md)
+- [Risk Scoring Model](risk-scoring-model.md)
+- [False Positive Guidance](false-positive-guidance.md)
+- [Safe-vs-Dangerous Scenarios](safe-vs-dangerous-scenarios.md)
+- [Detection Rule Test Matrix](detection-rule-test-matrix.md)
+- [Synthetic Sample Events](sample_events.ndjson)
 
 ## Troubleshooting
 

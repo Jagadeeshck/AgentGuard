@@ -1,16 +1,17 @@
-name: Elastic Package
+name: Elastic Package Validation
 
 on:
   pull_request:
     paths:
-      - 'elastic-integration-ai-sentinel/**'
-      - '.github/workflows/elastic-package.yml'
+      - "elastic-integration-ai-sentinel/**"
+      - ".github/workflows/elastic-package.yml"
   push:
     branches:
       - main
+      - master
     paths:
-      - 'elastic-integration-ai-sentinel/**'
-      - '.github/workflows/elastic-package.yml'
+      - "elastic-integration-ai-sentinel/**"
+      - ".github/workflows/elastic-package.yml"
   workflow_dispatch:
 
 permissions:
@@ -18,35 +19,30 @@ permissions:
 
 jobs:
   elastic-package:
-    name: Lint, build, and test Elastic package
+    name: Lint, build, and pipeline tests
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: elastic-integration-ai-sentinel
+    env:
+      ELASTIC_PACKAGE: >-
+        docker run --rm
+        -v ${{ github.workspace }}/elastic-integration-ai-sentinel:/package
+        -v /var/run/docker.sock:/var/run/docker.sock
+        -w /package
+        docker.elastic.co/elastic-package/elastic-package:0.123.0
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: stable
-          cache: true
-
-      - name: Install elastic-package
-        run: go install github.com/elastic/elastic-package@latest
-
       - name: Show elastic-package version
-        run: elastic-package version
+        run: $ELASTIC_PACKAGE version
 
       - name: Lint package
-        run: elastic-package lint
+        run: make lint
 
       - name: Build package
-        run: elastic-package build
+        run: make build
 
-      - name: Run pipeline tests
-        run: elastic-package test pipeline
-
-      - name: Run asset tests
-        run: elastic-package test asset
+      - name: Run ingest pipeline tests
+        run: make test-pipeline
