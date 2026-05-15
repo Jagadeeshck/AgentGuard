@@ -30,7 +30,7 @@ jobs:
         -v ${{ github.workspace }}/elastic-integration-ai-sentinel:/package
         -v /var/run/docker.sock:/var/run/docker.sock
         -w /package
-        docker.elastic.co/elastic-package/elastic-package:latest
+        docker.elastic.co/elastic-package/elastic-package:0.123.0
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
