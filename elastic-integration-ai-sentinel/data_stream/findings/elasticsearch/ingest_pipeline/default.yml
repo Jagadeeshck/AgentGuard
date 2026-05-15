@@ -21,6 +21,20 @@ processors:
             field: error.message
             value: '{{{ _ingest.on_failure_message }}}'
   - remove:
+      field:
+        - ai_sentinel.prompt
+        - ai_sentinel.prompts
+        - ai_sentinel.prompt_content
+        - ai_sentinel.completion
+        - ai_sentinel.response
+        - ai_sentinel.secret
+        - ai_sentinel.secrets
+        - clipboard
+        - browser.history
+        - http.request.body.content
+      ignore_missing: true
+      description: Drop prohibited sensitive payload fields if an upstream producer emits them accidentally.
+  - remove:
       field: event.original
       ignore_missing: true
       if: ctx.tags == null || !ctx.tags.contains('preserve_original_event')
@@ -79,6 +93,14 @@ processors:
       field: event.type
       value: [connection]
       if: ctx.ai_sentinel?.finding?.type == 'ai_api_connection'
+  - set:
+      field: event.type
+      value: [info]
+      if: ctx.ai_sentinel?.finding?.type == 'local_llm_service' || ctx.ai_sentinel?.finding?.type == 'mcp_server' || ctx.ai_sentinel?.finding?.type == 'mcp_config_modified' || ctx.ai_sentinel?.finding?.type == 'browser_extension'
+  - set:
+      field: event.type
+      value: [creation]
+      if: ctx.ai_sentinel?.finding?.type == 'startup_item'
   - set:
       field: event.type
       value: [info]

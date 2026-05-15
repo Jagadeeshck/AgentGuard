@@ -1,29 +1,52 @@
-name: elastic-package
+name: Elastic Package
 
 on:
-  push:
-    paths:
-      - 'elastic-integration-ai-sentinel/**'
-      - '.github/workflows/elastic-package.yml'
   pull_request:
     paths:
       - 'elastic-integration-ai-sentinel/**'
       - '.github/workflows/elastic-package.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'elastic-integration-ai-sentinel/**'
+      - '.github/workflows/elastic-package.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  package:
+  elastic-package:
+    name: Lint, build, and test Elastic package
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: elastic-integration-ai-sentinel
     steps:
-      - uses: actions/checkout@v4
-      - uses: elastic/elastic-package@main
-      - run: elastic-package lint
-      - run: elastic-package format --check
-      - run: elastic-package build
-      - run: elastic-package stack up -d
-      - run: elastic-package test pipeline
-      - run: elastic-package test asset
-      - if: always()
-        run: elastic-package stack down
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+
+      - name: Install elastic-package
+        run: go install github.com/elastic/elastic-package@latest
+
+      - name: Show elastic-package version
+        run: elastic-package version
+
+      - name: Lint package
+        run: elastic-package lint
+
+      - name: Build package
+        run: elastic-package build
+
+      - name: Run pipeline tests
+        run: elastic-package test pipeline
+
+      - name: Run asset tests
+        run: elastic-package test asset
