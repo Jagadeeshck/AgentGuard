@@ -1,3 +1,8 @@
+- version: 0.2.0
+  changes:
+    - description: Add AI cyber-agent detection pack fields, ingest support, sample events, dashboards, and Elastic Security rules.
+      type: enhancement
+      link: https://github.com/example/elastic-integration-ai-sentinel/pull/2
 - version: 0.1.0
   changes:
     - description: Initial AI Sentinel Fleet integration package with findings data stream, ingest pipeline, dashboards, and detection rules.

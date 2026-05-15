@@ -1,0 +1,15 @@
+[rule]
+author = ["AI Sentinel"]
+description = "Detects untrusted AI agent use of MCP browser or shell tooling based on declared capabilities and tool metadata."
+from = "now-5m"
+index = ["logs-ai_sentinel.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "Untrusted AI Agent Using MCP Browser/Shell Tools"
+query = '''event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: ("ai_security_tool_mcp_server" or "ai_agent_shell_tool_use" or "ai_cyber_agent_activity") and ai_sentinel.cyber_agent.capabilities: "mcp" and ai_sentinel.cyber_agent.capabilities: ("browser" or "shell")'''
+references = []
+risk_score = 84
+rule_id = "ai_sentinel_015"
+severity = "high"
+tags = ["AI Sentinel", "Elastic Security", "AI Security", "MCP", "AI Cyber-Agent"]
+type = "query"

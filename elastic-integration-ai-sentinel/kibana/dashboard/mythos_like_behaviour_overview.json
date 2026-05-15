@@ -1,0 +1,16 @@
+{
+  "id": "mythos_like_behaviour_overview",
+  "type": "dashboard",
+  "attributes": {
+    "title": "Mythos-like Behaviour Overview",
+    "description": "Placeholder dashboard for AI Sentinel cyber-agent detection pack. Import the package and replace with Lens panels as schemas stabilize.",
+    "panelsJSON": "[]",
+    "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}",
+    "version": 1,
+    "timeRestore": false,
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: ai_sentinel and ai_sentinel.finding.type: ai_vulnerability_research_agent\",\"language\":\"kuery\"},\"filter\":[]}"
+    }
+  },
+  "references": []
+}

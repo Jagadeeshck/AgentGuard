@@ -1,0 +1,15 @@
+[rule]
+author = ["AI Sentinel"]
+description = "Detects critical AI cyber-agent findings across vulnerability research, exploit-development, sandbox escape, shell use, fuzzing, reverse-engineering, and mass codebase analysis behaviours."
+from = "now-5m"
+index = ["logs-ai_sentinel.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "Critical AI Cyber-Agent Activity"
+query = '''event.module: "ai_sentinel" and ai_sentinel.finding.type: ("ai_cyber_agent_activity" or "ai_vulnerability_research_agent" or "ai_sandbox_escape_research" or "ai_fuzzing_activity" or "ai_reverse_engineering_activity" or "ai_exploit_development_activity" or "ai_security_tool_mcp_server" or "ai_agent_shell_tool_use" or "ai_agent_sensitive_repo_scan" or "ai_agent_mass_codebase_analysis") and (ai_sentinel.risk.level: "critical" or event.severity >= 99 or event.risk_score >= 90)'''
+references = []
+risk_score = 95
+rule_id = "ai_sentinel_016"
+severity = "critical"
+tags = ["AI Sentinel", "Elastic Security", "AI Security", "AI Cyber-Agent"]
+type = "query"

@@ -22,7 +22,7 @@ Each line must be a single JSON object. The package reads each line with Elastic
 | --- | --- | --- | --- |
 | `@timestamp` | date | Recommended | Time the finding was observed. Elastic will provide an ingest timestamp if omitted. |
 | `ai_sentinel.finding.id` | keyword | Yes | Stable finding identifier. |
-| `ai_sentinel.finding.type` | keyword | Yes | Finding family. Supported MVP values are `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, and `local_llm_service`. |
+| `ai_sentinel.finding.type` | keyword | Yes | Finding family. Supported values include `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, `suspicious_agent_process`, `mcp_config_modified`, and the AI cyber-agent detection pack values: `ai_cyber_agent_activity`, `ai_vulnerability_research_agent`, `ai_sandbox_escape_research`, `ai_fuzzing_activity`, `ai_reverse_engineering_activity`, `ai_exploit_development_activity`, `ai_security_tool_mcp_server`, `ai_agent_shell_tool_use`, `ai_agent_sensitive_repo_scan`, and `ai_agent_mass_codebase_analysis`. |
 | `ai_sentinel.risk.level` | keyword | Yes | One of `low`, `medium`, `high`, or `critical`. |
 | `ai_sentinel.risk.score` | float | Yes | Numeric risk score, typically 0-100. |
 | `ai_sentinel.allowed` | boolean | Recommended | Whether the finding is allowlisted or approved by policy. |
@@ -137,6 +137,44 @@ Pipeline-derived fields:
 
 - `event.category: ["network"]`
 - `event.type: ["info"]`
+
+## AI cyber-agent detection pack
+
+The cyber-agent pack detects Mythos-like AI cyber-agent activity using behaviour-based metadata. The integration must not collect prompt content, secrets, decrypted traffic, clipboard content, browsing history, exploit logic, or offensive payloads. The optional word `mythos` may appear as one weak indicator in `ai_sentinel.cyber_agent.suspicious_keywords`, but producers and rules must combine it with concrete behaviours such as shell access, filesystem access, security tooling, sensitive path scanning, or exploit-development file metadata.
+
+Supported cyber-agent finding types:
+
+- `ai_cyber_agent_activity`
+- `ai_vulnerability_research_agent`
+- `ai_sandbox_escape_research`
+- `ai_fuzzing_activity`
+- `ai_reverse_engineering_activity`
+- `ai_exploit_development_activity`
+- `ai_security_tool_mcp_server`
+- `ai_agent_shell_tool_use`
+- `ai_agent_sensitive_repo_scan`
+- `ai_agent_mass_codebase_analysis`
+
+Recommended fields under `ai_sentinel.cyber_agent.*`:
+
+- `name`: observed or declared agent name, when available.
+- `framework`: non-sensitive framework/runtime hint, such as an agent framework name.
+- `model_hint`: non-sensitive model family hint.
+- `provider`: AI provider associated with the agent.
+- `activity_type`: behaviour classification such as `security_tool_use`, `vulnerability_research`, `sandbox_escape_research`, `fuzzing`, `reverse_engineering`, `exploit_development`, `sensitive_repo_scan`, or `mass_codebase_analysis`.
+- `capabilities`: observed capabilities such as `mcp`, `shell`, `filesystem`, `browser`, `fuzzing`, or `reverse_engineering`.
+- `target_paths`: paths or repository areas inspected or written by the agent; include paths only, not contents.
+- `security_tools`: names of security tools invoked or configured by the agent.
+- `codebase_scan_volume`: approximate count of files, symbols, or repository objects inspected.
+- `suspicious_keywords`: behavioural metadata keywords from filenames, commands, or normalized findings; do not store prompt content.
+- `mitre_tactics` and `mitre_techniques`: ATT&CK tactic and technique identifiers associated with the finding.
+
+Pipeline-derived fields:
+
+- Cyber-agent findings receive the `cyber_agent_activity` tag.
+- Most cyber-agent findings receive `event.category: ["process"]` and `event.type: ["info"]`.
+- `ai_agent_sensitive_repo_scan` receives `event.category: ["file"]`.
+- `ai_exploit_development_activity` receives `event.type: ["creation"]`.
 
 ## Risk mapping
 
