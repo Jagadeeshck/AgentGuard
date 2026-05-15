@@ -32,6 +32,13 @@ processors:
         - clipboard
         - browser.history
         - http.request.body.content
+        - ai_sentinel.cyber_agent.prompt
+        - ai_sentinel.cyber_agent.prompts
+        - ai_sentinel.cyber_agent.prompt_content
+        - ai_sentinel.cyber_agent.completion
+        - ai_sentinel.cyber_agent.response
+        - ai_sentinel.cyber_agent.secret
+        - ai_sentinel.cyber_agent.secrets
       ignore_missing: true
       description: Drop prohibited sensitive payload fields if an upstream producer emits them accidentally.
   - remove:
@@ -54,6 +61,11 @@ processors:
       field: tags
       value: endpoint_visibility
       allow_duplicates: false
+  - append:
+      field: tags
+      value: cyber_agent_activity
+      allow_duplicates: false
+      if: ctx.ai_sentinel?.cyber_agent != null || (ctx.ai_sentinel?.finding?.type != null && ['ai_cyber_agent_activity', 'ai_vulnerability_research_agent', 'ai_sandbox_escape_research', 'ai_fuzzing_activity', 'ai_reverse_engineering_activity', 'ai_exploit_development_activity', 'ai_security_tool_mcp_server', 'ai_agent_shell_tool_use', 'ai_agent_sensitive_repo_scan', 'ai_agent_mass_codebase_analysis'].contains(ctx.ai_sentinel.finding.type))
   - set:
       field: ecs.version
       value: 8.17.0
@@ -90,6 +102,14 @@ processors:
       value: [process]
       if: ctx.ai_sentinel?.finding?.type == 'suspicious_agent_process'
   - set:
+      field: event.category
+      value: [process]
+      if: ctx.ai_sentinel?.finding?.type != null && ['ai_cyber_agent_activity', 'ai_vulnerability_research_agent', 'ai_sandbox_escape_research', 'ai_fuzzing_activity', 'ai_reverse_engineering_activity', 'ai_exploit_development_activity', 'ai_security_tool_mcp_server', 'ai_agent_shell_tool_use', 'ai_agent_mass_codebase_analysis'].contains(ctx.ai_sentinel.finding.type)
+  - set:
+      field: event.category
+      value: [file]
+      if: ctx.ai_sentinel?.finding?.type == 'ai_agent_sensitive_repo_scan'
+  - set:
       field: event.type
       value: [connection]
       if: ctx.ai_sentinel?.finding?.type == 'ai_api_connection'
@@ -101,6 +121,14 @@ processors:
       field: event.type
       value: [creation]
       if: ctx.ai_sentinel?.finding?.type == 'startup_item'
+  - set:
+      field: event.type
+      value: [creation]
+      if: ctx.ai_sentinel?.finding?.type == 'ai_exploit_development_activity'
+  - set:
+      field: event.type
+      value: [info]
+      if: ctx.ai_sentinel?.finding?.type != null && ['ai_cyber_agent_activity', 'ai_vulnerability_research_agent', 'ai_sandbox_escape_research', 'ai_fuzzing_activity', 'ai_reverse_engineering_activity', 'ai_security_tool_mcp_server', 'ai_agent_shell_tool_use', 'ai_agent_sensitive_repo_scan', 'ai_agent_mass_codebase_analysis'].contains(ctx.ai_sentinel.finding.type)
   - set:
       field: event.type
       value: [info]
@@ -165,7 +193,7 @@ processors:
         String[] fields = new String[] {
           'process.command_line', 'ai_sentinel.mcp.server.command', 'ai_sentinel.mcp.server.args',
           'ai_sentinel.mcp.config.path', 'ai_sentinel.startup.command', 'ai_sentinel.startup.path',
-          'ai_sentinel.ai.endpoint', 'url.full', 'http.request.headers.authorization', 'http.request.body.content'
+          'ai_sentinel.ai.endpoint', 'ai_sentinel.cyber_agent.target_paths', 'url.full', 'http.request.headers.authorization', 'http.request.body.content'
         };
         for (String f : fields) redactPath(ctx, f);
   - append:

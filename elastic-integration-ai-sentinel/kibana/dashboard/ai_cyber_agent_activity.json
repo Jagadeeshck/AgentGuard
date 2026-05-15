@@ -1,0 +1,16 @@
+{
+  "id": "ai_cyber_agent_activity",
+  "type": "dashboard",
+  "attributes": {
+    "title": "AI Cyber-Agent Activity",
+    "description": "Placeholder dashboard for AI Sentinel cyber-agent detection pack. Import the package and replace with Lens panels as schemas stabilize.",
+    "panelsJSON": "[]",
+    "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}",
+    "version": 1,
+    "timeRestore": false,
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: ai_sentinel and tags: cyber_agent_activity\",\"language\":\"kuery\"},\"filter\":[]}"
+    }
+  },
+  "references": []
+}

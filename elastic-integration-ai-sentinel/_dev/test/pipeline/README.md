@@ -11,3 +11,5 @@ Required MVP coverage:
 - `redaction`
 
 Additional regression fixtures cover missing optional fields, risk score mapping, and event categorisation.
+
+AI cyber-agent detection pack coverage includes security-tool MCP activity, sensitive repository scanning, exploit-development file metadata, cyber-agent tag derivation, field normalization, and defensive redaction of prohibited cyber-agent payload fields.

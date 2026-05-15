@@ -1,7 +1,7 @@
 format_version: 3.0.3
 name: ai_sentinel
 title: AI Sentinel
-version: 0.1.0
+version: 0.2.0
 description: Ingest AI Sentinel endpoint AI security findings into Elastic Security.
 type: integration
 categories:

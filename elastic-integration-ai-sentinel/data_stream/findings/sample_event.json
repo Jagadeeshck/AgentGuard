@@ -1,34 +1,103 @@
 {
   "@timestamp": "2026-05-14T10:00:00.000Z",
-  "ecs": { "version": "8.17.0" },
+  "ecs": {
+    "version": "8.17.0"
+  },
   "event": {
     "kind": "alert",
-    "category": ["network"],
-    "type": ["connection"],
-    "action": "ai_api_connection",
+    "category": [
+      "process"
+    ],
+    "type": [
+      "info"
+    ],
+    "action": "ai_security_tool_mcp_server",
     "outcome": "success",
     "severity": 73,
-    "risk_score": 82
+    "risk_score": 84
   },
-  "host": { "name": "workstation-01", "os": { "type": "macos" } },
-  "process": { "name": "node", "executable": "/usr/local/bin/node", "pid": 4312 },
-  "user": { "name": "analyst" },
-  "destination": { "domain": "api.openai.com", "address": "api.openai.com", "port": 443 },
-  "network": { "transport": "tcp", "protocol": "tls" },
-  "observer": { "vendor": "AI Sentinel", "product": "AI Sentinel", "type": "endpoint" },
+  "host": {
+    "name": "workstation-01",
+    "os": {
+      "type": "macos"
+    }
+  },
+  "process": {
+    "name": "node",
+    "executable": "/usr/local/bin/node",
+    "pid": 4312
+  },
+  "user": {
+    "name": "analyst"
+  },
+  "destination": {
+    "domain": "api.openai.com",
+    "address": "api.openai.com",
+    "port": 443
+  },
+  "network": {
+    "transport": "tcp",
+    "protocol": "tls"
+  },
+  "observer": {
+    "vendor": "AI Sentinel",
+    "product": "AI Sentinel",
+    "type": "endpoint"
+  },
   "ai_sentinel": {
     "finding": {
-      "id": "ais-20260514-0001",
-      "type": "ai_api_connection",
-      "name": "Unknown process connecting to AI API",
+      "id": "ais-20260514-0008",
+      "type": "ai_security_tool_mcp_server",
+      "name": "Untrusted AI agent security tool MCP server",
       "status": "open",
-      "confidence": 0.92,
+      "confidence": 0.91,
       "first_seen": "2026-05-14T09:55:00.000Z",
       "last_seen": "2026-05-14T10:00:00.000Z"
     },
-    "risk": { "level": "high", "score": 82, "reasons": ["unknown_process", "external_ai_api"] },
-    "ai": { "provider": "openai", "endpoint": "https://api.openai.com/v1/chat/completions", "local_service": false, "confidence": 0.95 },
-    "allowed": false
+    "risk": {
+      "level": "high",
+      "score": 84,
+      "reasons": [
+        "security_tool_mcp",
+        "untrusted_agent"
+      ]
+    },
+    "allowed": false,
+    "cyber_agent": {
+      "name": "research-agent",
+      "framework": "langchain",
+      "model_hint": "claude-family",
+      "provider": "anthropic",
+      "activity_type": "security_tool_use",
+      "capabilities": [
+        "mcp",
+        "shell",
+        "filesystem"
+      ],
+      "target_paths": [
+        "/workspace/project/src/security"
+      ],
+      "security_tools": [
+        "semgrep",
+        "gitleaks"
+      ],
+      "codebase_scan_volume": 340,
+      "suspicious_keywords": [
+        "cve",
+        "auth"
+      ],
+      "mitre_tactics": [
+        "TA0007"
+      ],
+      "mitre_techniques": [
+        "T1083"
+      ]
+    }
   },
-  "tags": ["ai_sentinel", "ai_activity", "endpoint_visibility"]
+  "tags": [
+    "ai_sentinel",
+    "ai_activity",
+    "endpoint_visibility",
+    "cyber_agent_activity"
+  ]
 }

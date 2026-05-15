@@ -1,0 +1,15 @@
+[rule]
+author = ["AI Sentinel"]
+description = "Detects untrusted AI agent findings for sensitive source repository scanning, such as security-critical paths, infra-as-code, auth code, or secrets-related filenames."
+from = "now-5m"
+index = ["logs-ai_sentinel.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "AI Agent Scanning Sensitive Source Code"
+query = '''event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: "ai_agent_sensitive_repo_scan" and (ai_sentinel.cyber_agent.target_paths: ("*auth*" or "*security*" or "*crypto*" or "*terraform*" or "*kubernetes*" or "*.env*" or "*secrets*") or ai_sentinel.cyber_agent.suspicious_keywords: ("credential" or "secret" or "token" or "auth" or "crypto"))'''
+references = []
+risk_score = 78
+rule_id = "ai_sentinel_012"
+severity = "high"
+tags = ["AI Sentinel", "Elastic Security", "AI Security", "Source Code", "AI Cyber-Agent"]
+type = "query"

@@ -6,7 +6,7 @@
       description: Stable AI Sentinel finding identifier.
     - name: finding.type
       type: keyword
-      description: Finding family such as ai_api_connection, mcp_server, browser_extension, startup_item, local_llm_service, mcp_config_modified, or suspicious_agent_process.
+      description: Finding family such as ai_api_connection, mcp_server, browser_extension, startup_item, local_llm_service, mcp_config_modified, suspicious_agent_process, or an AI cyber-agent detection pack type.
     - name: finding.name
       type: keyword
     - name: finding.status
@@ -34,6 +34,42 @@
       type: keyword
     - name: ai.confidence
       type: float
+    - name: cyber_agent.name
+      type: keyword
+      description: Observed or declared AI cyber-agent name, when available.
+    - name: cyber_agent.framework
+      type: keyword
+      description: AI agent framework or runtime, when known.
+    - name: cyber_agent.model_hint
+      type: keyword
+      description: Non-sensitive model family or model hint associated with the agent.
+    - name: cyber_agent.provider
+      type: keyword
+      description: AI provider associated with the agent.
+    - name: cyber_agent.activity_type
+      type: keyword
+      description: Behaviour-based activity classification for cyber-agent findings.
+    - name: cyber_agent.capabilities
+      type: keyword
+      description: Non-sensitive capabilities observed for the agent, such as shell, filesystem, browser, mcp, fuzzing, or reverse_engineering.
+    - name: cyber_agent.target_paths
+      type: wildcard
+      description: Filesystem paths or repository areas targeted by the agent. Do not include file contents.
+    - name: cyber_agent.security_tools
+      type: keyword
+      description: Security analysis tools invoked or configured by the agent.
+    - name: cyber_agent.codebase_scan_volume
+      type: long
+      description: Approximate count of files, symbols, or repository objects inspected by the agent.
+    - name: cyber_agent.suspicious_keywords
+      type: keyword
+      description: Behavioural indicator keywords observed in filenames, commands, or metadata; never prompt content.
+    - name: cyber_agent.mitre_tactics
+      type: keyword
+      description: MITRE ATT&CK tactics associated with the finding.
+    - name: cyber_agent.mitre_techniques
+      type: keyword
+      description: MITRE ATT&CK techniques associated with the finding.
     - name: mcp.client.name
       type: keyword
     - name: mcp.server.name
