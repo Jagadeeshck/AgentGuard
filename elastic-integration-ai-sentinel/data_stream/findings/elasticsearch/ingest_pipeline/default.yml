@@ -1,0 +1,179 @@
+description: Parse and normalize AI Sentinel findings.
+processors:
+  - set:
+      field: event.original
+      copy_from: message
+      ignore_empty_value: true
+      if: ctx.tags != null && ctx.tags.contains('preserve_original_event')
+  - json:
+      field: message
+      add_to_root: true
+      if: ctx.message != null && ctx.message instanceof String && ctx.message.length() > 0 && ctx.message.trim().startsWith('{')
+      on_failure:
+        - set:
+            field: event.kind
+            value: pipeline_error
+        - append:
+            field: tags
+            value: ai_sentinel_invalid_json
+            allow_duplicates: false
+        - set:
+            field: error.message
+            value: '{{{ _ingest.on_failure_message }}}'
+  - remove:
+      field: event.original
+      ignore_missing: true
+      if: ctx.tags == null || !ctx.tags.contains('preserve_original_event')
+  - append:
+      field: tags
+      value: ai_sentinel
+      allow_duplicates: false
+  - append:
+      field: tags
+      value: ai_activity
+      allow_duplicates: false
+  - append:
+      field: tags
+      value: mcp_monitoring
+      allow_duplicates: false
+  - append:
+      field: tags
+      value: endpoint_visibility
+      allow_duplicates: false
+  - set:
+      field: ecs.version
+      value: 8.17.0
+      override: false
+  - set:
+      field: event.module
+      value: ai_sentinel
+  - set:
+      field: event.dataset
+      value: ai_sentinel.findings
+  - set:
+      field: observer.vendor
+      value: AI Sentinel
+  - set:
+      field: observer.product
+      value: AI Sentinel
+  - set:
+      field: observer.type
+      value: endpoint
+  - set:
+      field: event.kind
+      value: alert
+      if: ctx.event == null || ctx.event.kind == null
+  - set:
+      field: event.category
+      value: [network]
+      if: ctx.ai_sentinel?.finding?.type == 'ai_api_connection' || ctx.ai_sentinel?.finding?.type == 'local_llm_service'
+  - set:
+      field: event.category
+      value: [configuration]
+      if: ctx.ai_sentinel?.finding?.type == 'mcp_server' || ctx.ai_sentinel?.finding?.type == 'mcp_config_modified' || ctx.ai_sentinel?.finding?.type == 'browser_extension' || ctx.ai_sentinel?.finding?.type == 'startup_item'
+  - set:
+      field: event.category
+      value: [process]
+      if: ctx.ai_sentinel?.finding?.type == 'suspicious_agent_process'
+  - set:
+      field: event.type
+      value: [connection]
+      if: ctx.ai_sentinel?.finding?.type == 'ai_api_connection'
+  - set:
+      field: event.type
+      value: [info]
+      if: ctx.event == null || ctx.event.type == null
+  - set:
+      field: event.action
+      copy_from: ai_sentinel.finding.type
+      ignore_empty_value: true
+      if: ctx.event == null || ctx.event.action == null
+  - set:
+      field: event.outcome
+      value: success
+      if: ctx.event == null || ctx.event.outcome == null
+  - set:
+      field: event.risk_score
+      copy_from: ai_sentinel.risk.score
+      ignore_empty_value: true
+  - set:
+      field: event.severity
+      value: 21
+      if: ctx.ai_sentinel?.risk?.level == 'low' && (ctx.event == null || ctx.event.severity == null)
+  - set:
+      field: event.severity
+      value: 47
+      if: ctx.ai_sentinel?.risk?.level == 'medium' && (ctx.event == null || ctx.event.severity == null)
+  - set:
+      field: event.severity
+      value: 73
+      if: ctx.ai_sentinel?.risk?.level == 'high' && (ctx.event == null || ctx.event.severity == null)
+  - set:
+      field: event.severity
+      value: 99
+      if: ctx.ai_sentinel?.risk?.level == 'critical' && (ctx.event == null || ctx.event.severity == null)
+  - script:
+      lang: painless
+      description: Redact common secret patterns from command, MCP, environment-like, URL, header, and path fields.
+      source: |
+        String redact(String v) {
+          if (v == null) return null;
+          v = /(?i)(authorization:\s*bearer\s+)[A-Za-z0-9._~+\/=:-]+/.matcher(v).replaceAll('$1[REDACTED]');
+          v = /(?i)(api[_-]?key|token|secret|password|passwd|pwd)(\s*[=:]\s*)[^\s,&;\"']+/.matcher(v).replaceAll('$1$2[REDACTED]');
+          v = /(?i)([?&](?:api_key|token|secret|key|access_token)=)[^&\s]+/.matcher(v).replaceAll('$1[REDACTED]');
+          v = /(?i)(--(?:api-key|token|secret|password)\s+)[^\s]+/.matcher(v).replaceAll('$1[REDACTED]');
+          return v;
+        }
+        void redactPath(Map m, String path) {
+          def parts = path.splitOnToken('.');
+          def cur = m;
+          for (int i = 0; i < parts.length - 1; i++) {
+            if (!(cur instanceof Map) || !cur.containsKey(parts[i])) return;
+            cur = cur[parts[i]];
+          }
+          def k = parts[parts.length - 1];
+          if (cur instanceof Map && cur.containsKey(k)) {
+            def val = cur[k];
+            if (val instanceof String) cur[k] = redact(val);
+            else if (val instanceof List) {
+              for (int j = 0; j < val.size(); j++) if (val[j] instanceof String) val[j] = redact(val[j]);
+            }
+          }
+        }
+        String[] fields = new String[] {
+          'process.command_line', 'ai_sentinel.mcp.server.command', 'ai_sentinel.mcp.server.args',
+          'ai_sentinel.mcp.config.path', 'ai_sentinel.startup.command', 'ai_sentinel.startup.path',
+          'ai_sentinel.ai.endpoint', 'url.full', 'http.request.headers.authorization', 'http.request.body.content'
+        };
+        for (String f : fields) redactPath(ctx, f);
+  - append:
+      field: related.hosts
+      value: '{{{host.name}}}'
+      allow_duplicates: false
+      if: ctx.host?.name != null
+  - append:
+      field: related.user
+      value: '{{{user.name}}}'
+      allow_duplicates: false
+      if: ctx.user?.name != null
+  - append:
+      field: related.ip
+      value: '{{{destination.ip}}}'
+      allow_duplicates: false
+      if: ctx.destination?.ip != null
+  - append:
+      field: related.ip
+      value: '{{{source.ip}}}'
+      allow_duplicates: false
+      if: ctx.source?.ip != null
+on_failure:
+  - set:
+      field: event.kind
+      value: pipeline_error
+  - append:
+      field: tags
+      value: ai_sentinel_pipeline_failure
+      allow_duplicates: false
+  - set:
+      field: error.message
+      value: '{{{ _ingest.on_failure_message }}}'

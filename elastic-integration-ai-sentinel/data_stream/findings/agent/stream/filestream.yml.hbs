@@ -1,0 +1,22 @@
+paths:
+{{#each paths as |path i|}}
+  - {{path}}
+{{/each}}
+prospector.scanner.check_interval: 10s
+parsers:
+  - ndjson:
+      target: ""
+      add_error_key: true
+      overwrite_keys: true
+tags:
+{{#each tags as |tag|}}
+  - {{tag}}
+{{/each}}
+{{#if preserve_original_event}}
+  - preserve_original_event
+{{/if}}
+fields:
+  _conf:
+    timezone: {{timezone}}
+processors:
+{{processors}}

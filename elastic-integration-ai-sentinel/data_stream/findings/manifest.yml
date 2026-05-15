@@ -1,0 +1,55 @@
+title: AI Sentinel findings
+type: logs
+dataset: ai_sentinel.findings
+streams:
+  - input: filestream
+    title: AI Sentinel findings logs
+    description: Collect AI Sentinel finding events from NDJSON files.
+    template_path: agent/stream/filestream.yml.hbs
+    vars:
+      - name: paths
+        type: text
+        title: Paths
+        multi: true
+        required: true
+        show_user: true
+        default:
+          - /var/log/ai-sentinel/findings.ndjson
+          - /Library/Logs/AI-Sentinel/findings.ndjson
+          - 'C:\\ProgramData\\AI-Sentinel\\logs\\findings.ndjson'
+      - name: tags
+        type: text
+        title: Tags
+        multi: true
+        required: false
+        show_user: true
+        default:
+          - ai_sentinel
+          - ai_activity
+          - mcp_monitoring
+          - endpoint_visibility
+      - name: preserve_original_event
+        type: bool
+        title: Preserve original event
+        required: true
+        show_user: true
+        default: false
+      - name: processors
+        type: yaml
+        title: Processors
+        required: false
+        show_user: false
+        default: |
+          []
+      - name: timezone
+        type: text
+        title: Time zone
+        required: true
+        show_user: true
+        default: UTC
+      - name: data_stream.dataset
+        type: text
+        title: Data stream dataset
+        required: true
+        show_user: false
+        default: ai_sentinel.findings

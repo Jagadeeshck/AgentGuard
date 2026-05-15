@@ -1,0 +1,15 @@
+[rule]
+author = ["AI Sentinel"]
+description = "Detects new or modified mcp config from AI Sentinel findings."
+from = "now-5m"
+index = ["logs-ai_sentinel.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "New or Modified MCP Config"
+query = '''event.module: "ai_sentinel" and event.action: ("mcp_config_created" or "mcp_config_modified")'''
+references = []
+risk_score = 47
+rule_id = "ai_sentinel_007"
+severity = "medium"
+tags = ["AI Sentinel", "Elastic Security", "AI Security"]
+type = "query"

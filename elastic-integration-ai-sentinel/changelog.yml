@@ -1,0 +1,5 @@
+- version: 0.1.0
+  changes:
+    - description: Initial AI Sentinel Fleet integration package with findings data stream, ingest pipeline, dashboards, and detection rules.
+      type: enhancement
+      link: https://github.com/example/elastic-integration-ai-sentinel/pull/1

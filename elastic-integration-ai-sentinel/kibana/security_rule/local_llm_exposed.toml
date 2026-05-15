@@ -1,0 +1,15 @@
+[rule]
+author = ["AI Sentinel"]
+description = "Detects local llm service exposed beyond localhost from AI Sentinel findings."
+from = "now-5m"
+index = ["logs-ai_sentinel.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "Local LLM Service Exposed Beyond Localhost"
+query = '''event.module: "ai_sentinel" and ai_sentinel.ai.local_service: true and destination.port: (11434 or 1234 or 7860 or 8000 or 8080) and not destination.ip: ("127.0.0.1" or "::1" or "localhost")'''
+references = []
+risk_score = 73
+rule_id = "ai_sentinel_005"
+severity = "high"
+tags = ["AI Sentinel", "Elastic Security", "AI Security"]
+type = "query"

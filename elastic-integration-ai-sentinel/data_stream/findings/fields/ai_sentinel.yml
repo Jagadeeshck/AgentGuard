@@ -1,0 +1,84 @@
+- name: ai_sentinel
+  type: group
+  fields:
+    - name: finding.id
+      type: keyword
+      description: Stable AI Sentinel finding identifier.
+    - name: finding.type
+      type: keyword
+      description: Finding family such as ai_api_connection, mcp_server, browser_extension, startup_item, local_llm_service, mcp_config_modified, or suspicious_agent_process.
+    - name: finding.name
+      type: keyword
+    - name: finding.status
+      type: keyword
+    - name: finding.confidence
+      type: float
+    - name: finding.first_seen
+      type: date
+    - name: finding.last_seen
+      type: date
+    - name: risk.level
+      type: keyword
+      description: "Risk level: low, medium, high, or critical."
+    - name: risk.score
+      type: float
+    - name: risk.reasons
+      type: keyword
+    - name: ai.provider
+      type: keyword
+    - name: ai.endpoint
+      type: keyword
+    - name: ai.local_service
+      type: boolean
+    - name: ai.model_hint
+      type: keyword
+    - name: ai.confidence
+      type: float
+    - name: mcp.client.name
+      type: keyword
+    - name: mcp.server.name
+      type: keyword
+    - name: mcp.server.command
+      type: wildcard
+    - name: mcp.server.args
+      type: keyword
+    - name: mcp.config.path
+      type: keyword
+    - name: mcp.tools
+      type: keyword
+    - name: mcp.capabilities
+      type: keyword
+    - name: mcp.risk_reasons
+      type: keyword
+    - name: browser.name
+      type: keyword
+    - name: browser.profile
+      type: keyword
+    - name: extension.id
+      type: keyword
+    - name: extension.name
+      type: keyword
+    - name: extension.version
+      type: keyword
+    - name: extension.permissions
+      type: keyword
+    - name: extension.host_permissions
+      type: keyword
+    - name: extension.risk_reasons
+      type: keyword
+    - name: startup.type
+      type: keyword
+    - name: startup.name
+      type: keyword
+    - name: startup.path
+      type: keyword
+    - name: startup.command
+      type: wildcard
+    - name: startup.enabled
+      type: boolean
+    - name: allowed
+      type: boolean
+    - name: allowed_by
+      type: keyword
+    - name: allowed_at
+      type: date

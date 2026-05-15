@@ -1,0 +1,14 @@
+{
+  "id": "ai_sentinel_destination_domains",
+  "type": "visualization",
+  "attributes": {
+    "title": "Destination Domains",
+    "description": "Placeholder visualization for AI Sentinel dashboard content.",
+    "visState": "{\"title\":\"Destination Domains\",\"type\":\"markdown\",\"params\":{\"markdown\":\"Configure this panel with Lens after installing sample data.\"},\"aggs\":[]}",
+    "uiStateJSON": "{}",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: ai_sentinel\",\"language\":\"kuery\"},\"filter\":[]}"
+    }
+  },
+  "references": []
+}
