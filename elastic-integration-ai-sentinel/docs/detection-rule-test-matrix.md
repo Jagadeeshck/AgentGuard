@@ -1,29 +1,28 @@
 # Detection Rule Test Matrix
 
-This matrix maps packaged Elastic Security rules to finding types, sample events, and expected validation outcomes. It is a documentation-level test plan for independent package validation before an endpoint scanner exists.
+This matrix maps the synthetic NDJSON validation corpus in `test-data/` to the expected Elastic Security rules. It is a manual validation aid for `elastic-package test asset` and local lab testing; sample data is synthetic and contains no real secrets, prompt content, browsing history, clipboard content, or private file contents.
 
-| Rule file | Primary finding types | Positive sample IDs | Expected behavior | Tuning dimensions |
-| --- | --- | --- | --- | --- |
-| `unknown_process_ai_api.toml` | `ai_api_connection` | `sample-ai-api-unknown-process` | Alerts when an unapproved process contacts an AI API endpoint. | Process executable, provider, host group. |
-| `multiple_ai_api_connections_threshold.toml` | `ai_api_connection` | `sample-ai-api-unknown-process` | Alerts on repeated AI API connections above threshold. | Provider, host group, approved automation. |
-| `untrusted_mcp_shell_filesystem.toml` | `mcp_server` | `sample-mcp-shell-filesystem` | Alerts on untrusted MCP with shell and filesystem capabilities. | MCP server name, command path, restricted root. |
-| `new_modified_mcp_config.toml` | `mcp_config_modified` | `sample-mcp-config-modified` | Alerts on new or modified MCP configuration metadata. | Config path, managed deployment policy. |
-| `ai_browser_extension_broad_permissions.toml` | `browser_extension` | `sample-browser-extension-broad-permissions` | Alerts on broad extension permissions or host permissions. | Extension ID, version, managed profile. |
-| `ai_tool_added_startup.toml` | `startup_item` | `sample-startup-item-ai-helper` | Alerts when AI-related helper is configured for startup. | Startup item name, path, software owner. |
-| `local_llm_exposed.toml` | `local_llm_service` | `sample-local-llm-exposed` | Alerts on exposed local LLM listener metadata. | Loopback-only services, approved host group. |
-| `ai_sentinel_critical_finding.toml` | All finding types | `sample-cyber-agent-general`, `sample-exploit-development` | Alerts on critical risk findings. | Validated allowlist status and risk reason quality. |
-| `critical_ai_cyber_agent_activity.toml` | Cyber-agent finding types | `sample-cyber-agent-general`, `sample-exploit-development` | Alerts on critical cyber-agent behavior combinations. | Authorized security research workstations. |
-| `untrusted_ai_agent_mcp_browser_shell.toml` | `ai_cyber_agent_activity`, `ai_agent_shell_tool_use` | `sample-cyber-agent-general`, `sample-agent-shell-tool-use` | Alerts on untrusted agent combining MCP/browser/shell-style capabilities. | Agent framework, approved capabilities. |
-| `untrusted_ai_agent_security_tools.toml` | `ai_security_tool_mcp_server` | `sample-security-tool-mcp` | Alerts on untrusted AI agent access to security tools through MCP. | Approved tools, team ownership, ticket metadata. |
-| `ai_agent_shell_filesystem_mcp.toml` | `ai_agent_shell_tool_use`, `ai_security_tool_mcp_server` | `sample-agent-shell-tool-use`, `sample-security-tool-mcp` | Alerts on combined shell, filesystem, and MCP capabilities. | Project root restriction, command path. |
-| `ai_agent_sensitive_source_scan.toml` | `ai_agent_sensitive_repo_scan` | `sample-sensitive-repo-scan` | Alerts on scanning sensitive repository areas. | Approved repo paths, user group. |
-| `ai_agent_sandbox_escape_research.toml` | `ai_sandbox_escape_research` | `sample-sandbox-escape-research` | Alerts on sandbox escape research indicators. | Authorized container security research. |
-| `ai_agent_exploit_like_files.toml` | `ai_exploit_development_activity` | `sample-exploit-development` | Alerts on exploit-like file/project metadata. | Authorized exploit research projects. |
-| `possible_mythos_like_vulnerability_research_agent.toml` | `ai_vulnerability_research_agent`, `ai_cyber_agent_activity` | `sample-vulnerability-research-agent` | Alerts only when mythos-like labels appear with concrete risky behaviors. | Do not alert on name alone; require behavior. |
+| Sample file | Finding type | Expected rule | Expected severity | Should alert yes/no | Notes |
+|---|---|---|---|---|---|
+| `test-data/ai-api-connection-high.ndjson` | `ai_api_connection` | `unknown_process_ai_api.toml` | high | yes | Unknown process path connects to an external AI API endpoint. |
+| `test-data/ai-api-connection-high.ndjson` | `ai_api_connection` | `multiple_ai_api_connections_threshold.toml` | medium | no | Single sample line alone should not meet the threshold rule. |
+| `test-data/mcp-server-dangerous.ndjson` | `mcp_server` | `untrusted_mcp_shell_filesystem.toml` | high | yes | Untrusted MCP server exposes shell and filesystem capabilities. |
+| `test-data/mcp-server-dangerous.ndjson` | `mcp_server` | `ai_agent_shell_filesystem_mcp.toml` | high | no | Rule is scoped to cyber-agent findings; MCP server risk is covered by `untrusted_mcp_shell_filesystem.toml`. |
+| `test-data/cyber-agent-activity.ndjson` | `ai_cyber_agent_activity` | `critical_ai_cyber_agent_activity.toml` | critical | yes | Untrusted agent combines MCP, shell, filesystem, browser, and security tooling. |
+| `test-data/browser-extension-risk.ndjson` | `browser_extension` | `ai_browser_extension_broad_permissions.toml` | high | yes | Extension has `all_urls` and `nativeMessaging`. |
+| `test-data/local-llm-exposed.ndjson` | `local_llm_service` | `local_llm_exposed.toml` | high | yes | Local LLM service is bound to `0.0.0.0`. |
+| `test-data/safe-ollama-loopback.ndjson` | `local_llm_service` | `local_llm_exposed.toml` | low | no | Loopback-only and allowlisted. |
+| `test-data/safe-approved-ai-client.ndjson` | `ai_api_connection` | `unknown_process_ai_api.toml` | low | no | Approved internal AI API client with allowlist metadata. |
+| `test-data/startup-item-ai-agent.ndjson` | `startup_item` | `ai_tool_added_startup.toml` | high | yes | AI helper creates startup persistence. |
+| `test-data/startup-item-ai-agent.ndjson` | `startup_item` | `ai_sentinel_critical_finding.toml` | critical | no | High severity only; should not match critical catch-all. |
+| `test-data/sensitive-repo-scan.ndjson` | `ai_agent_sensitive_repo_scan` | `ai_agent_sensitive_source_scan.toml` | high | yes | Agent scans auth, token, and CI/CD metadata paths. |
+| `test-data/sensitive-repo-scan.ndjson` | `ai_agent_mass_codebase_analysis` | `untrusted_ai_agent_mcp_browser_shell.toml` | high | no | This sample is sensitive repo scanning, not shell/browser/MCP activity. |
+| `test-data/exploit-like-file-write.ndjson` | `ai_exploit_development_activity` | `ai_agent_exploit_like_files.toml` | critical | yes | Untrusted agent writes exploit-like synthetic PoC files. |
+| `test-data/exploit-like-file-write.ndjson` | `ai_exploit_development_activity` | `ai_sentinel_critical_finding.toml` | critical | yes | Score is in the critical range. |
 
-## Manual validation checklist
+## Validation checklist
 
-- Confirm every rule maps to at least one synthetic positive sample.
-- Confirm each sample uses metadata-only fields.
-- Confirm allowlisted safe scenarios are documented separately rather than encoded as real secrets or private content.
-- Confirm pipeline tests pass before asset tests are run.
+- Every expected alert maps to a synthetic positive sample.
+- Every safe sample documents why it should not alert.
+- Rules should remain behavior-based and should not depend on prompt content, secrets, clipboard content, browsing history, decrypted traffic, or private file contents.
+- Pipeline tests must pass before asset tests are run.

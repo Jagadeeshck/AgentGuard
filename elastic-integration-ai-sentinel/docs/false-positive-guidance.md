@@ -1,16 +1,27 @@
 # False Positive Guidance
 
-This package is designed to surface risky AI-related metadata while avoiding sensitive content collection. Analysts should tune on approved business use, trusted tools, and expected environments rather than disabling entire finding families.
+This package surfaces risky AI-related metadata while avoiding sensitive content collection. Tune on approved business use, trusted tools, host groups, signed paths, extension IDs, and explicit allowlist context. Do not tune by collecting prompts, completions, clipboard data, browsing history, decrypted traffic, secrets, or private file contents.
 
-## Common benign patterns
+## Safe examples
 
-| Pattern | Why it can be benign | Suggested tuning |
-| --- | --- | --- |
-| Approved developer AI tools contacting AI APIs. | Expected use of sanctioned assistants. | Allow by process path, signing identity, provider, and host group. |
-| Managed browser extensions with broad permissions. | Enterprise extensions may require broad host permissions. | Allow by extension ID, version, browser profile, and deployment policy. |
-| Local LLM bound to loopback only. | Developer or research workflow with local-only exposure. | Lower severity when `destination.ip` is loopback and owner is approved. |
-| MCP filesystem access in a sandboxed project directory. | Some coding assistants require project-scoped file access. | Allow by MCP server name, command path, and restricted root directory. |
-| Security teams running AI-assisted analysis. | Authorized defensive research. | Allow by user group, workstation tag, ticket reference, and approved tools. |
+| Example | Why it is usually safe | Suggested tuning |
+|---|---|---|
+| Claude Desktop installed but no dangerous MCP tools. | Installation alone does not imply shell, filesystem, browser, or security-tool capability. | Keep as low risk inventory unless MCP capabilities expand. |
+| Ollama bound only to `127.0.0.1`. | Loopback-only local LLM service is not reachable from other hosts. | Allow by process path, loopback destination, owner, and host group. |
+| Cursor installed but no shell MCP server. | An approved editor without shell-capable MCP tooling is lower risk. | Allow by signed application path and absence of `shell` / `filesystem` MCP capabilities. |
+| Approved internal AI API client. | Business-sanctioned client uses an internal gateway or approved provider. | Set `ai_sentinel.allowed: true` with `allowed_by` and `allowed_at`; scope by process path and destination. |
+| Approved security researcher running fuzzing tools. | Defensive research can legitimately use fuzzers or security tools. | Allow by user group, research workstation, approved tools, and ticket or policy reference. |
+
+## Dangerous examples
+
+| Example | Why it is dangerous | Expected response |
+|---|---|---|
+| Unknown MCP server with shell and filesystem. | Gives an AI client command execution and file access through an untrusted bridge. | Alert high; review server command path, config path, and capabilities. |
+| AI agent scans source code and calls external AI API. | Combines repository access with external AI communication and potential sensitive context exposure. | Alert high/critical depending on paths, volume, and approval state. |
+| Browser extension with `all_urls` and `nativeMessaging`. | Broad web access plus native host communication can bridge browser and local system access. | Alert high; validate extension ID, deployment policy, and native host registration. |
+| Local LLM service bound to `0.0.0.0`. | Service is reachable beyond loopback and may expose local model APIs to other hosts. | Alert high; restrict bind address or firewall exposure. |
+| AI agent creates startup persistence. | Persistence can keep an agent or MCP bridge running after reboot/login. | Alert high; validate owner and remove unapproved startup item. |
+| AI agent runs security tools from Downloads or temp folder. | Untrusted execution path plus security tooling is a strong behavior signal. | Alert high/critical when paired with shell/filesystem or sensitive paths. |
 
 ## High-value review questions
 
@@ -24,7 +35,7 @@ This package is designed to surface risky AI-related metadata while avoiding sen
 
 - Prefer narrow allowlists over broad rule suppression.
 - Keep allowlist metadata in `ai_sentinel.allowed`, `ai_sentinel.allowed_by`, and `ai_sentinel.allowed_at` where possible.
-- Use host groups, user groups, signed binaries, extension IDs, MCP server names, and approved paths as tuning dimensions.
+- Use host groups, user groups, signed binaries, extension IDs, MCP server names, approved paths, and approved destinations as tuning dimensions.
 - Revisit exceptions periodically, especially for browser extensions and MCP servers.
 
 ## What not to tune on
