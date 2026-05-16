@@ -1,0 +1,61 @@
+name: Elastic Package Validation
+
+on:
+  pull_request:
+    paths:
+      - "elastic-integration-ai-sentinel/**"
+      - ".github/workflows/elastic-package-validation.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "elastic-integration-ai-sentinel/**"
+      - ".github/workflows/elastic-package-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  elastic-package:
+    name: Lint, build, pipeline tests, and asset tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: elastic-integration-ai-sentinel
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install latest elastic-package
+        working-directory: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          url="$(curl -fsSL ${GITHUB_API_URL:-https://api.github.com}/repos/elastic/elastic-package/releases/latest | jq -r '.assets[] | select(.name | test("linux_amd64\\.tar\\.gz$")) | .browser_download_url' | head -n 1)"
+          if [ -z "$url" ]; then
+            echo "Could not find linux_amd64 elastic-package release asset" >&2
+            exit 1
+          fi
+          curl -fsSL "$url" -o elastic-package.tar.gz
+          mkdir -p elastic-package-bin
+          tar -xzf elastic-package.tar.gz -C elastic-package-bin
+          sudo install -m 0755 "$(find elastic-package-bin -type f -name elastic-package | head -n 1)" /usr/local/bin/elastic-package
+          elastic-package version
+
+      - name: Lint package
+        run: elastic-package lint
+
+      - name: Build package
+        run: elastic-package build
+
+      - name: Run ingest pipeline tests
+        run: elastic-package test pipeline
+
+      - name: Run asset tests when stack is available
+        run: |
+          set -euo pipefail
+          if elastic-package stack status >/dev/null 2>&1; then
+            elastic-package test asset
+          else
+            echo "Skipping elastic-package test asset: it requires a running Elastic stack. Run 'elastic-package stack up' before asset tests in local validation."
+          fi

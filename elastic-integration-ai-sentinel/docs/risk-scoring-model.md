@@ -1,29 +1,44 @@
-# Risk Scoring Model
+# AI Sentinel Risk Scoring Model
 
-The integration accepts producer-provided risk metadata and normalizes it into Elastic Security fields. The ingest pipeline copies `ai_sentinel.risk.score` to `event.risk_score` and maps `ai_sentinel.risk.level` to `event.severity`.
+This package accepts producer-supplied `ai_sentinel.risk.score`, `ai_sentinel.risk.level`, and `ai_sentinel.risk.reasons` values and maps them into Elastic Security fields. The future endpoint scanner is responsible for calculating the score before writing NDJSON; this Elastic integration normalizes, validates, and displays the result.
 
 ## Risk levels
 
-| Risk level | Score range | Pipeline severity | Interpretation |
-| --- | ---: | ---: | --- |
-| `low` | 0-39 | 21 | Informational visibility or approved behavior with low-risk metadata. |
-| `medium` | 40-69 | 47 | Reviewable behavior with a limited suspicious signal or moderate exposure. |
-| `high` | 70-89 | 73 | Unapproved behavior with meaningful execution, network, file, or tool risk. |
-| `critical` | 90-100 | 99 | High-confidence dangerous combination such as untrusted agent plus shell/filesystem/security tooling or exposed service risk. |
+| Risk level | Score range | Default `event.severity` | Analyst meaning |
+|---|---:|---:|---|
+| `low` | 0-30 | 21 | Expected or low-impact AI-related metadata. |
+| `medium` | 31-60 | 47 | Reviewable behavior with a meaningful but limited risky signal. |
+| `high` | 61-85 | 73 | Unapproved behavior with execution, network, file, tool, or exposure risk. |
+| `critical` | 86-100 | 99 | High-confidence dangerous combination of multiple strong behavioral signals. |
 
-## Scoring inputs
+Scores must be capped at 100 and should not be negative. Producers should keep `ai_sentinel.risk.level` consistent with the score range.
 
-Recommended additive signals:
+## Additive scoring examples
 
-- Capability risk: shell, filesystem, browser automation, MCP tool access, startup persistence, non-loopback listeners.
-- Trust context: unapproved provider, untrusted path, unsigned or unknown process, absent allowlist.
-- Exposure: broad browser permissions, public bind address, sensitive repository paths, high codebase scan volume.
-- Tooling: security tools, fuzzers, reverse engineering tools, or exploit-development metadata.
-- Confidence: confidence should raise or lower the score only after behavior is established.
+These are recommended examples for the producer's behavior-based scoring logic:
 
-## Scoring guardrails
+| Signal | Suggested score contribution |
+|---|---:|
+| AI provider/API connection | +20 |
+| MCP shell capability | +20 |
+| MCP filesystem capability | +20 |
+| Security tool execution | +15 |
+| Large codebase scan | +15 |
+| Suspicious cyber keywords in metadata such as filenames, commands, or paths | +15 |
+| Exploit-like file writes | +20 |
+| Access to browser, email, cloud, or token paths | +20 |
+| Process running from temp, downloads, or unknown path | +25 |
+| Persistence/startup item | +30 |
 
-- Do not assign high or critical risk from a model name, provider name, or the word `mythos` alone.
-- Do not use prompt content, completion content, browser history, clipboard content, decrypted traffic, secrets, or private file contents in scoring.
-- Treat `ai_sentinel.allowed: true` as context for triage and dashboards, not as proof that the event is harmless.
-- Preserve `ai_sentinel.risk.reasons` as concise normalized labels so analysts can understand why a score was assigned.
+## Behavior-based requirements
+
+Scoring must be based on observed behavior and non-sensitive metadata, not on raw user prompts or private content. Strong scores should require combinations such as untrusted process path plus external AI API access, MCP shell plus filesystem capability, broad browser extension permissions plus native messaging, or startup persistence plus agent execution.
+
+A single weak signal must not produce a critical alert. For example, the word `mythos` by itself is not enough to trigger a critical finding. It can only contribute to risk when paired with concrete behavior such as security tool execution, exploit-like file writes, sensitive repository scanning, shell/filesystem MCP access, or public listener exposure.
+
+## Guardrails
+
+- Do not score on prompt content, completion content, clipboard content, browsing history, decrypted traffic, secrets, or private file contents.
+- Keep `ai_sentinel.risk.reasons` concise and normalized, for example `mcp_shell_capability`, `external_ai_api`, `temp_path_process`, or `startup_persistence`.
+- Treat `ai_sentinel.allowed: true` as triage context. It may reduce detection urgency, but it should not delete the finding.
+- Favor transparent, explainable scoring over opaque model-derived labels.

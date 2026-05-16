@@ -106,16 +106,18 @@ Pipeline test fixtures live in `data_stream/findings/test/pipeline/` and cover `
 
 ## Validation pack documentation
 
+Version 0.3.0 adds validation, synthetic test data under `test-data/`, a detection rule test matrix, and the scanner-to-Elastic contract. The endpoint scanner remains a separate future project; this package only ingests NDJSON findings.
+
 Version 0.3.0 adds an end-to-end validation pack so this Elastic integration can be tested independently before an endpoint scanner exists:
 
-- [Local Elastic Package Test Lab](local-elastic-package-test-lab.md)
+- [Local Elastic Package Lab](local-lab.md)
 - [AgentGuard to Elastic Contract v0.1](agentguard-to-elastic-contract-v0.1.md)
 - [Event Taxonomy](event-taxonomy.md)
 - [Risk Scoring Model](risk-scoring-model.md)
 - [False Positive Guidance](false-positive-guidance.md)
 - [Safe-vs-Dangerous Scenarios](safe-vs-dangerous-scenarios.md)
 - [Detection Rule Test Matrix](detection-rule-test-matrix.md)
-- [Synthetic Sample Events](sample_events.ndjson)
+- [Synthetic Test Data](../test-data/)
 
 ## Troubleshooting
 
