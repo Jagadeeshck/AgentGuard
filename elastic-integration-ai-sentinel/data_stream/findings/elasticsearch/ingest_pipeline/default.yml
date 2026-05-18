@@ -46,6 +46,11 @@ processors:
       field: event.original
       ignore_missing: true
       if: ctx.tags == null || !ctx.tags.contains('preserve_original_event')
+  - remove:
+      field: message
+      ignore_missing: true
+      if: ctx.tags == null || (!ctx.tags.contains('preserve_original_event') && !ctx.tags.contains('ai_sentinel_invalid_json'))
+      description: Drop raw parsed NDJSON by default so unredacted source payloads are not indexed.
   - append:
       field: tags
       value: ai_sentinel

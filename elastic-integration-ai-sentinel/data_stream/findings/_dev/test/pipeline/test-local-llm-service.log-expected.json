@@ -1,8 +1,59 @@
 {
   "expected": [
     {
+      "@timestamp": "2026-05-14T10:04:00Z",
+      "host": {
+        "name": "host-d"
+      },
+      "process": {
+        "name": "ollama",
+        "executable": "/usr/local/bin/ollama"
+      },
+      "destination": {
+        "ip": "127.0.0.1",
+        "address": "127.0.0.1",
+        "port": 11434
+      },
+      "network": {
+        "transport": "tcp",
+        "protocol": "http"
+      },
+      "ai_sentinel": {
+        "finding": {
+          "id": "f-llm-1",
+          "type": "local_llm_service",
+          "name": "Local LLM service",
+          "status": "open",
+          "confidence": 0.93
+        },
+        "risk": {
+          "level": "critical",
+          "score": 91,
+          "reasons": [
+            "listening_service"
+          ]
+        },
+        "ai": {
+          "provider": "ollama",
+          "endpoint": "http://127.0.0.1:11434",
+          "local_service": true,
+          "model_hint": "local"
+        },
+        "allowed": false
+      },
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
       "event": {
         "module": "ai_sentinel",
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
         "category": [
           "network"
         ],
@@ -10,37 +61,23 @@
           "info"
         ],
         "action": "local_llm_service",
-        "severity": 99,
+        "outcome": "success",
         "risk_score": 91,
-        "dataset": "ai_sentinel.findings",
-        "kind": "alert",
-        "outcome": "success"
-      },
-      "ai_sentinel": {
-        "ai": {
-          "provider": "ollama",
-          "local_service": true
-        }
-      },
-      "related": {
-        "ip": [
-          "127.0.0.1"
-        ]
-      },
-      "ecs": {
-        "version": "8.17.0"
+        "severity": 99
       },
       "observer": {
         "vendor": "AI Sentinel",
         "product": "AI Sentinel",
         "type": "endpoint"
       },
-      "tags": [
-        "ai_sentinel",
-        "ai_activity",
-        "mcp_monitoring",
-        "endpoint_visibility"
-      ]
+      "related": {
+        "hosts": [
+          "host-d"
+        ],
+        "ip": [
+          "127.0.0.1"
+        ]
+      }
     }
   ]
 }
