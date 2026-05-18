@@ -180,7 +180,9 @@ processors:
           return !isLetter && !isDigit && c != "_" && c != "-";
         }
         boolean isWhitespace(String c) {
-          return c == " " || c == "\t" || c == "\r" || c == "\n";
+          if (c == null || c.length() == 0) return false;
+          int code = (int)c.charAt(0);
+          return code == 32 || code == 9 || code == 13 || code == 10;
         }
         boolean isValueDelimiter(String c) {
           return c == "" || isWhitespace(c) || c == "&" || c == "," || c == ";" || c == "\"" || c == "'";
