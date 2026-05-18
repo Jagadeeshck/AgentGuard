@@ -49,7 +49,7 @@ In Fleet, open the enrolled agent and inspect the effective policy. The policy s
 - `pipeline: logs-ai_sentinel.findings-default`
 - tags such as `ai_sentinel`, `agentguard`, `ai_activity`, `mcp_monitoring`, and `endpoint_visibility`
 
-See `_dev/examples/fleet-managed-policy-example.yml` for a documentation-only rendering example.
+See `repo-root/dev-assets/examples/fleet-managed-policy-example.yml` for a documentation-only rendering example.
 
 ## Verify data in Kibana
 
@@ -60,7 +60,7 @@ See `_dev/examples/fleet-managed-policy-example.yml` for a documentation-only re
 
 ## Verify draft Elastic Security rule references
 
-1. Draft rule KQL is documented in `docs/security-rules.md` and TOML drafts are under `_dev/security_rules_toml/`.
+1. Draft rule KQL is documented in `docs/security-rules.md` and TOML drafts are under `repo-root/dev-assets/security_rules_toml/`.
 2. Convert drafts to supported Elastic Security rule saved-object JSON before packaging them as integration assets.
 3. If you create rules manually in a lab, target `logs-ai_sentinel.findings-*`.
 4. Generate a safe synthetic finding and verify the expected rule behavior.

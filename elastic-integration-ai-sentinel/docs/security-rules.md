@@ -1,10 +1,10 @@
 # AI Sentinel Security Rule Reference
 
-The TOML rule drafts were moved to `_dev/security_rules_toml/` because Elastic package security rule assets require package-supported saved-object JSON. This page preserves the rule names and KQL queries for operators until valid package assets are generated.
+The TOML rule drafts were moved to `repo-root/dev-assets/security_rules_toml/` because Elastic package security rule assets require package-supported saved-object JSON. This page preserves the rule names and KQL queries for operators until valid package assets are generated.
 
 ## AI Agent Writing Exploit-like Files
 
-- Source draft: `_dev/security_rules_toml/ai_agent_exploit_like_files.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_exploit_like_files.toml`
 - Severity: `high`
 - Risk score: `88`
 - Description: Detects AI agent findings that indicate exploit-like file creation or modification based on metadata, file names, and behavioural labels.
@@ -15,7 +15,7 @@ event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.fi
 
 ## AI Agent Sandbox Escape Research Indicators
 
-- Source draft: `_dev/security_rules_toml/ai_agent_sandbox_escape_research.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_sandbox_escape_research.toml`
 - Severity: `high`
 - Risk score: `86`
 - Description: Detects AI agent sandbox escape research indicators from metadata such as activity type, target paths, or behavioural keywords.
@@ -26,7 +26,7 @@ event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.fi
 
 ## AI Agent Scanning Sensitive Source Code
 
-- Source draft: `_dev/security_rules_toml/ai_agent_sensitive_source_scan.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_sensitive_source_scan.toml`
 - Severity: `high`
 - Risk score: `78`
 - Description: Detects untrusted AI agent findings for sensitive source repository scanning, such as security-critical paths, infra-as-code, auth code, or secrets-related filenames.
@@ -37,7 +37,7 @@ event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.fi
 
 ## AI Agent With Shell and Filesystem MCP Access
 
-- Source draft: `_dev/security_rules_toml/ai_agent_shell_filesystem_mcp.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_shell_filesystem_mcp.toml`
 - Severity: `high`
 - Risk score: `85`
 - Description: Detects AI agent findings with both shell and filesystem MCP capabilities, which can enable autonomous codebase inspection and tool execution.
@@ -48,7 +48,7 @@ event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.fi
 
 ## AI Browser Extension With Broad Permissions
 
-- Source draft: `_dev/security_rules_toml/ai_browser_extension_broad_permissions.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/ai_browser_extension_broad_permissions.toml`
 - Severity: `medium`
 - Risk score: `55`
 - Description: Detects ai browser extension with broad permissions from AI Sentinel findings.
@@ -59,7 +59,7 @@ event.module: "ai_sentinel" and ai_sentinel.finding.type: "browser_extension" an
 
 ## AI Sentinel Critical Finding
 
-- Source draft: `_dev/security_rules_toml/ai_sentinel_critical_finding.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/ai_sentinel_critical_finding.toml`
 - Severity: `critical`
 - Risk score: `90`
 - Description: Detects ai sentinel critical finding from AI Sentinel findings.
@@ -70,7 +70,7 @@ event.module: "ai_sentinel" and ai_sentinel.risk.level: "critical"
 
 ## AI Tool Added to Startup
 
-- Source draft: `_dev/security_rules_toml/ai_tool_added_startup.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/ai_tool_added_startup.toml`
 - Severity: `medium`
 - Risk score: `50`
 - Description: Detects ai tool added to startup from AI Sentinel findings.
@@ -81,7 +81,7 @@ event.module: "ai_sentinel" and ai_sentinel.finding.type: "startup_item" and not
 
 ## Critical AI Cyber-Agent Activity
 
-- Source draft: `_dev/security_rules_toml/critical_ai_cyber_agent_activity.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/critical_ai_cyber_agent_activity.toml`
 - Severity: `critical`
 - Risk score: `95`
 - Description: Detects critical AI cyber-agent findings across vulnerability research, exploit-development, sandbox escape, shell use, fuzzing, reverse-engineering, and mass codebase analysis behaviours.
@@ -92,7 +92,7 @@ event.module: "ai_sentinel" and ai_sentinel.finding.type: ("ai_cyber_agent_activ
 
 ## Local LLM Service Exposed Beyond Localhost
 
-- Source draft: `_dev/security_rules_toml/local_llm_exposed.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/local_llm_exposed.toml`
 - Severity: `high`
 - Risk score: `73`
 - Description: Detects local llm service exposed beyond localhost from AI Sentinel findings.
@@ -103,7 +103,7 @@ event.module: "ai_sentinel" and ai_sentinel.ai.local_service: true and destinati
 
 ## Multiple AI API Connections From Same Process
 
-- Source draft: `_dev/security_rules_toml/multiple_ai_api_connections_threshold.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/multiple_ai_api_connections_threshold.toml`
 - Severity: `medium`
 - Risk score: `65`
 - Description: Detects 10 or more untrusted AI API connection findings from the same host, process, and provider in five minutes.
@@ -114,7 +114,7 @@ event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_api_connection" an
 
 ## New or Modified MCP Config
 
-- Source draft: `_dev/security_rules_toml/new_modified_mcp_config.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/new_modified_mcp_config.toml`
 - Severity: `medium`
 - Risk score: `47`
 - Description: Detects new or modified mcp config from AI Sentinel findings.
@@ -125,7 +125,7 @@ event.module: "ai_sentinel" and event.action: ("mcp_config_created" or "mcp_conf
 
 ## Possible Mythos-like Vulnerability Research Agent
 
-- Source draft: `_dev/security_rules_toml/possible_mythos_like_vulnerability_research_agent.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/possible_mythos_like_vulnerability_research_agent.toml`
 - Severity: `high`
 - Risk score: `82`
 - Description: Detects Mythos-like AI vulnerability research behaviour using multiple behavioural signals. The word mythos is treated only as a weak supporting signal and is never sufficient by itself.
@@ -136,7 +136,7 @@ event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.fi
 
 ## Unknown Process Connecting to AI API
 
-- Source draft: `_dev/security_rules_toml/unknown_process_ai_api.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/unknown_process_ai_api.toml`
 - Severity: `medium`
 - Risk score: `55`
 - Description: Detects unknown process connecting to ai api from AI Sentinel findings.
@@ -147,7 +147,7 @@ event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_api_connection" an
 
 ## Untrusted AI Agent Using MCP Browser/Shell Tools
 
-- Source draft: `_dev/security_rules_toml/untrusted_ai_agent_mcp_browser_shell.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/untrusted_ai_agent_mcp_browser_shell.toml`
 - Severity: `high`
 - Risk score: `84`
 - Description: Detects untrusted AI agent use of MCP browser or shell tooling based on declared capabilities and tool metadata.
@@ -158,7 +158,7 @@ event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.fi
 
 ## Untrusted AI Agent Running Security Tools
 
-- Source draft: `_dev/security_rules_toml/untrusted_ai_agent_security_tools.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/untrusted_ai_agent_security_tools.toml`
 - Severity: `high`
 - Risk score: `80`
 - Description: Detects untrusted AI agent findings that indicate security tool orchestration or security research capabilities. Behaviour-based and does not rely on an agent name.
@@ -169,7 +169,7 @@ event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.fi
 
 ## Untrusted MCP Server With Shell or Filesystem Access
 
-- Source draft: `_dev/security_rules_toml/untrusted_mcp_shell_filesystem.toml`
+- Source draft: `repo-root/dev-assets/security_rules_toml/untrusted_mcp_shell_filesystem.toml`
 - Severity: `high`
 - Risk score: `75`
 - Description: Detects untrusted mcp server with shell or filesystem access from AI Sentinel findings.
