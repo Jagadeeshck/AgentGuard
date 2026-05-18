@@ -1,6 +1,0 @@
-[
-  {
-    "event.kind": "pipeline_error",
-    "tags": ["ai_sentinel_invalid_json", "ai_sentinel", "ai_activity", "mcp_monitoring", "endpoint_visibility"]
-  }
-]

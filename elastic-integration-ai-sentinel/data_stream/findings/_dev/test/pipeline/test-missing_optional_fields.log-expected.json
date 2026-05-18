@@ -1,9 +1,0 @@
-[
-  {
-    "event.module": "ai_sentinel",
-    "event.dataset": "ai_sentinel.findings",
-    "event.severity": 21,
-    "event.risk_score": 12,
-    "ai_sentinel.allowed": true
-  }
-]

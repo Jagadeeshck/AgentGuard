@@ -1,0 +1,12 @@
+{
+  "expected": [
+    {
+      "event.module": "ai_sentinel",
+      "event.category": [
+        "process"
+      ],
+      "event.severity": 73,
+      "event.risk_score": 75
+    }
+  ]
+}

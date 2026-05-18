@@ -4,13 +4,13 @@ Pipeline tests live in `data_stream/findings/_dev/test/pipeline/` and include ma
 
 Required MVP coverage:
 
-- `ai_api_connection`
-- `mcp_server`
-- `browser_extension`
-- `startup_item`
-- `local_llm_service`
-- `invalid_json`
-- `redaction`
+- `test-ai-api-connection.log` / `test-ai-api-connection.log-expected.json`
+- `test-mcp-server.log` / `test-mcp-server.log-expected.json`
+- `test-browser-extension.log` / `test-browser-extension.log-expected.json`
+- `test-startup-item.log` / `test-startup-item.log-expected.json`
+- `test-local-llm-service.log` / `test-local-llm-service.log-expected.json`
+- `test-invalid-json.log` / `test-invalid-json.log-expected.json`
+- `test-redaction.log` / `test-redaction.log-expected.json`
 
 Additional regression fixtures cover missing optional fields, risk score mapping, and event categorisation.
 

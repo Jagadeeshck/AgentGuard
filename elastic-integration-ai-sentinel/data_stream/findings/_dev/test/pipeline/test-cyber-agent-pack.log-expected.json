@@ -1,0 +1,95 @@
+{
+  "expected": [
+    {
+      "event.module": "ai_sentinel",
+      "event.dataset": "ai_sentinel.findings",
+      "event.category": [
+        "process"
+      ],
+      "event.type": [
+        "info"
+      ],
+      "event.action": "ai_security_tool_mcp_server",
+      "event.severity": 73,
+      "event.risk_score": 84,
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility",
+        "cyber_agent_activity"
+      ],
+      "ai_sentinel.cyber_agent.name": "research-agent",
+      "ai_sentinel.cyber_agent.framework": "langchain",
+      "ai_sentinel.cyber_agent.provider": "anthropic",
+      "ai_sentinel.cyber_agent.capabilities": [
+        "mcp",
+        "shell",
+        "filesystem"
+      ],
+      "ai_sentinel.cyber_agent.target_paths": [
+        "/workspace/project/src/security?token=[REDACTED]"
+      ],
+      "ai_sentinel.cyber_agent.security_tools": [
+        "semgrep",
+        "gitleaks"
+      ],
+      "ai_sentinel.cyber_agent.codebase_scan_volume": 340,
+      "ai_sentinel.cyber_agent.mitre_tactics": [
+        "TA0007"
+      ],
+      "ai_sentinel.cyber_agent.mitre_techniques": [
+        "T1083"
+      ]
+    },
+    {
+      "event.module": "ai_sentinel",
+      "event.category": [
+        "file"
+      ],
+      "event.type": [
+        "info"
+      ],
+      "event.action": "ai_agent_sensitive_repo_scan",
+      "event.severity": 73,
+      "event.risk_score": 78,
+      "ai_sentinel.cyber_agent.activity_type": "sensitive_repo_scan",
+      "ai_sentinel.cyber_agent.target_paths": [
+        "/workspace/project/auth",
+        "/workspace/project/.env.example"
+      ],
+      "ai_sentinel.cyber_agent.codebase_scan_volume": 1200,
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility",
+        "cyber_agent_activity"
+      ]
+    },
+    {
+      "event.module": "ai_sentinel",
+      "event.category": [
+        "process"
+      ],
+      "event.type": [
+        "creation"
+      ],
+      "event.action": "ai_exploit_development_activity",
+      "event.severity": 99,
+      "event.risk_score": 92,
+      "ai_sentinel.cyber_agent.activity_type": "exploit_development",
+      "ai_sentinel.cyber_agent.suspicious_keywords": [
+        "poc",
+        "cve"
+      ],
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility",
+        "cyber_agent_activity"
+      ]
+    }
+  ]
+}
