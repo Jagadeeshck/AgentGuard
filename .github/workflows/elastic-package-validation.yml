@@ -18,8 +18,9 @@ permissions:
 
 jobs:
   elastic-package:
-    name: Lint, build, pipeline tests, and asset tests
+    name: Lint, build, and pipeline tests
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: elastic-integration-ai-sentinel
@@ -28,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install latest elastic-package
-        working-directory: ${{ runner.temp }}
+        working-directory: .
         run: |
           set -euo pipefail
           url="$(curl -fsSL ${GITHUB_API_URL:-https://api.github.com}/repos/elastic/elastic-package/releases/latest | jq -r '.assets[] | select(.name | test("linux_amd64\\.tar\\.gz$")) | .browser_download_url' | head -n 1)"
@@ -42,20 +43,26 @@ jobs:
           sudo install -m 0755 "$(find elastic-package-bin -type f -name elastic-package | head -n 1)" /usr/local/bin/elastic-package
           elastic-package version
 
+      - name: Docker diagnostics
+        working-directory: .
+        run: |
+          docker version
+          docker compose version || true
+
       - name: Lint package
         run: elastic-package lint
 
       - name: Build package
         run: elastic-package build
 
+      - name: Start Elasticsearch for pipeline tests
+        timeout-minutes: 10
+        run: elastic-package stack up -d --services=elasticsearch
+
       - name: Run ingest pipeline tests
+        timeout-minutes: 10
         run: elastic-package test pipeline
 
-      - name: Run asset tests when stack is available
-        run: |
-          set -euo pipefail
-          if elastic-package stack status >/dev/null 2>&1; then
-            elastic-package test asset
-          else
-            echo "Skipping elastic-package test asset: it requires a running Elastic stack. Run 'elastic-package stack up' before asset tests in local validation."
-          fi
+      - name: Stop Elastic stack
+        if: always()
+        run: elastic-package stack down
