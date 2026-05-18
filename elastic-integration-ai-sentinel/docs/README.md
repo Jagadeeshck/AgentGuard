@@ -2,7 +2,7 @@
 
 AgentGuard / AI Sentinel is a defensive endpoint visibility product that emits ECS-compatible NDJSON findings about AI-related activity such as AI API connections, MCP server configuration, local LLM services, browser extensions, and startup items.
 
-This repository contains **only** the Elastic integration package. It is not the AgentGuard endpoint scanner and it does not include scanner collection logic. The package can be deployed through Fleet-managed Elastic Agent or standalone Elastic Agent. It reads already-produced AgentGuard / AI Sentinel NDJSON findings from disk, parses them into ECS-compatible fields, and ships Elastic package assets such as fields, ingest pipelines, dashboards, and rules. It does not perform endpoint scanning, decrypt traffic, collect private prompt content, collect clipboard content, collect browsing history, or store secrets.
+This repository contains **only** the Elastic integration package. It is not the AgentGuard endpoint scanner and it does not include scanner collection logic. The package can be deployed through Fleet-managed Elastic Agent or standalone Elastic Agent. It reads already-produced AgentGuard / AI Sentinel NDJSON findings from disk, parses them into ECS-compatible fields, and ships Elastic package assets such as fields and ingest pipelines, while keeping dashboard placeholders and draft rule references under `_dev/` until they are converted to supported package asset formats. It does not perform endpoint scanning, decrypt traffic, collect private prompt content, collect clipboard content, collect browsing history, or store secrets.
 
 ## Data streams
 
@@ -57,7 +57,7 @@ Configurable variables:
 
 ## Standalone Elastic Agent
 
-See [standalone-elastic-agent.md](standalone-elastic-agent.md) and the examples under [examples/](examples/) for standalone `elastic-agent.yml` configuration.
+See [standalone-elastic-agent.md](standalone-elastic-agent.md) and the documentation-only examples under `repo-root/dev-assets/examples/` for standalone `elastic-agent.yml` configuration.
 
 ## Event schema
 
@@ -77,7 +77,7 @@ The ingest pipeline redacts common secret patterns in command lines, MCP server 
 
 ## Dashboards
 
-The package includes placeholder saved objects for these dashboard entry points:
+Development placeholder dashboard drafts were moved to `repo-root/dev-assets/kibana_placeholders/` for these dashboard entry points:
 
 1. AI Sentinel Overview: findings by risk, host, time, providers, risky processes, and critical/high tables.
 2. MCP Security Dashboard: MCP servers, clients, capabilities, privileged access, and changed configs.
@@ -89,7 +89,7 @@ The placeholders define stable IDs so maintainers can replace them with producti
 
 ## Detection rules
 
-Security detection rules are included under `kibana/security_rule/` for critical findings, untrusted MCP servers with shell/filesystem access, unknown AI API clients, risky AI browser extensions, exposed local LLM services, AI startup items, MCP config changes, AI cyber-agent behavior, and a threshold rule for multiple AI API connections from the same process.
+Draft Security detection rules are listed in [security-rules.md](security-rules.md), with TOML drafts kept under `repo-root/dev-assets/security_rules_toml/` until they are converted to package-supported saved-object JSON.
 
 Rules target `logs-ai_sentinel.findings-*` and use KQL against ECS and `ai_sentinel.*` fields. The rule coverage plan is documented in [detection-rule-test-matrix.md](detection-rule-test-matrix.md).
 
@@ -119,11 +119,11 @@ elastic-package stack up
 elastic-package stack down
 ```
 
-Pipeline test fixtures live in `data_stream/findings/test/pipeline/` and cover `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, cyber-agent pack examples, malformed JSON, redaction, missing optional fields, risk score mapping, and event categorisation. Each `.log` fixture has a matching expected `.json` output file for `elastic-package test pipeline`. The broader synthetic validation corpus lives in [sample_events.ndjson](sample_events.ndjson).
+Pipeline test fixtures live in `data_stream/findings/_dev/test/pipeline/` and cover `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, cyber-agent pack examples, malformed JSON, redaction, missing optional fields, risk score mapping, and event categorisation. Each log fixture is named `test-<fixture>.log` and has a matching `test-<fixture>.log-expected.json` output file for `elastic-package test pipeline`. The broader synthetic validation corpus lives in `repo-root/dev-assets/sample_events/sample_events.ndjson`.
 
 ## Validation pack documentation
 
-Version 0.3.0 adds validation, synthetic test data under `test-data/`, a detection rule test matrix, and the scanner-to-Elastic contract. The endpoint scanner remains a separate future project; this package only ingests NDJSON findings.
+Version 0.3.0 adds validation, synthetic test data under `repo-root/dev-assets/test_data/`, a detection rule test matrix, and the scanner-to-Elastic contract. The endpoint scanner remains a separate future project; this package only ingests NDJSON findings.
 
 Version 0.3.0 adds an end-to-end validation pack so this Elastic integration can be tested independently before an endpoint scanner exists:
 
@@ -139,11 +139,11 @@ Version 0.3.0 adds an end-to-end validation pack so this Elastic integration can
 - [False Positive Guidance](false-positive-guidance.md)
 - [Safe-vs-Dangerous Scenarios](safe-vs-dangerous-scenarios.md)
 - [Detection Rule Test Matrix](detection-rule-test-matrix.md)
-- [Synthetic Test Data](../test-data/)
+- Synthetic Test Data: `repo-root/dev-assets/test_data/`
 
 ## Troubleshooting
 
 - No events: verify the Elastic Agent policy path matches the AI Sentinel NDJSON path and that the Agent user can read the file.
 - Invalid JSON tags: inspect events tagged `ai_sentinel_invalid_json`; each line must be a single valid JSON object.
-- Missing dashboards or rules: run `elastic-package test asset` during development and reinstall the package in Fleet.
+- Missing dashboards or rules: placeholder dashboards and TOML rule drafts are development references only until converted to package-supported saved-object JSON assets.
 - Unexpected secrets: disable `preserve_original_event`, verify AI Sentinel scanner-side redaction, and review fields that contain commands, URLs, headers, or config paths.

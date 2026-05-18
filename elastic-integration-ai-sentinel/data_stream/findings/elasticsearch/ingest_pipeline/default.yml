@@ -1,3 +1,4 @@
+---
 description: Parse and normalize AI Sentinel findings.
 processors:
   - set:

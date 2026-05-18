@@ -6,7 +6,7 @@ This contract defines the metadata-only NDJSON event format that a future AgentG
 
 The **future endpoint scanner** is responsible for observing host metadata, assigning `ai_sentinel.finding.type`, calculating risk, redacting sensitive values, and writing one JSON object per line.
 
-This **Elastic integration** is responsible only for collecting those already-produced NDJSON findings with Elastic Agent `filestream`, parsing JSON, normalizing ECS fields, applying defensive redaction for common secret patterns, installing dashboards/rules, and making the data queryable in `logs-ai_sentinel.findings-default`.
+This **Elastic integration** is responsible only for collecting those already-produced NDJSON findings with Elastic Agent `filestream`, parsing JSON, normalizing ECS fields, applying defensive redaction for common secret patterns, keeping development dashboard/rule references, and making the data queryable in `logs-ai_sentinel.findings-default`.
 
 This repository must not contain endpoint scanner logic, process enumeration, browser inspection, network capture, prompt collection, clipboard collection, browsing history collection, traffic decryption, or secret storage logic.
 
@@ -111,7 +111,7 @@ Unknown types should be avoided. If a producer must add a new type, it should fi
 
 ## Privacy requirements
 
-The producer must emit only metadata needed for detection, triage, dashboards, and rules. It must not emit:
+The producer must emit only metadata needed for detection, triage, dashboard placeholders, and draft rule references. It must not emit:
 
 - Raw prompt text, completion text, conversation transcripts, or private tool-call payloads.
 - Clipboard content.

@@ -13,7 +13,7 @@ In both modes, Elastic Agent uses the `filestream` input to read ECS-compatible 
 
 ## What this repository is
 
-- An Elastic integration package with Fleet manifests, field definitions, ingest pipeline assets, Kibana dashboards, detection rules, sample events, and `elastic-package` tests.
+- An Elastic integration package with Fleet manifests, field definitions, ingest pipeline assets, development dashboard/rule references, sample events, and `elastic-package` tests.
 - A package that reads already-produced AgentGuard / AI Sentinel finding logs from configured file paths through Elastic Agent `filestream`.
 - A schema and normalization layer for ECS-compatible metadata under `ai_sentinel.*`.
 
@@ -24,7 +24,7 @@ In both modes, Elastic Agent uses the `filestream` input to read ECS-compatible 
 - It does **not** add process scanning code, browser inspection code, or network capture code.
 - It does **not** collect prompt content, secrets, decrypted traffic, clipboard content, or browsing history.
 
-The AgentGuard / AI Sentinel endpoint product is a separate producer that writes the NDJSON findings consumed by this integration. See [`elastic-integration-ai-sentinel/docs/README.md`](elastic-integration-ai-sentinel/docs/README.md) for Fleet-managed and standalone installation documentation, field mapping, dashboards, rules, privacy model, validation-pack documentation, and local `elastic-package` testing instructions. The event schema is documented in [`elastic-integration-ai-sentinel/docs/event-schema-v0.1.md`](elastic-integration-ai-sentinel/docs/event-schema-v0.1.md), and the producer contract is documented in [`elastic-integration-ai-sentinel/docs/agentguard-to-elastic-contract-v0.1.md`](elastic-integration-ai-sentinel/docs/agentguard-to-elastic-contract-v0.1.md).
+The AgentGuard / AI Sentinel endpoint product is a separate producer that writes the NDJSON findings consumed by this integration. See [`elastic-integration-ai-sentinel/docs/README.md`](elastic-integration-ai-sentinel/docs/README.md) for Fleet-managed and standalone installation documentation, field mapping, dashboard/rule references, privacy model, validation-pack documentation, and local `elastic-package` testing instructions. The event schema is documented in [`elastic-integration-ai-sentinel/docs/event-schema-v0.1.md`](elastic-integration-ai-sentinel/docs/event-schema-v0.1.md), and the producer contract is documented in [`elastic-integration-ai-sentinel/docs/agentguard-to-elastic-contract-v0.1.md`](elastic-integration-ai-sentinel/docs/agentguard-to-elastic-contract-v0.1.md).
 
 ## v0.3.0 validation pack
 
