@@ -1,12 +1,31 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "process"
-      ],
-      "event.severity": 73,
-      "event.risk_score": 75
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "process"
+        ],
+        "severity": 73,
+        "risk_score": 75,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      },
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
+      ]
     }
   ]
 }

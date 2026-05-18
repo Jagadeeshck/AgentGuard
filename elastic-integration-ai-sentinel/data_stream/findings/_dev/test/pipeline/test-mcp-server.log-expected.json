@@ -1,26 +1,53 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "configuration"
-      ],
-      "event.type": [
-        "info"
-      ],
-      "event.action": "mcp_server",
-      "event.severity": 99,
-      "event.risk_score": 96,
-      "ai_sentinel.mcp.server.command": "node server.js --token [REDACTED]",
-      "ai_sentinel.mcp.server.args": [
-        "--root",
-        "/Users/alice/project",
-        "--token=[REDACTED]"
-      ],
-      "ai_sentinel.mcp.config.path": "/Users/alice/.config/mcp/config.json?token=[REDACTED]",
-      "ai_sentinel.mcp.capabilities": [
-        "shell",
-        "filesystem"
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "configuration"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "mcp_server",
+        "severity": 99,
+        "risk_score": 96,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "ai_sentinel": {
+        "mcp": {
+          "server": {
+            "command": "node server.js --token [REDACTED]",
+            "args": [
+              "--root",
+              "/Users/alice/project",
+              "--token=[REDACTED]"
+            ]
+          },
+          "config": {
+            "path": "/Users/alice/.config/mcp/config.json?token=[REDACTED]"
+          },
+          "capabilities": [
+            "shell",
+            "filesystem"
+          ]
+        }
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      },
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
       ]
     }
   ]

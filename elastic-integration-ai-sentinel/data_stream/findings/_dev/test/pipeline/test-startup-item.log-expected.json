@@ -1,18 +1,41 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "configuration"
-      ],
-      "event.type": [
-        "creation"
-      ],
-      "event.action": "startup_item",
-      "event.severity": 47,
-      "event.risk_score": 49,
-      "ai_sentinel.startup.command": "/usr/local/bin/ai-helper --token [REDACTED]",
-      "ai_sentinel.startup.enabled": true
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "configuration"
+        ],
+        "type": [
+          "creation"
+        ],
+        "action": "startup_item",
+        "severity": 47,
+        "risk_score": 49,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "ai_sentinel": {
+        "startup": {
+          "command": "/usr/local/bin/ai-helper --token [REDACTED]",
+          "enabled": true
+        }
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      },
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
+      ]
     }
   ]
 }

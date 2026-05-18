@@ -1,17 +1,21 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.dataset": "ai_sentinel.findings",
-      "event.category": [
-        "process"
-      ],
-      "event.type": [
-        "info"
-      ],
-      "event.action": "ai_security_tool_mcp_server",
-      "event.severity": 73,
-      "event.risk_score": 84,
+      "event": {
+        "module": "ai_sentinel",
+        "dataset": "ai_sentinel.findings",
+        "category": [
+          "process"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "ai_security_tool_mcp_server",
+        "severity": 73,
+        "risk_score": 84,
+        "kind": "alert",
+        "outcome": "success"
+      },
       "tags": [
         "ai_sentinel",
         "ai_activity",
@@ -19,77 +23,123 @@
         "endpoint_visibility",
         "cyber_agent_activity"
       ],
-      "ai_sentinel.cyber_agent.name": "research-agent",
-      "ai_sentinel.cyber_agent.framework": "langchain",
-      "ai_sentinel.cyber_agent.provider": "anthropic",
-      "ai_sentinel.cyber_agent.capabilities": [
-        "mcp",
-        "shell",
-        "filesystem"
-      ],
-      "ai_sentinel.cyber_agent.target_paths": [
-        "/workspace/project/src/security?token=[REDACTED]"
-      ],
-      "ai_sentinel.cyber_agent.security_tools": [
-        "semgrep",
-        "gitleaks"
-      ],
-      "ai_sentinel.cyber_agent.codebase_scan_volume": 340,
-      "ai_sentinel.cyber_agent.mitre_tactics": [
-        "TA0007"
-      ],
-      "ai_sentinel.cyber_agent.mitre_techniques": [
-        "T1083"
-      ]
+      "ai_sentinel": {
+        "cyber_agent": {
+          "name": "research-agent",
+          "framework": "langchain",
+          "provider": "anthropic",
+          "capabilities": [
+            "mcp",
+            "shell",
+            "filesystem"
+          ],
+          "target_paths": [
+            "/workspace/project/src/security?token=[REDACTED]"
+          ],
+          "security_tools": [
+            "semgrep",
+            "gitleaks"
+          ],
+          "codebase_scan_volume": 340,
+          "mitre_tactics": [
+            "TA0007"
+          ],
+          "mitre_techniques": [
+            "T1083"
+          ]
+        }
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      }
     },
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "file"
-      ],
-      "event.type": [
-        "info"
-      ],
-      "event.action": "ai_agent_sensitive_repo_scan",
-      "event.severity": 73,
-      "event.risk_score": 78,
-      "ai_sentinel.cyber_agent.activity_type": "sensitive_repo_scan",
-      "ai_sentinel.cyber_agent.target_paths": [
-        "/workspace/project/auth",
-        "/workspace/project/.env.example"
-      ],
-      "ai_sentinel.cyber_agent.codebase_scan_volume": 1200,
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "file"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "ai_agent_sensitive_repo_scan",
+        "severity": 73,
+        "risk_score": 78,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "ai_sentinel": {
+        "cyber_agent": {
+          "activity_type": "sensitive_repo_scan",
+          "target_paths": [
+            "/workspace/project/auth",
+            "/workspace/project/.env.example"
+          ],
+          "codebase_scan_volume": 1200
+        }
+      },
       "tags": [
         "ai_sentinel",
         "ai_activity",
         "mcp_monitoring",
         "endpoint_visibility",
         "cyber_agent_activity"
-      ]
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      }
     },
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "process"
-      ],
-      "event.type": [
-        "creation"
-      ],
-      "event.action": "ai_exploit_development_activity",
-      "event.severity": 99,
-      "event.risk_score": 92,
-      "ai_sentinel.cyber_agent.activity_type": "exploit_development",
-      "ai_sentinel.cyber_agent.suspicious_keywords": [
-        "poc",
-        "cve"
-      ],
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "process"
+        ],
+        "type": [
+          "creation"
+        ],
+        "action": "ai_exploit_development_activity",
+        "severity": 99,
+        "risk_score": 92,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "ai_sentinel": {
+        "cyber_agent": {
+          "activity_type": "exploit_development",
+          "suspicious_keywords": [
+            "poc",
+            "cve"
+          ]
+        }
+      },
       "tags": [
         "ai_sentinel",
         "ai_activity",
         "mcp_monitoring",
         "endpoint_visibility",
         "cyber_agent_activity"
-      ]
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      }
     }
   ]
 }

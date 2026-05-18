@@ -1,15 +1,38 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "configuration"
-      ],
-      "event.severity": 47,
-      "event.risk_score": 55,
-      "ai_sentinel.extension.permissions": [
-        "<all_urls>",
-        "nativeMessaging"
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "configuration"
+        ],
+        "severity": 47,
+        "risk_score": 55,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "ai_sentinel": {
+        "extension": {
+          "permissions": [
+            "<all_urls>",
+            "nativeMessaging"
+          ]
+        }
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      },
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
       ]
     }
   ]

@@ -20,7 +20,7 @@ processors:
             allow_duplicates: false
         - set:
             field: error.message
-            value: '{{{ _ingest.on_failure_message }}}'
+            value: Invalid JSON payload
   - remove:
       field:
         - ai_sentinel.prompt
@@ -165,14 +165,116 @@ processors:
       if: ctx.ai_sentinel?.risk?.level == 'critical' && (ctx.event == null || ctx.event.severity == null)
   - script:
       lang: painless
-      description: Redact common secret patterns from command, MCP, environment-like, URL, header, and path fields.
+      description: Redact common secret patterns from command, MCP, environment-like, URL, header, and path fields without high-complexity regex.
       source: |
+        boolean isBoundaryChar(String v, int pos) {
+          if (pos < 0 || pos >= v.length()) return true;
+          char c = v.charAt(pos);
+          return !(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && c != '_' && c != '-';
+        }
+        boolean isValueDelimiter(char c) {
+          return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '&' || c == ',' || c == ';' || c == '"' || c == '\'';
+        }
+        String redactRange(String v, int start, int end) {
+          if (start < 0 || end < start || start > v.length()) return v;
+          return v.substring(0, start) + '[REDACTED]' + v.substring(end);
+        }
+        String redactBearer(String v) {
+          String lower = v.toLowerCase();
+          int from = 0;
+          while (from < v.length()) {
+            int idx = lower.indexOf('bearer', from);
+            if (idx < 0) return v;
+            int valueStart = idx + 6;
+            if (!isBoundaryChar(v, idx - 1) || valueStart >= v.length() || (v.charAt(valueStart) != ' ' && v.charAt(valueStart) != '\t')) {
+              from = idx + 6;
+              continue;
+            }
+            while (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) valueStart++;
+            int valueEnd = valueStart;
+            while (valueEnd < v.length() && !isValueDelimiter(v.charAt(valueEnd))) valueEnd++;
+            if (valueEnd > valueStart) {
+              v = redactRange(v, valueStart, valueEnd);
+              lower = v.toLowerCase();
+              from = valueStart + 10;
+            } else {
+              from = idx + 6;
+            }
+          }
+          return v;
+        }
+        String redactKeyValue(String v, String key) {
+          String lower = v.toLowerCase();
+          String keyLower = key.toLowerCase();
+          int from = 0;
+          while (from < v.length()) {
+            int idx = lower.indexOf(keyLower, from);
+            if (idx < 0) return v;
+            int afterKey = idx + key.length();
+            if (!isBoundaryChar(v, idx - 1)) {
+              from = afterKey;
+              continue;
+            }
+            int sep = afterKey;
+            while (sep < v.length() && (v.charAt(sep) == ' ' || v.charAt(sep) == '\t')) sep++;
+            if (sep >= v.length() || (v.charAt(sep) != '=' && v.charAt(sep) != ':')) {
+              from = afterKey;
+              continue;
+            }
+            int valueStart = sep + 1;
+            while (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) valueStart++;
+            int valueEnd = valueStart;
+            while (valueEnd < v.length() && !isValueDelimiter(v.charAt(valueEnd))) valueEnd++;
+            if (valueEnd > valueStart) {
+              v = redactRange(v, valueStart, valueEnd);
+              lower = v.toLowerCase();
+              from = valueStart + 10;
+            } else {
+              from = afterKey;
+            }
+          }
+          return v;
+        }
+        String redactCliFlag(String v, String flag) {
+          String lower = v.toLowerCase();
+          String flagLower = flag.toLowerCase();
+          int from = 0;
+          while (from < v.length()) {
+            int idx = lower.indexOf(flagLower, from);
+            if (idx < 0) return v;
+            int afterFlag = idx + flag.length();
+            if (!isBoundaryChar(v, idx - 1) || (afterFlag < v.length() && !isBoundaryChar(v, afterFlag))) {
+              from = afterFlag;
+              continue;
+            }
+            int valueStart = afterFlag;
+            if (valueStart < v.length() && v.charAt(valueStart) == '=') {
+              valueStart++;
+            } else if (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) {
+              while (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) valueStart++;
+            } else {
+              from = afterFlag;
+              continue;
+            }
+            int valueEnd = valueStart;
+            while (valueEnd < v.length() && !isValueDelimiter(v.charAt(valueEnd))) valueEnd++;
+            if (valueEnd > valueStart) {
+              v = redactRange(v, valueStart, valueEnd);
+              lower = v.toLowerCase();
+              from = valueStart + 10;
+            } else {
+              from = afterFlag;
+            }
+          }
+          return v;
+        }
         String redact(String v) {
           if (v == null) return null;
-          v = /(?i)(authorization:\s*bearer\s+)[A-Za-z0-9._~+\/=:-]+/.matcher(v).replaceAll('$1[REDACTED]');
-          v = /(?i)(api[_-]?key|token|secret|password|passwd|pwd)(\s*[=:]\s*)[^\s,&;\"']+/.matcher(v).replaceAll('$1$2[REDACTED]');
-          v = /(?i)([?&](?:api_key|token|secret|key|access_token)=)[^&\s]+/.matcher(v).replaceAll('$1[REDACTED]');
-          v = /(?i)(--(?:api-key|token|secret|password)\s+)[^\s]+/.matcher(v).replaceAll('$1[REDACTED]');
+          v = redactBearer(v);
+          String[] keys = new String[] {'access_token', 'api_key', 'apikey', 'api-key', 'token', 'secret', 'password', 'passwd', 'pwd'};
+          for (String key : keys) v = redactKeyValue(v, key);
+          String[] flags = new String[] {'--api-key', '--token', '--secret', '--password'};
+          for (String flag : flags) v = redactCliFlag(v, flag);
           return v;
         }
         void redactPath(Map m, String path) {
@@ -194,7 +296,7 @@ processors:
         String[] fields = new String[] {
           'process.command_line', 'ai_sentinel.mcp.server.command', 'ai_sentinel.mcp.server.args',
           'ai_sentinel.mcp.config.path', 'ai_sentinel.startup.command', 'ai_sentinel.startup.path',
-          'ai_sentinel.ai.endpoint', 'ai_sentinel.cyber_agent.target_paths', 'url.full', 'http.request.headers.authorization', 'http.request.body.content'
+          'ai_sentinel.ai.endpoint', 'ai_sentinel.cyber_agent.target_paths', 'url.full', 'http.request.headers.authorization'
         };
         for (String f : fields) redactPath(ctx, f);
   - append:
