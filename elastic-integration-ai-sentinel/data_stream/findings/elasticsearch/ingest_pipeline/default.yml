@@ -181,8 +181,7 @@ processors:
         }
         boolean isWhitespace(String c) {
           if (c.length() == 0) return false;
-          int code = c.charAt(0);
-          return code == 32 || code == 9 || code == 13 || code == 10;
+          return Character.isWhitespace(c.charAt(0));
         }
         boolean isValueDelimiter(String c) {
           return c == "" || isWhitespace(c) || c == "&" || c == "," || c == ";" || c == "\"" || c == "'";
