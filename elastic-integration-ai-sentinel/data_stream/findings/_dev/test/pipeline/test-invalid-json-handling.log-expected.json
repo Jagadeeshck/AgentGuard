@@ -3,13 +3,13 @@
     {
       "message": "{\"ai_sentinel\":{\"finding\":{\"id\":\"bad\"}",
       "event": {
-        "kind": "pipeline_error",
+        "kind": "event",
         "module": "ai_sentinel",
         "dataset": "ai_sentinel.findings",
         "type": [
-          "info"
+          "error"
         ],
-        "outcome": "success"
+        "outcome": "failure"
       },
       "tags": [
         "ai_sentinel_invalid_json",

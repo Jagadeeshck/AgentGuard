@@ -13,7 +13,19 @@ processors:
       on_failure:
         - set:
             field: event.kind
-            value: pipeline_error
+            value: event
+        - set:
+            field: event.outcome
+            value: failure
+        - set:
+            field: event.type
+            value: [error]
+        - set:
+            field: event.module
+            value: ai_sentinel
+        - set:
+            field: event.dataset
+            value: ai_sentinel.findings
         - append:
             field: tags
             value: ai_sentinel_invalid_json
