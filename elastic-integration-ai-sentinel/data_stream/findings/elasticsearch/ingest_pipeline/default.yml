@@ -167,32 +167,42 @@ processors:
       lang: painless
       description: Redact common secret patterns from command, MCP, environment-like, URL, header, and path fields without high-complexity regex.
       source: |
+        String chAt(String v, int pos) {
+          if (v == null || pos < 0 || pos >= v.length()) return "";
+          return v.substring(pos, pos + 1);
+        }
         boolean isBoundaryChar(String v, int pos) {
           if (pos < 0 || pos >= v.length()) return true;
-          char c = v.charAt(pos);
-          return !(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && c != '_' && c != '-';
+          String c = chAt(v, pos);
+          String lower = c.toLowerCase();
+          boolean isLetter = lower.compareTo("a") >= 0 && lower.compareTo("z") <= 0;
+          boolean isDigit = c.compareTo("0") >= 0 && c.compareTo("9") <= 0;
+          return !isLetter && !isDigit && c != "_" && c != "-";
         }
-        boolean isValueDelimiter(char c) {
-          return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '&' || c == ',' || c == ';' || c == '"' || c == '\'';
+        boolean isWhitespace(String c) {
+          return c == " " || c == "\t" || c == "\r" || c == "\n";
+        }
+        boolean isValueDelimiter(String c) {
+          return c == "" || isWhitespace(c) || c == "&" || c == "," || c == ";" || c == "\"" || c == "'";
         }
         String redactRange(String v, int start, int end) {
           if (start < 0 || end < start || start > v.length()) return v;
-          return v.substring(0, start) + '[REDACTED]' + v.substring(end);
+          return v.substring(0, start) + "[REDACTED]" + v.substring(end);
         }
         String redactBearer(String v) {
           String lower = v.toLowerCase();
           int from = 0;
           while (from < v.length()) {
-            int idx = lower.indexOf('bearer', from);
+            int idx = lower.indexOf("bearer", from);
             if (idx < 0) return v;
             int valueStart = idx + 6;
-            if (!isBoundaryChar(v, idx - 1) || valueStart >= v.length() || (v.charAt(valueStart) != ' ' && v.charAt(valueStart) != '\t')) {
+            if (!isBoundaryChar(v, idx - 1) || valueStart >= v.length() || (!isWhitespace(chAt(v, valueStart)))) {
               from = idx + 6;
               continue;
             }
-            while (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) valueStart++;
+            while (valueStart < v.length() && isWhitespace(chAt(v, valueStart))) valueStart++;
             int valueEnd = valueStart;
-            while (valueEnd < v.length() && !isValueDelimiter(v.charAt(valueEnd))) valueEnd++;
+            while (valueEnd < v.length() && !isValueDelimiter(chAt(v, valueEnd))) valueEnd++;
             if (valueEnd > valueStart) {
               v = redactRange(v, valueStart, valueEnd);
               lower = v.toLowerCase();
@@ -216,15 +226,15 @@ processors:
               continue;
             }
             int sep = afterKey;
-            while (sep < v.length() && (v.charAt(sep) == ' ' || v.charAt(sep) == '\t')) sep++;
-            if (sep >= v.length() || (v.charAt(sep) != '=' && v.charAt(sep) != ':')) {
+            while (sep < v.length() && isWhitespace(chAt(v, sep))) sep++;
+            if (sep >= v.length() || (chAt(v, sep) != "=" && chAt(v, sep) != ":")) {
               from = afterKey;
               continue;
             }
             int valueStart = sep + 1;
-            while (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) valueStart++;
+            while (valueStart < v.length() && isWhitespace(chAt(v, valueStart))) valueStart++;
             int valueEnd = valueStart;
-            while (valueEnd < v.length() && !isValueDelimiter(v.charAt(valueEnd))) valueEnd++;
+            while (valueEnd < v.length() && !isValueDelimiter(chAt(v, valueEnd))) valueEnd++;
             if (valueEnd > valueStart) {
               v = redactRange(v, valueStart, valueEnd);
               lower = v.toLowerCase();
@@ -248,16 +258,16 @@ processors:
               continue;
             }
             int valueStart = afterFlag;
-            if (valueStart < v.length() && v.charAt(valueStart) == '=') {
+            if (valueStart < v.length() && chAt(v, valueStart) == "=") {
               valueStart++;
-            } else if (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) {
-              while (valueStart < v.length() && (v.charAt(valueStart) == ' ' || v.charAt(valueStart) == '\t')) valueStart++;
+            } else if (valueStart < v.length() && isWhitespace(chAt(v, valueStart))) {
+              while (valueStart < v.length() && isWhitespace(chAt(v, valueStart))) valueStart++;
             } else {
               from = afterFlag;
               continue;
             }
             int valueEnd = valueStart;
-            while (valueEnd < v.length() && !isValueDelimiter(v.charAt(valueEnd))) valueEnd++;
+            while (valueEnd < v.length() && !isValueDelimiter(chAt(v, valueEnd))) valueEnd++;
             if (valueEnd > valueStart) {
               v = redactRange(v, valueStart, valueEnd);
               lower = v.toLowerCase();
@@ -271,14 +281,14 @@ processors:
         String redact(String v) {
           if (v == null) return null;
           v = redactBearer(v);
-          String[] keys = new String[] {'access_token', 'api_key', 'apikey', 'api-key', 'token', 'secret', 'password', 'passwd', 'pwd'};
+          String[] keys = new String[] {"access_token", "api_key", "apikey", "api-key", "token", "secret", "password", "passwd", "pwd"};
           for (String key : keys) v = redactKeyValue(v, key);
-          String[] flags = new String[] {'--api-key', '--token', '--secret', '--password'};
+          String[] flags = new String[] {"--api-key", "--token", "--secret", "--password"};
           for (String flag : flags) v = redactCliFlag(v, flag);
           return v;
         }
         void redactPath(Map m, String path) {
-          def parts = path.splitOnToken('.');
+          def parts = path.splitOnToken(".");
           def cur = m;
           for (int i = 0; i < parts.length - 1; i++) {
             if (!(cur instanceof Map) || !cur.containsKey(parts[i])) return;
@@ -294,9 +304,9 @@ processors:
           }
         }
         String[] fields = new String[] {
-          'process.command_line', 'ai_sentinel.mcp.server.command', 'ai_sentinel.mcp.server.args',
-          'ai_sentinel.mcp.config.path', 'ai_sentinel.startup.command', 'ai_sentinel.startup.path',
-          'ai_sentinel.ai.endpoint', 'ai_sentinel.cyber_agent.target_paths', 'url.full', 'http.request.headers.authorization'
+          "process.command_line", "ai_sentinel.mcp.server.command", "ai_sentinel.mcp.server.args",
+          "ai_sentinel.mcp.config.path", "ai_sentinel.startup.command", "ai_sentinel.startup.path",
+          "ai_sentinel.ai.endpoint", "ai_sentinel.cyber_agent.target_paths", "url.full", "http.request.headers.authorization"
         };
         for (String f : fields) redactPath(ctx, f);
   - append:
