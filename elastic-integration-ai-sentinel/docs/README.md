@@ -119,7 +119,7 @@ elastic-package stack up
 elastic-package stack down
 ```
 
-Pipeline test fixtures live in `data_stream/findings/_dev/test/pipeline/` and cover `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, cyber-agent pack examples, malformed JSON, redaction, missing optional fields, risk score mapping, and event categorisation. Each `.log` fixture has a matching `<fixture>.log-expected.json` output file for `elastic-package test pipeline`. The broader synthetic validation corpus lives in `repo-root/dev-assets/sample_events/sample_events.ndjson`.
+Pipeline test fixtures live in `data_stream/findings/_dev/test/pipeline/` and cover `ai_api_connection`, `mcp_server`, `browser_extension`, `startup_item`, `local_llm_service`, cyber-agent pack examples, malformed JSON, redaction, missing optional fields, risk score mapping, and event categorisation. Each log fixture is named `test-<fixture>.log` and has a matching `test-<fixture>.log-expected.json` output file for `elastic-package test pipeline`. The broader synthetic validation corpus lives in `repo-root/dev-assets/sample_events/sample_events.ndjson`.
 
 ## Validation pack documentation
 

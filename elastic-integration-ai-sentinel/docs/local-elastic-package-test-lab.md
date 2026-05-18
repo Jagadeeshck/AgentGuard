@@ -61,7 +61,7 @@ To inspect finding coverage locally:
 jq -r '.ai_sentinel.finding.type' repo-root/dev-assets/sample_events/sample_events.ndjson | sort | uniq -c
 ```
 
-To create a temporary pipeline fixture from a sample event, copy a single NDJSON line into `data_stream/findings/_dev/test/pipeline/<case>.log` and create a matching `<case>.log-expected.json` document following existing fixtures. Keep test values synthetic and metadata-only.
+To create a temporary pipeline fixture from a sample event, copy a single NDJSON line into `data_stream/findings/_dev/test/pipeline/test-<case>.log` and create a matching `test-<case>.log-expected.json` document following existing fixtures. Keep test values synthetic and metadata-only.
 
 ## Expected success criteria
 

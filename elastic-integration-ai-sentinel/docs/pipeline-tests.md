@@ -1,6 +1,6 @@
 # Pipeline Test Fixtures
 
-Pipeline tests live in `data_stream/findings/_dev/test/pipeline/` and include matching `.log` input fixtures and `<fixture>.log-expected.json` expected output files for `elastic-package test pipeline`.
+Pipeline tests live in `data_stream/findings/_dev/test/pipeline/` and include matching `test-<fixture>.log` input fixtures and `test-<fixture>.log-expected.json` expected output files for `elastic-package test pipeline`.
 
 Required MVP coverage:
 
