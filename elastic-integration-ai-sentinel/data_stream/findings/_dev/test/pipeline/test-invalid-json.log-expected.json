@@ -18,9 +18,6 @@
         "mcp_monitoring",
         "endpoint_visibility"
       ],
-      "error": {
-        "message": "Invalid JSON payload"
-      },
       "ecs": {
         "version": "8.17.0"
       },
@@ -28,6 +25,13 @@
         "vendor": "AI Sentinel",
         "product": "AI Sentinel",
         "type": "endpoint"
+      },
+      "ai_sentinel": {
+        "ingest": {
+          "error": {
+            "message": "Invalid JSON payload"
+          }
+        }
       }
     }
   ]

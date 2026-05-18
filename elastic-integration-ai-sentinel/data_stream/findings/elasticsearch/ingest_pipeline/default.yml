@@ -31,7 +31,7 @@ processors:
             value: ai_sentinel_invalid_json
             allow_duplicates: false
         - set:
-            field: error.message
+            field: ai_sentinel.ingest.error.message
             value: Invalid JSON payload
   - remove:
       field:

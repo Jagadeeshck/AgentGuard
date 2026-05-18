@@ -220,12 +220,15 @@
         "dataset": "ai_sentinel.findings",
         "kind": "alert",
         "type": [
-          "info"
+          "creation"
         ],
         "action": "ai_exploit_development_activity",
         "outcome": "success",
         "risk_score": 92,
-        "severity": 99
+        "severity": 99,
+        "category": [
+          "process"
+        ]
       },
       "observer": {
         "vendor": "AI Sentinel",
