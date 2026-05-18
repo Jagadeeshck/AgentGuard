@@ -2,12 +2,12 @@ paths:
 {{#each paths as |path i|}}
   - {{path}}
 {{/each}}
-prospector.scanner.check_interval: 10s
-parsers:
-  - ndjson:
-      target: ""
-      add_error_key: true
-      overwrite_keys: true
+data_stream:
+  dataset: {{data_stream.dataset}}
+{{#if pipeline}}
+pipeline: {{pipeline}}
+{{/if}}
+{{#if tags}}
 tags:
 {{#each tags as |tag|}}
   - {{tag}}
@@ -15,8 +15,39 @@ tags:
 {{#if preserve_original_event}}
   - preserve_original_event
 {{/if}}
+{{else}}
+{{#if preserve_original_event}}
+tags:
+  - preserve_original_event
+{{/if}}
+{{/if}}
 fields:
   _conf:
     timezone: {{timezone}}
+{{#if parsers}}
+parsers:
+{{parsers}}
+{{/if}}
+{{#if exclude_files}}
+exclude_files:
+{{#each exclude_files as |pattern|}}
+  - {{pattern}}
+{{/each}}
+{{/if}}
+{{#if include_files}}
+include_files:
+{{#each include_files as |pattern|}}
+  - {{pattern}}
+{{/each}}
+{{/if}}
+{{#if ignore_older}}
+ignore_older: {{ignore_older}}
+{{/if}}
+{{#if close_inactive}}
+close.on_state_change.inactive: {{close_inactive}}
+{{/if}}
+prospector.scanner.check_interval: 10s
+{{#if processors}}
 processors:
 {{processors}}
+{{/if}}

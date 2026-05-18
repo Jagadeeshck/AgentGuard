@@ -1,0 +1,32 @@
+outputs:
+  default:
+    type: elasticsearch
+    hosts: ["https://YOUR-ELASTICSEARCH-HOST:9200"]
+    api_key: "${ELASTIC_API_KEY}"
+    ssl.certificate_authorities:
+      - 'C:\Program Files\Elastic\Agent\certs\http_ca.crt'
+
+inputs:
+  - id: agentguard-ai-sentinel-findings-windows
+    type: filestream
+    streams:
+      - id: agentguard-ai-sentinel-findings-windows-stream
+        data_stream:
+          type: logs
+          dataset: ai_sentinel.findings
+          namespace: default
+        paths:
+          - 'C:\ProgramData\AgentGuard\logs\findings.ndjson'
+          - 'C:\ProgramData\AI-Sentinel\logs\findings.ndjson'
+        parsers:
+          - ndjson:
+              target: ""
+              add_error_key: true
+              overwrite_keys: true
+        pipeline: logs-ai_sentinel.findings-default
+        tags:
+          - ai_sentinel
+          - agentguard
+          - ai_activity
+          - mcp_monitoring
+          - endpoint_visibility
