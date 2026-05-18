@@ -1,22 +1,51 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "configuration"
-      ],
-      "event.type": [
-        "info"
-      ],
-      "event.severity": 73,
-      "event.risk_score": 78,
-      "process.command_line": "node bridge.js token=[REDACTED]",
-      "ai_sentinel.mcp.server.command": "node bridge.js --api-key [REDACTED]",
-      "ai_sentinel.mcp.server.args": [
-        "--password=[REDACTED]",
-        "--safe-mode"
-      ],
-      "ai_sentinel.mcp.config.path": "/tmp/mcp.json?access_token=[REDACTED]"
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "configuration"
+        ],
+        "type": [
+          "info"
+        ],
+        "severity": 73,
+        "risk_score": 78,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "process": {
+        "command_line": "node bridge.js token=[REDACTED]"
+      },
+      "ai_sentinel": {
+        "mcp": {
+          "server": {
+            "command": "node bridge.js --api-key [REDACTED]",
+            "args": [
+              "--password=[REDACTED]",
+              "--safe-mode"
+            ]
+          },
+          "config": {
+            "path": "/tmp/mcp.json?access_token=[REDACTED]"
+          }
+        }
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      },
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
+      ]
     }
   ]
 }

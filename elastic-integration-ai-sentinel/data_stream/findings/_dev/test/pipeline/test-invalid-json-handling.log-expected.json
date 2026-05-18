@@ -1,14 +1,29 @@
 {
   "expected": [
     {
-      "event.kind": "pipeline_error",
+      "event": {
+        "kind": "pipeline_error",
+        "module": "ai_sentinel",
+        "dataset": "ai_sentinel.findings"
+      },
       "tags": [
         "ai_sentinel_invalid_json",
         "ai_sentinel",
         "ai_activity",
         "mcp_monitoring",
         "endpoint_visibility"
-      ]
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      },
+      "error": {
+        "message": "Invalid JSON payload"
+      }
     }
   ]
 }

@@ -1,25 +1,33 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.dataset": "ai_sentinel.findings",
-      "event.kind": "alert",
-      "event.category": [
-        "process"
-      ],
-      "event.type": [
-        "info"
-      ],
-      "event.action": "ai_cyber_agent_activity",
-      "event.outcome": "success",
-      "event.risk_score": 92,
-      "event.severity": 99,
-      "ai_sentinel.finding.id": "f-cyber-activity-1",
-      "ai_sentinel.cyber_agent.capabilities": [
-        "mcp",
-        "shell",
-        "filesystem"
-      ],
+      "event": {
+        "module": "ai_sentinel",
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "category": [
+          "process"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "ai_cyber_agent_activity",
+        "outcome": "success",
+        "risk_score": 92,
+        "severity": 99
+      },
+      "ai_sentinel": {
+        "finding": {
+          "id": "f-cyber-activity-1"
+        },
+        "cyber_agent": {
+          "capabilities": [
+            "mcp",
+            "shell",
+            "filesystem"
+          ]
+        }
+      },
       "tags": [
         "ai_sentinel",
         "ai_activity",
@@ -27,12 +35,22 @@
         "endpoint_visibility",
         "cyber_agent_activity"
       ],
-      "related.hosts": [
-        "host-cyber"
-      ],
-      "related.user": [
-        "analyst"
-      ]
+      "related": {
+        "hosts": [
+          "host-cyber"
+        ],
+        "user": [
+          "analyst"
+        ]
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      }
     }
   ]
 }

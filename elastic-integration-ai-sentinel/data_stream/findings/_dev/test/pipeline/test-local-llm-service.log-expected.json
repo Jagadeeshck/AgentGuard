@@ -1,20 +1,45 @@
 {
   "expected": [
     {
-      "event.module": "ai_sentinel",
-      "event.category": [
-        "network"
-      ],
-      "event.type": [
-        "info"
-      ],
-      "event.action": "local_llm_service",
-      "event.severity": 99,
-      "event.risk_score": 91,
-      "ai_sentinel.ai.provider": "ollama",
-      "ai_sentinel.ai.local_service": true,
-      "related.ip": [
-        "127.0.0.1"
+      "event": {
+        "module": "ai_sentinel",
+        "category": [
+          "network"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "local_llm_service",
+        "severity": 99,
+        "risk_score": 91,
+        "dataset": "ai_sentinel.findings",
+        "kind": "alert",
+        "outcome": "success"
+      },
+      "ai_sentinel": {
+        "ai": {
+          "provider": "ollama",
+          "local_service": true
+        }
+      },
+      "related": {
+        "ip": [
+          "127.0.0.1"
+        ]
+      },
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AI Sentinel",
+        "product": "AI Sentinel",
+        "type": "endpoint"
+      },
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
       ]
     }
   ]
