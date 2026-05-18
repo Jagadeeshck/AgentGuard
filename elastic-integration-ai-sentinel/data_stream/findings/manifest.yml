@@ -5,7 +5,7 @@ streams:
   - input: filestream
     title: AgentGuard / AI Sentinel findings logs
     description: Collect AgentGuard / AI Sentinel finding events from ECS-compatible NDJSON files on disk.
-    template_path: agent/stream/filestream.yml.hbs
+    template_path: agent/input/filestream.yml.hbs
     vars:
       - name: paths
         type: text

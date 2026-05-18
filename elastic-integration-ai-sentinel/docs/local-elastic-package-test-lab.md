@@ -9,7 +9,7 @@ This repository remains the Elastic integration package only. The lab does not s
 Allowed validation inputs:
 
 - Synthetic NDJSON finding events in `repo-root/dev-assets/sample_events/sample_events.ndjson`.
-- Pipeline fixtures in `data_stream/findings/test/pipeline`.
+- Pipeline fixtures in `data_stream/findings/_dev/test/pipeline`.
 - Package manifests and fields inside the package, with development dashboard/rule references kept under `repo-root/dev-assets/`.
 
 Prohibited validation inputs:
@@ -61,7 +61,7 @@ To inspect finding coverage locally:
 jq -r '.ai_sentinel.finding.type' repo-root/dev-assets/sample_events/sample_events.ndjson | sort | uniq -c
 ```
 
-To create a temporary pipeline fixture from a sample event, copy a single NDJSON line into `data_stream/findings/test/pipeline/<case>.log` and create a matching expected JSON document following existing fixtures. Keep test values synthetic and metadata-only.
+To create a temporary pipeline fixture from a sample event, copy a single NDJSON line into `data_stream/findings/_dev/test/pipeline/<case>.log` and create a matching `<case>.log-expected.json` document following existing fixtures. Keep test values synthetic and metadata-only.
 
 ## Expected success criteria
 
