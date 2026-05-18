@@ -1,0 +1,35 @@
+{
+  "expected": [
+    {
+      "event.module": "ai_sentinel",
+      "event.dataset": "ai_sentinel.findings",
+      "event.kind": "alert",
+      "event.category": [
+        "network"
+      ],
+      "event.type": [
+        "connection"
+      ],
+      "event.action": "ai_api_connection",
+      "event.outcome": "success",
+      "event.risk_score": 82,
+      "event.severity": 73,
+      "observer.vendor": "AI Sentinel",
+      "ai_sentinel.finding.id": "f-ai-api-1",
+      "ai_sentinel.ai.endpoint": "https://api.openai.com/v1/responses?api_key=[REDACTED]",
+      "process.command_line": "python app.py --api-key [REDACTED]",
+      "related.hosts": [
+        "host-a"
+      ],
+      "related.user": [
+        "alice"
+      ],
+      "tags": [
+        "ai_sentinel",
+        "ai_activity",
+        "mcp_monitoring",
+        "endpoint_visibility"
+      ]
+    }
+  ]
+}
