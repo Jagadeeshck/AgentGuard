@@ -1,6 +1,6 @@
 # Local Elastic Package Test Lab
 
-This lab validates the AI Sentinel Elastic integration without requiring the endpoint scanner. It uses checked-in NDJSON fixtures, the ingest pipeline, Kibana assets, and `elastic-package` commands only.
+This lab validates the AI Sentinel Elastic integration without requiring the endpoint scanner. It uses checked-in NDJSON fixtures, the ingest pipeline, development Kibana references, and `elastic-package` commands only.
 
 ## Scope and safety boundaries
 
@@ -8,9 +8,9 @@ This repository remains the Elastic integration package only. The lab does not s
 
 Allowed validation inputs:
 
-- Synthetic NDJSON finding events in `docs/sample_events.ndjson`.
-- Pipeline fixtures in `data_stream/findings/test/pipeline`.
-- Package manifests, fields, dashboards, and rules already present in this package.
+- Synthetic NDJSON finding events in `_dev/sample_events/sample_events.ndjson`.
+- Pipeline fixtures in `data_stream/findings/_dev/test/pipeline`.
+- Package manifests, fields, and development dashboard/rule references kept under `_dev/`.
 
 Prohibited validation inputs:
 
@@ -53,15 +53,15 @@ make test-pipeline
 
 ## Sample event replay
 
-Use `docs/sample_events.ndjson` as the canonical synthetic corpus for demos, manual ingest testing, and producer contract review. Each line represents a complete finding type and intentionally avoids secret values, prompt content, clipboard data, browsing history, decrypted traffic, and private file contents.
+Use `_dev/sample_events/sample_events.ndjson` as the canonical synthetic corpus for demos, manual ingest testing, and producer contract review. Each line represents a complete finding type and intentionally avoids secret values, prompt content, clipboard data, browsing history, decrypted traffic, and private file contents.
 
 To inspect finding coverage locally:
 
 ```bash
-jq -r '.ai_sentinel.finding.type' docs/sample_events.ndjson | sort | uniq -c
+jq -r '.ai_sentinel.finding.type' _dev/sample_events/sample_events.ndjson | sort | uniq -c
 ```
 
-To create a temporary pipeline fixture from a sample event, copy a single NDJSON line into `data_stream/findings/test/pipeline/<case>.log` and create a matching expected JSON document following existing fixtures. Keep test values synthetic and metadata-only.
+To create a temporary pipeline fixture from a sample event, copy a single NDJSON line into `data_stream/findings/_dev/test/pipeline/<case>.log` and create a matching expected JSON document following existing fixtures. Keep test values synthetic and metadata-only.
 
 ## Expected success criteria
 

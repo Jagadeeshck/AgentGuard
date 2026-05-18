@@ -63,7 +63,7 @@ Asset tests require a running stack. If no stack is running, run `elastic-packag
 
 ## Ingest sample NDJSON
 
-The validation corpus lives in `test-data/`. Each file contains one or more synthetic JSON lines matching the `ai_sentinel.*` schema.
+The validation corpus lives in `_dev/test_data/`. Each file contains one or more synthetic JSON lines matching the `ai_sentinel.*` schema.
 
 To ingest one file directly into the findings data stream:
 
@@ -77,13 +77,13 @@ while IFS= read -r line; do
     -H 'Content-Type: application/json' \
     -X POST "$ES_URL/logs-ai_sentinel.findings-default/_doc" \
     -d "$line"
-done < test-data/mcp-server-dangerous.ndjson
+done < _dev/test_data/mcp-server-dangerous.ndjson
 ```
 
 To ingest every synthetic sample:
 
 ```bash
-for file in test-data/*.ndjson; do
+for file in _dev/test_data/*.ndjson; do
   while IFS= read -r line; do
     curl -k -u "$ES_USER:$ES_PASS" \
       -H 'Content-Type: application/json' \
@@ -112,14 +112,14 @@ In Kibana Discover, select the data view that includes `logs-ai_sentinel.finding
 - `ai_sentinel.risk.level`
 - `ai_sentinel.risk.score`
 
-## Verify detection rules and dashboards
+## Verify draft detection rules and dashboard placeholders
 
-1. Open Kibana and confirm the AI Sentinel integration assets are installed.
-2. Open Elastic Security rules and filter for `AI Sentinel` or the TOML rule names documented in `detection-rule-test-matrix.md`.
-3. Enable the rules you want to validate in the local lab.
-4. Ingest the matching `test-data/*.ndjson` sample.
+1. Open Kibana and confirm the AI Sentinel integration package is installed.
+2. Draft TOML rules are development references under `_dev/security_rules_toml/` and summarized in `docs/security-rules.md`; convert them to supported saved-object JSON before installing them as package assets.
+3. Use the KQL in `docs/security-rules.md` for manual validation or for rules created outside this package.
+4. Ingest the matching `_dev/test_data/*.ndjson` sample.
 5. Confirm expected alerts match `detection-rule-test-matrix.md`.
-6. Open the AI Sentinel dashboards and verify panels can query `logs-ai_sentinel.findings-*`.
+6. Dashboard placeholder JSON files are kept under `_dev/kibana_placeholders/` until converted to supported package saved objects.
 
 ## Tear down and clean
 
