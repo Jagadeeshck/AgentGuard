@@ -1,8 +1,8 @@
 format_version: 3.0.3
 name: ai_sentinel
-title: AI Sentinel
+title: AgentGuard / AI Sentinel
 version: 0.3.0
-description: Ingest AI Sentinel endpoint AI security findings into Elastic Security.
+description: Collect AgentGuard / AI Sentinel ECS-compatible NDJSON findings from disk with Elastic Agent filestream and ingest them into Elastic Security.
 type: integration
 categories:
   - security
@@ -12,7 +12,7 @@ conditions:
     version: ^8.13.0 || ^9.0.0
 icons:
   - src: /img/logo.svg
-    title: AI Sentinel logo
+    title: AgentGuard / AI Sentinel logo
     size: 32x32
     type: image/svg+xml
 owner:
@@ -20,9 +20,9 @@ owner:
   type: community
 policy_templates:
   - name: ai_sentinel
-    title: AI Sentinel logs
-    description: Collect AI Sentinel ECS-compatible NDJSON findings using Elastic Agent filestream.
+    title: AgentGuard / AI Sentinel findings
+    description: Collect AgentGuard / AI Sentinel NDJSON findings from disk using the Elastic Agent filestream input.
     inputs:
       - type: filestream
-        title: AI Sentinel findings logs
-        description: Collect AI Sentinel NDJSON finding events from disk.
+        title: AgentGuard / AI Sentinel findings logs
+        description: Collect AgentGuard / AI Sentinel ECS-compatible NDJSON finding events from configured files.

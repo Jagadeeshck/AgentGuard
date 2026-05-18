@@ -1,55 +1,112 @@
-title: AI Sentinel findings
+title: AgentGuard / AI Sentinel findings
 type: logs
 dataset: ai_sentinel.findings
 streams:
   - input: filestream
-    title: AI Sentinel findings logs
-    description: Collect AI Sentinel finding events from NDJSON files.
+    title: AgentGuard / AI Sentinel findings logs
+    description: Collect AgentGuard / AI Sentinel finding events from ECS-compatible NDJSON files on disk.
     template_path: agent/stream/filestream.yml.hbs
     vars:
       - name: paths
         type: text
         title: Paths
+        description: One or more AgentGuard / AI Sentinel NDJSON finding files for Elastic Agent filestream to read.
         multi: true
         required: true
         show_user: true
         default:
+          - /var/log/agentguard/findings.ndjson
           - /var/log/ai-sentinel/findings.ndjson
+          - /Library/Logs/AgentGuard/findings.ndjson
           - /Library/Logs/AI-Sentinel/findings.ndjson
-          - 'C:\\ProgramData\\AI-Sentinel\\logs\\findings.ndjson'
+          - 'C:\ProgramData\AgentGuard\logs\findings.ndjson'
+          - 'C:\ProgramData\AI-Sentinel\logs\findings.ndjson'
+      - name: preserve_original_event
+        type: bool
+        title: Preserve original event
+        description: Preserve the raw NDJSON line in event.original by adding the preserve_original_event tag. Disabled by default to avoid retaining raw input.
+        required: true
+        show_user: true
+        default: false
       - name: tags
         type: text
         title: Tags
+        description: Tags added to collected AgentGuard / AI Sentinel finding events.
         multi: true
         required: false
         show_user: true
         default:
           - ai_sentinel
+          - agentguard
           - ai_activity
           - mcp_monitoring
           - endpoint_visibility
-      - name: preserve_original_event
-        type: bool
-        title: Preserve original event
-        required: true
-        show_user: true
-        default: false
       - name: processors
         type: yaml
         title: Processors
+        description: Optional Elastic Agent processors to run before sending events to Elasticsearch.
         required: false
-        show_user: false
-        default: |
-          []
+        show_user: true
+        default: ""
       - name: timezone
         type: text
         title: Time zone
+        description: Time zone metadata for collectors that need local timestamp context.
         required: true
         show_user: true
         default: UTC
       - name: data_stream.dataset
         type: text
         title: Data stream dataset
+        description: Dataset name for the findings data stream. Keep as ai_sentinel.findings unless you intentionally route to another dataset.
         required: true
-        show_user: false
+        show_user: true
         default: ai_sentinel.findings
+      - name: pipeline
+        type: text
+        title: Ingest pipeline
+        description: Ingest pipeline to apply to collected findings.
+        required: true
+        show_user: true
+        default: logs-ai_sentinel.findings-default
+      - name: ignore_older
+        type: text
+        title: Ignore older
+        description: Optional filestream ignore_older duration, such as 72h. Leave empty to read all matching files.
+        required: false
+        show_user: true
+        default: ""
+      - name: close_inactive
+        type: text
+        title: Close inactive
+        description: Optional filestream close.on_state_change.inactive duration, such as 5m. Leave empty to use the Elastic Agent default.
+        required: false
+        show_user: true
+        default: ""
+      - name: exclude_files
+        type: text
+        title: Exclude files
+        description: Optional regular expressions for files to exclude.
+        multi: true
+        required: false
+        show_user: true
+        default: []
+      - name: include_files
+        type: text
+        title: Include files
+        description: Optional regular expressions for files to include.
+        multi: true
+        required: false
+        show_user: true
+        default: []
+      - name: parsers
+        type: yaml
+        title: Parsers
+        description: Filestream parsers. Defaults to NDJSON with target at the event root.
+        required: false
+        show_user: true
+        default: |
+          - ndjson:
+              target: ""
+              add_error_key: true
+              overwrite_keys: true

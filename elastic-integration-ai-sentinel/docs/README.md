@@ -1,8 +1,8 @@
-# AI Sentinel Elastic Integration
+# AgentGuard / AI Sentinel Elastic Integration
 
-AI Sentinel is a defensive endpoint visibility product that emits ECS-compatible NDJSON findings about AI-related activity such as AI API connections, MCP server configuration, local LLM services, browser extensions, and startup items.
+AgentGuard / AI Sentinel is a defensive endpoint visibility product that emits ECS-compatible NDJSON findings about AI-related activity such as AI API connections, MCP server configuration, local LLM services, browser extensions, and startup items.
 
-This repository contains **only** the Elastic Fleet integration package. It is not the AI Sentinel endpoint scanner and it does not include scanner collection logic. The package reads already-produced NDJSON findings from disk, parses them into ECS-compatible fields, and ships Elastic package assets such as fields, ingest pipelines, dashboards, and rules. It does not perform endpoint scanning, decrypt traffic, collect private prompt content, collect clipboard content, collect browsing history, or store secrets.
+This repository contains **only** the Elastic integration package. It is not the AgentGuard endpoint scanner and it does not include scanner collection logic. The package can be deployed through Fleet-managed Elastic Agent or standalone Elastic Agent. It reads already-produced AgentGuard / AI Sentinel NDJSON findings from disk, parses them into ECS-compatible fields, and ships Elastic package assets such as fields, ingest pipelines, dashboards, and rules. It does not perform endpoint scanning, decrypt traffic, collect private prompt content, collect clipboard content, collect browsing history, or store secrets.
 
 ## Data streams
 
@@ -18,20 +18,31 @@ Future data stream names are reserved for more specialised telemetry:
 - `logs-ai_sentinel.browser_extension-default`
 - `logs-ai_sentinel.startup-default`
 
+## Deployment modes
+
+This package can be deployed through:
+
+- Fleet-managed Elastic Agent
+- Standalone Elastic Agent
+
+It collects NDJSON findings written by AgentGuard / AI Sentinel. It does not contain the AgentGuard endpoint scanner.
+
 ## Fleet installation
+
+See [fleet-installation.md](fleet-installation.md) for the complete Fleet-managed Elastic Agent workflow.
 
 1. Build the package with `elastic-package build`.
 2. Add the package zip from `build/packages/` to your internal Elastic Package Registry or install it in a development stack with `elastic-package stack up` and `elastic-package install`.
-3. In Kibana Fleet, add the **AI Sentinel** integration to an Elastic Agent policy.
-4. Confirm that the AI Sentinel endpoint product writes NDJSON findings to one or more configured paths.
+3. In Kibana Fleet, add the **AgentGuard / AI Sentinel** integration to an Elastic Agent policy.
+4. Confirm that the AgentGuard / AI Sentinel endpoint product writes NDJSON findings to one or more configured paths.
 
 ## Log collection
 
 The integration uses Elastic Agent `filestream` to read JSON lines from disk. Default paths are:
 
-- Linux: `/var/log/ai-sentinel/findings.ndjson`
-- macOS: `/Library/Logs/AI-Sentinel/findings.ndjson`
-- Windows: `C:\ProgramData\AI-Sentinel\logs\findings.ndjson`
+- Linux: `/var/log/agentguard/findings.ndjson`, `/var/log/ai-sentinel/findings.ndjson`
+- macOS: `/Library/Logs/AgentGuard/findings.ndjson`, `/Library/Logs/AI-Sentinel/findings.ndjson`
+- Windows: `C:\ProgramData\AgentGuard\logs\findings.ndjson`, `C:\ProgramData\AI-Sentinel\logs\findings.ndjson`
 
 Configurable variables:
 
@@ -41,6 +52,12 @@ Configurable variables:
 - `processors`: optional Elastic Agent processors.
 - `timezone`: local timezone metadata for collectors that need it.
 - `data_stream.dataset`: defaults to `ai_sentinel.findings`.
+- `pipeline`: defaults to `logs-ai_sentinel.findings-default`.
+- `ignore_older`, `close_inactive`, `exclude_files`, `include_files`, and `parsers`: advanced filestream settings.
+
+## Standalone Elastic Agent
+
+See [standalone-elastic-agent.md](standalone-elastic-agent.md) and the examples under [examples/](examples/) for standalone `elastic-agent.yml` configuration.
 
 ## Event schema
 
@@ -110,6 +127,11 @@ Version 0.3.0 adds validation, synthetic test data under `test-data/`, a detecti
 
 Version 0.3.0 adds an end-to-end validation pack so this Elastic integration can be tested independently before an endpoint scanner exists:
 
+- [Fleet Installation](fleet-installation.md)
+- [Standalone Elastic Agent](standalone-elastic-agent.md)
+- [Deployment Architecture](deployment-architecture.md)
+- [Security and Privacy](security-and-privacy.md)
+- [Compatibility](compatibility.md)
 - [Local Elastic Package Lab](local-lab.md)
 - [AgentGuard to Elastic Contract v0.1](agentguard-to-elastic-contract-v0.1.md)
 - [Event Taxonomy](event-taxonomy.md)

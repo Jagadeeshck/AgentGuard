@@ -1,0 +1,36 @@
+# Documentation-only example of the Elastic Agent policy Fleet renders for
+# AgentGuard / AI Sentinel. Fleet owns the actual generated policy.
+inputs:
+  - id: filestream-ai_sentinel-findings
+    name: AgentGuard / AI Sentinel findings
+    type: filestream
+    use_output: default
+    streams:
+      - id: filestream-ai_sentinel.findings-default
+        data_stream:
+          type: logs
+          dataset: ai_sentinel.findings
+          namespace: default
+        paths:
+          - /var/log/agentguard/findings.ndjson
+          - /var/log/ai-sentinel/findings.ndjson
+          - /Library/Logs/AgentGuard/findings.ndjson
+          - /Library/Logs/AI-Sentinel/findings.ndjson
+          - 'C:\ProgramData\AgentGuard\logs\findings.ndjson'
+          - 'C:\ProgramData\AI-Sentinel\logs\findings.ndjson'
+        parsers:
+          - ndjson:
+              target: ""
+              add_error_key: true
+              overwrite_keys: true
+        pipeline: logs-ai_sentinel.findings-default
+        tags:
+          - ai_sentinel
+          - agentguard
+          - ai_activity
+          - mcp_monitoring
+          - endpoint_visibility
+        fields:
+          _conf:
+            timezone: UTC
+        processors: []
