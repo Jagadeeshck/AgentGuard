@@ -4,14 +4,17 @@ build:
 test:
 	go test ./...
 
-run-scan:
-	go run ./cmd/agentguard-sensor scan --stdout
+install-linux:
+	bash install/linux/install.sh
 
-run-watch:
-	go run ./cmd/agentguard-sensor watch --stdout --once
+uninstall-linux:
+	bash install/linux/uninstall.sh
 
-generate-test-findings:
-	go run ./cmd/agentguard-sensor generate-test-findings --output /tmp/agentguard-test.ndjson
+install-macos:
+	bash install/macos/install.sh
 
-validate-output:
-	go run ./cmd/agentguard-sensor validate-output --input /tmp/agentguard-test.ndjson
+uninstall-macos:
+	bash install/macos/uninstall.sh
+
+package:
+	tar -czf agentguard-sensor-installers.tgz install/

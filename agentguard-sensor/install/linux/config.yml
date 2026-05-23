@@ -1,0 +1,25 @@
+output:
+  path: /var/log/agentguard/findings.ndjson
+  format: ndjson
+watch:
+  interval: 60s
+  state_file: /var/lib/agentguard/state.json
+  emit_resolved: true
+scan:
+  mcp: true
+  browser_extensions: true
+  local_llm: true
+  startup_items: true
+  processes: true
+privacy:
+  redact_secrets: true
+  collect_prompt_content: false
+  collect_clipboard: false
+  collect_browser_history: false
+  collect_private_file_contents: false
+  decrypt_traffic: false
+allowlist:
+  path: /etc/agentguard/allowlist.yml
+logging:
+  level: info
+  path: /var/log/agentguard/agentguard.log
