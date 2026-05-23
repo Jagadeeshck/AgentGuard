@@ -1,0 +1,38 @@
+name: AgentGuard Sensor CI
+
+on:
+  pull_request:
+    paths:
+      - 'agentguard-sensor/**'
+      - '.github/workflows/sensor-ci.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'agentguard-sensor/**'
+      - '.github/workflows/sensor-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sensor-go-checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agentguard-sensor
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: agentguard-sensor/go.mod
+
+      - name: Run Go tests
+        run: go test ./...
+
+      - name: Build agentguard-sensor
+        run: go build ./cmd/agentguard-sensor
