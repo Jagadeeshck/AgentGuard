@@ -13,7 +13,9 @@ build:
 	$(ELASTIC_PACKAGE) build
 
 test-pipeline:
+	$(ELASTIC_PACKAGE) stack up -d --services=elasticsearch
 	$(ELASTIC_PACKAGE) test pipeline
+	$(ELASTIC_PACKAGE) stack down
 
 test-asset:
 	$(ELASTIC_PACKAGE) test asset
