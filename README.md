@@ -2,7 +2,7 @@
 
 This repository hosts the `elastic-integration-ai-sentinel` project: a defensive Elastic integration package for ingesting AgentGuard / AI Sentinel NDJSON findings into Elastic Security.
 
-> **Important:** this integration currently collects AgentGuard findings. It does not itself scan the endpoint. Active scanning is planned as the separate AgentGuard Sensor component.
+> **Important:** Elastic Agent collects AgentGuard Sensor findings through this integration. It does not itself scan the endpoint. Active scanning is planned as the separate AgentGuard Sensor component.
 
 ## Deployment modes
 
@@ -31,3 +31,10 @@ The AgentGuard / AI Sentinel endpoint product is a separate producer that writes
 ## v0.3.0 validation pack
 
 Version 0.3.0 adds validation assets, synthetic test data, a detection rule test matrix, Fleet-managed and standalone Elastic Agent deployment documentation, and the scanner-to-Elastic producer contract. This repository remains the Elastic integration only; the endpoint scanner is a separate future project. The package ingests NDJSON findings and does not include endpoint scanner, process enumeration, browser inspection, network capture, prompt collection, clipboard collection, browsing history collection, traffic decryption, or secret storage logic.
+
+
+## Roadmap
+
+- Current: Elastic Agent collects AgentGuard findings via filestream.
+- Next: Fleet-managed sidecar configuration alignment for AgentGuard Sensor settings and paths.
+- Future: Native Elastic Agent custom input/component to run AgentGuard Sensor directly, if supported.

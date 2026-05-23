@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/agentguard/agentguard-sensor/internal/config"
@@ -38,6 +39,10 @@ func main() {
 		generateTestFindingsCmd(args[1:])
 	case "validate-output":
 		validateOutputCmd(args[1:])
+	case "config":
+		configCmd(args[1:])
+	case "doctor":
+		doctorCmd(args[1:])
 	case "version":
 		fmt.Printf("agentguard-sensor %s\n", version)
 	case "list-mcp", "list-extensions", "list-local-ai", "list-startup", "list-processes":
@@ -50,15 +55,19 @@ func main() {
 func parseGlobal(args []string) (string, []string) {
 	cp := ""
 	out := []string{}
+	parsingGlobal := true
 	for i := 0; i < len(args); i++ {
-		if args[i] == "--config" && i+1 < len(args) {
+		if parsingGlobal && args[i] == "--config" && i+1 < len(args) {
 			cp = args[i+1]
 			i++
 			continue
 		}
-		if strings.HasPrefix(args[i], "--config=") {
+		if parsingGlobal && strings.HasPrefix(args[i], "--config=") {
 			cp = strings.TrimPrefix(args[i], "--config=")
 			continue
+		}
+		if parsingGlobal && !strings.HasPrefix(args[i], "-") {
+			parsingGlobal = false
 		}
 		out = append(out, args[i])
 	}
@@ -158,5 +167,71 @@ func listCmd(kind string) {
 	}
 }
 func usage() {
-	fmt.Println("Usage: agentguard-sensor [--config path] <scan|watch|install-service|uninstall-service|service-status|generate-test-findings|validate-output|version|list-mcp|list-extensions|list-local-ai|list-startup|list-processes>")
+	fmt.Println("Usage: agentguard-sensor [--config path] <scan|watch|config|doctor|install-service|uninstall-service|service-status|generate-test-findings|validate-output|version|list-mcp|list-extensions|list-local-ai|list-startup|list-processes>")
+}
+
+func configCmd(args []string) {
+	if len(args) == 0 || args[0] != "init" {
+		fmt.Fprintln(os.Stderr, "usage: agentguard-sensor config init [--elastic-agent] [--output path]")
+		os.Exit(1)
+	}
+	fs := flag.NewFlagSet("config init", flag.ExitOnError)
+	elasticAgent := fs.Bool("elastic-agent", false, "generate an Elastic Agent aligned config")
+	outputPath := fs.String("output", "", "output config path")
+	_ = fs.Parse(args[1:])
+	if !*elasticAgent {
+		fmt.Fprintln(os.Stderr, "config init currently requires --elastic-agent")
+		os.Exit(1)
+	}
+	if err := config.WriteElasticAgentConfig(*outputPath); err != nil {
+		fmt.Fprintln(os.Stderr, "config init failed:", err)
+		os.Exit(1)
+	}
+	if *outputPath == "" {
+		fmt.Printf("wrote Elastic Agent aligned config to %s\n", config.DefaultConfigPath())
+		return
+	}
+	fmt.Printf("wrote Elastic Agent aligned config to %s\n", *outputPath)
+}
+
+func doctorCmd(args []string) {
+	fs := flag.NewFlagSet("doctor", flag.ExitOnError)
+	elasticAgent := fs.Bool("elastic-agent", false, "run Elastic Agent sidecar checks")
+	configPath := fs.String("config", "", "sensor config path")
+	expectedPath := fs.String("expected-path", "", "expected findings path from Elastic integration")
+	_ = fs.Parse(args)
+	if !*elasticAgent {
+		fmt.Fprintln(os.Stderr, "doctor currently requires --elastic-agent")
+		os.Exit(1)
+	}
+	if *configPath == "" {
+		*configPath = config.DefaultConfigPath()
+	}
+	cfg, err := config.Load(*configPath)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "doctor failed to load config:", err)
+		os.Exit(1)
+	}
+	if err := cfg.Validate(); err != nil {
+		fmt.Fprintln(os.Stderr, "doctor failed:", err)
+		os.Exit(1)
+	}
+	if *expectedPath != "" && cfg.Output.Path != *expectedPath {
+		fmt.Fprintf(os.Stderr, "doctor failed: configured output.path %q does not match expected path %q\n", cfg.Output.Path, *expectedPath)
+		os.Exit(1)
+	}
+	if err := os.MkdirAll(filepath.Dir(cfg.Output.Path), 0o755); err != nil {
+		fmt.Fprintln(os.Stderr, "doctor failed to ensure output directory:", err)
+		os.Exit(1)
+	}
+	f, err := os.OpenFile(cfg.Output.Path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "doctor failed: output path not writable:", err)
+		os.Exit(1)
+	}
+	_ = f.Close()
+	if stat, err := os.Stat(cfg.Output.Path); err == nil && stat.Size() > 0 {
+		validateOutputCmd([]string{"--input", cfg.Output.Path})
+	}
+	fmt.Printf("doctor checks passed for %s\n", *configPath)
 }
