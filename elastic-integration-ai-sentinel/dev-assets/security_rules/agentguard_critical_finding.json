@@ -1,0 +1,37 @@
+{
+  "type": "query",
+  "language": "kuery",
+  "index": [
+    "logs-ai_sentinel.findings-*"
+  ],
+  "interval": "5m",
+  "from": "now-10m",
+  "enabled": false,
+  "tags": [
+    "AgentGuard",
+    "AI Sentinel",
+    "AI Activity",
+    "MCP",
+    "Elastic Security"
+  ],
+  "references": [
+    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+  ],
+  "author": [
+    "AgentGuard"
+  ],
+  "rule_id": "agentguard-critical-finding",
+  "name": "AgentGuard Critical Finding",
+  "description": "Detects any critical AgentGuard / AI Sentinel finding.",
+  "severity": "critical",
+  "risk_score": 90,
+  "query": "event.module: \"ai_sentinel\" and ai_sentinel.risk.level: \"critical\"",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Discovery"
+      }
+    }
+  ]
+}

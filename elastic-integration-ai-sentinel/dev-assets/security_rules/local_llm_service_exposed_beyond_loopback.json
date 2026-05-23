@@ -1,0 +1,37 @@
+{
+  "type": "query",
+  "language": "kuery",
+  "index": [
+    "logs-ai_sentinel.findings-*"
+  ],
+  "interval": "5m",
+  "from": "now-10m",
+  "enabled": false,
+  "tags": [
+    "AgentGuard",
+    "AI Sentinel",
+    "AI Activity",
+    "MCP",
+    "Elastic Security"
+  ],
+  "references": [
+    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+  ],
+  "author": [
+    "AgentGuard"
+  ],
+  "rule_id": "local-llm-service-exposed-beyond-loopback",
+  "name": "Local LLM Service Exposed Beyond Loopback",
+  "description": "Detects local LLM services exposed beyond loopback interfaces.",
+  "severity": "high",
+  "risk_score": 78,
+  "query": "event.module: \"ai_sentinel\" and ai_sentinel.finding.type: \"local_llm_service\" and ai_sentinel.ai.local_service: true and not destination.ip: (\"127.0.0.1\" or \"::1\" or \"localhost\")",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Command and Control"
+      }
+    }
+  ]
+}

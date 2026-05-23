@@ -1,0 +1,29 @@
+{
+  "type": "query",
+  "language": "kuery",
+  "index": [
+    "logs-ai_sentinel.findings-*"
+  ],
+  "interval": "5m",
+  "from": "now-10m",
+  "enabled": false,
+  "tags": [
+    "AgentGuard",
+    "AI Sentinel",
+    "AI Activity",
+    "MCP",
+    "Elastic Security"
+  ],
+  "references": [
+    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+  ],
+  "author": [
+    "AgentGuard"
+  ],
+  "rule_id": "agentguard-pipeline-failure",
+  "name": "AgentGuard Pipeline Failure",
+  "description": "Detects failures in the AgentGuard ingest pipeline so SOC teams know telemetry may be degraded.",
+  "severity": "medium",
+  "risk_score": 50,
+  "query": "event.module: \"ai_sentinel\" and tags: \"ai_sentinel_pipeline_failure\""
+}

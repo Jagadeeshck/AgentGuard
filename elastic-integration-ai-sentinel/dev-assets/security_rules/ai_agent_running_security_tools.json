@@ -1,0 +1,49 @@
+{
+  "type": "query",
+  "language": "kuery",
+  "index": [
+    "logs-ai_sentinel.findings-*"
+  ],
+  "interval": "5m",
+  "from": "now-10m",
+  "enabled": false,
+  "tags": [
+    "AgentGuard",
+    "AI Sentinel",
+    "AI Activity",
+    "MCP",
+    "Elastic Security"
+  ],
+  "references": [
+    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+  ],
+  "author": [
+    "AgentGuard"
+  ],
+  "rule_id": "ai-agent-running-security-tools",
+  "name": "AI Agent Running Security Tools",
+  "description": "Detects untrusted AI agent usage of security tools.",
+  "severity": "high",
+  "risk_score": 85,
+  "query": "event.module: \"ai_sentinel\" and ai_sentinel.cyber_agent.security_tools: * and not ai_sentinel.allowed: true",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Discovery"
+      }
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Execution"
+      }
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Collection"
+      }
+    }
+  ]
+}

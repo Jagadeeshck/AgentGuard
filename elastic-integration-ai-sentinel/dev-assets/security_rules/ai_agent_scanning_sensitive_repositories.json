@@ -1,0 +1,43 @@
+{
+  "type": "query",
+  "language": "kuery",
+  "index": [
+    "logs-ai_sentinel.findings-*"
+  ],
+  "interval": "5m",
+  "from": "now-10m",
+  "enabled": false,
+  "tags": [
+    "AgentGuard",
+    "AI Sentinel",
+    "AI Activity",
+    "MCP",
+    "Elastic Security"
+  ],
+  "references": [
+    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+  ],
+  "author": [
+    "AgentGuard"
+  ],
+  "rule_id": "ai-agent-scanning-sensitive-repositories",
+  "name": "AI Agent Scanning Sensitive Repositories",
+  "description": "Detects untrusted AI agent scanning of sensitive repositories.",
+  "severity": "high",
+  "risk_score": 84,
+  "query": "event.module: \"ai_sentinel\" and ai_sentinel.finding.type: \"ai_agent_sensitive_repo_scan\" and not ai_sentinel.allowed: true",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Discovery"
+      }
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Collection"
+      }
+    }
+  ]
+}
