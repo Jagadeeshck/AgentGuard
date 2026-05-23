@@ -37,7 +37,7 @@ func SyntheticTestEvents() []Event {
 
 	events := make([]Event, 0, len(base))
 	for _, b := range base {
-		e := NewEvent(b.ftype, b.name, b.score, b.reasons, b.details)
+		e := NewEvent(b.ftype, StableFindingID("ag-synth-", b.ftype, b.name), b.name, b.score, b.reasons, b.details)
 		e.Timestamp = timestamp
 		e.Host.Name = host
 		e.Observer = Observer{Vendor: "AgentGuard", Product: "AgentGuard Sensor", Type: "endpoint"}

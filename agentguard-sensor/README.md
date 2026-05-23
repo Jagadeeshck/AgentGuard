@@ -29,3 +29,14 @@ Output is designed for `logs-ai_sentinel.findings-default` and compatible with t
 
 ## Uninstall/cleanup
 Delete the binary and findings file path.
+
+
+## Watch mode
+
+```bash
+agentguard-sensor watch --output findings.ndjson
+agentguard-sensor watch --stdout --once
+agentguard-sensor watch --interval 30s --allowlist allowlist.yml --state-file .agentguard-state.json
+```
+
+See `docs/watch-mode.md`.

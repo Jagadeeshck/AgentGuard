@@ -7,8 +7,9 @@ import (
 )
 
 type Item struct {
-	Path  string
-	Match bool
+	Path    string
+	Command string
+	Match   bool
 }
 
 var keywords = []string{"claude", "cursor", "ollama", "lmstudio", "mcp", "agent", "langchain", "llamaindex", "autogpt", "crewai", "open-interpreter", "ai-helper", "copilot"}
@@ -31,7 +32,7 @@ func Scan() []Item {
 				}
 			}
 			if m {
-				out = append(out, Item{Path: path, Match: true})
+				out = append(out, Item{Path: path, Command: path, Match: true})
 			}
 			return nil
 		})

@@ -21,19 +21,26 @@ type Options struct {
 	AllowlistPath  string
 }
 type Allowlist struct {
-	ProcessPaths, MCPConfigPaths, BrowserExtensionIDs, FindingIDs []string `yaml:"process_paths"`
-	LocalPorts                                                    []int    `yaml:"local_ports"`
+	ProcessPaths, MCPConfigPaths, BrowserExtensionIDs, FindingIDs []string
+	LocalPorts                                                    []int
 }
 
 func Run(opts Options) error {
-	al := loadAllowlist(opts.AllowlistPath)
+	events, _ := ScanFindings(opts.AllowlistPath)
+	return output.Write(events, opts.OutputPath, opts.Stdout, opts.Pretty)
+}
+
+func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
+	al := loadAllowlist(allowlistPath)
 	events := []findings.Event{}
 	for _, s := range mcp.Scan() {
 		score, reasons := rules.ComputeScore(rules.ScoreInput{MCPShell: has(s.Capabilities, "shell"), MCPFilesystem: has(s.Capabilities, "filesystem")})
-		e := findings.NewEvent("mcp_server", s.Name, score, reasons, map[string]any{"command": s.Command, "args": s.Args, "capabilities": s.Capabilities, "config_path": s.ConfigPath})
-		if contains(al.MCPConfigPaths, s.ConfigPath) {
+		id := findings.StableFindingID("ag-mcp-", s.ConfigPath, s.Name, s.Command)
+		e := findings.NewEvent("mcp_server", id, s.Name, score, reasons, map[string]any{"command": s.Command, "args": s.Args, "capabilities": s.Capabilities, "config_path": s.ConfigPath})
+		if contains(al.MCPConfigPaths, s.ConfigPath) || contains(al.FindingIDs, id) {
 			e.AIS.Allowed = true
 			e.AIS.Finding.Status = "allowed"
+			e.Event.Action = "finding_allowed"
 		}
 		events = append(events, e)
 	}
@@ -42,56 +49,48 @@ func Run(opts Options) error {
 		if hasAny(l, []string{"ollama", "lmstudio", "claude", "cursor", "open-interpreter", "autogpt", "crewai", "langchain", "llamaindex", "copilot"}) {
 			red, rf := rules.RedactSecrets(p.CommandLine)
 			score, reasons := rules.ComputeScore(rules.ScoreInput{UnknownRuntimeAI: hasAny(l, []string{"python", "node", "npx", "bun", "deno", "uv"}), RedactedSecret: rf, SecurityKeywords: hasAny(l, []string{"security", "cyber"})})
-			e := findings.NewEvent("suspicious_agent_process", p.Name, score, reasons, map[string]any{"process": map[string]any{"name": p.Name, "pid": p.PID, "ppid": p.PPID, "executable": p.Executable, "command_line": red}})
+			id := findings.StableFindingID("ag-proc-", p.Executable, red)
+			e := findings.NewEvent("suspicious_agent_process", id, p.Name, score, reasons, map[string]any{"process": map[string]any{"name": p.Name, "pid": p.PID, "ppid": p.PPID, "executable": p.Executable, "command_line": red}})
+			if contains(al.ProcessPaths, p.Executable) || contains(al.FindingIDs, id) {
+				e.AIS.Allowed = true
+				e.AIS.Finding.Status = "allowed"
+				e.Event.Action = "finding_allowed"
+			}
 			events = append(events, e)
 		}
 	}
 	for _, s := range localai.Scan() {
 		score, reasons := rules.ComputeScore(rules.ScoreInput{LocalExposed: s.Exposed})
-		e := findings.NewEvent("local_llm_service", fmt.Sprintf("port_%d", s.Port), score, reasons, map[string]any{"port": s.Port, "bind": s.Addr})
-		if containsInt(al.LocalPorts, s.Port) {
+		id := findings.StableFindingID("ag-llm-", s.Addr, fmt.Sprintf("%d", s.Port), s.ProcessName)
+		e := findings.NewEvent("local_llm_service", id, fmt.Sprintf("port_%d", s.Port), score, reasons, map[string]any{"port": s.Port, "bind": s.Addr, "process_name": s.ProcessName})
+		if containsInt(al.LocalPorts, s.Port) || contains(al.FindingIDs, id) {
 			e.AIS.Allowed = true
 			e.AIS.Finding.Status = "allowed"
+			e.Event.Action = "finding_allowed"
 		}
 		events = append(events, e)
 	}
 	for _, it := range startup.Scan() {
 		score, reasons := rules.ComputeScore(rules.ScoreInput{Startup: true})
-		events = append(events, findings.NewEvent("startup_item", it.Path, score, reasons, map[string]any{"path": it.Path}))
+		id := findings.StableFindingID("ag-startup-", it.Path, it.Command)
+		e := findings.NewEvent("startup_item", id, it.Path, score, reasons, map[string]any{"path": it.Path, "command": it.Command})
+		events = append(events, e)
 	}
-	_ = browser.ParseManifest
-	return output.Write(events, opts.OutputPath, opts.Stdout, opts.Pretty)
-}
-func List(kind string) ([]string, error) {
-	switch kind {
-	case "list-mcp":
-		r := []string{}
-		for _, s := range mcp.Scan() {
-			r = append(r, s.Name+" "+s.Command)
+	for _, ext := range browser.Scan() {
+		score, reasons := rules.ComputeScore(rules.ScoreInput{})
+		id := findings.StableFindingID("ag-ext-", ext.Browser, ext.Profile, ext.ID)
+		e := findings.NewEvent("browser_extension", id, ext.Name, score, reasons, map[string]any{"browser": ext.Browser, "profile": ext.Profile, "extension_id": ext.ID, "path": ext.Path})
+		if contains(al.BrowserExtensionIDs, ext.ID) || contains(al.FindingIDs, id) {
+			e.AIS.Allowed = true
+			e.AIS.Finding.Status = "allowed"
+			e.Event.Action = "finding_allowed"
 		}
-		return r, nil
-	case "list-local-ai":
-		r := []string{}
-		for _, s := range localai.Scan() {
-			r = append(r, fmt.Sprintf("%d %s", s.Port, s.Addr))
-		}
-		return r, nil
-	case "list-startup":
-		r := []string{}
-		for _, s := range startup.Scan() {
-			r = append(r, s.Path)
-		}
-		return r, nil
-	case "list-processes":
-		r := []string{}
-		for _, p := range process.Scan() {
-			r = append(r, p.Name)
-		}
-		return r, nil
-	default:
-		return []string{"not implemented for MVP"}, nil
+		events = append(events, e)
 	}
+	return events, al
 }
+
+func List(kind string) ([]string, error) { return []string{"not implemented for MVP"}, nil }
 func has(a []string, k string) bool {
 	for _, x := range a {
 		if x == k {
@@ -124,6 +123,7 @@ func containsInt(a []int, v int) bool {
 	}
 	return false
 }
+
 func loadAllowlist(path string) Allowlist {
 	if path == "" {
 		return Allowlist{}

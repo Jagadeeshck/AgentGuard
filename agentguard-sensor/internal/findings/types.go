@@ -1,10 +1,11 @@
 package findings
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -59,29 +60,45 @@ type Risk struct {
 	Reasons []string `json:"reasons"`
 }
 
-func NewEvent(ftype, name string, score int, reasons []string, details map[string]any) Event {
+func NewEvent(ftype, id, name string, score int, reasons []string, details map[string]any) Event {
 	h, _ := os.Hostname()
-	level := ScoreToLevel(score)
-	id := hashID(ftype + name + strings.Join(reasons, "|"))
 	return Event{Timestamp: time.Now().UTC().Format(time.RFC3339), ECS: ECS{Version: "8.11.0"},
-		Event:    EventMeta{Module: "ai_sentinel", Dataset: "ai_sentinel.findings", Kind: "alert", Category: []string{"configuration", "process"}, Type: []string{"info"}, Action: ftype, Outcome: "success", RiskScore: score, Severity: score},
+		Event:    EventMeta{Module: "ai_sentinel", Dataset: "ai_sentinel.findings", Kind: "alert", Category: []string{"configuration", "process"}, Type: []string{"info"}, Action: "finding_detected", Outcome: "success", RiskScore: score, Severity: score},
 		Observer: Observer{Vendor: "AgentGuard", Product: "AgentGuard Sensor", Type: "endpoint"}, Host: Host{Name: h},
-		AIS: AISentinelData{Finding: Finding{ID: id, Type: ftype, Name: name, Status: "open", Confidence: 0.7}, Risk: Risk{Level: level, Score: score, Reasons: reasons}, Allowed: false, Details: details},
+		AIS: AISentinelData{Finding: Finding{ID: id, Type: ftype, Name: name, Status: "open", Confidence: 0.7}, Risk: Risk{Level: ScoreToLevel(score), Score: score, Reasons: reasons}, Details: details},
 	}
 }
 
-func hashID(in string) string { s := sha1.Sum([]byte(in)); return hex.EncodeToString(s[:8]) }
-func ScoreToLevel(s int) string {
-	switch {
-	case s >= 86:
-		return "critical"
-	case s >= 61:
-		return "high"
-	case s >= 31:
-		return "medium"
-	default:
-		return "low"
+func StableFindingID(prefix string, parts ...string) string {
+	h := sha256.Sum256([]byte(strings.Join(parts, "|")))
+	return fmt.Sprintf("%s%s", prefix, hex.EncodeToString(h[:])[:16])
+}
+
+func SafeFingerprint(e Event) string {
+	keys := make([]string, 0, len(e.AIS.Details))
+	for k := range e.AIS.Details {
+		keys = append(keys, k)
 	}
+	sort.Strings(keys)
+	chunks := []string{e.AIS.Finding.Type, fmt.Sprintf("%d", e.AIS.Risk.Score)}
+	for _, k := range keys {
+		chunks = append(chunks, fmt.Sprintf("%s=%v", k, e.AIS.Details[k]))
+	}
+	h := sha256.Sum256([]byte(strings.Join(chunks, "|")))
+	return hex.EncodeToString(h[:])
+}
+
+func ScoreToLevel(s int) string {
+	if s >= 86 {
+		return "critical"
+	}
+	if s >= 61 {
+		return "high"
+	}
+	if s >= 31 {
+		return "medium"
+	}
+	return "low"
 }
 func ValidateRequired(e Event) error {
 	if e.Event.Module == "" || e.AIS.Finding.ID == "" || e.Timestamp == "" {

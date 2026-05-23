@@ -6,9 +6,10 @@ import (
 )
 
 type Service struct {
-	Port    int
-	Addr    string
-	Exposed bool
+	Port        int
+	Addr        string
+	Exposed     bool
+	ProcessName string
 }
 
 var Ports = []int{11434, 1234, 7860, 8000, 8080, 3000, 5000, 5173, 8888}
@@ -20,7 +21,7 @@ func Scan() []Service {
 			c, err := net.Dial("tcp", fmt.Sprintf("%s:%d", a, p))
 			if err == nil {
 				_ = c.Close()
-				out = append(out, Service{Port: p, Addr: a, Exposed: a != "127.0.0.1"})
+				out = append(out, Service{Port: p, Addr: a, Exposed: a != "127.0.0.1", ProcessName: "unknown"})
 			}
 		}
 	}
