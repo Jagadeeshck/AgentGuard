@@ -2,6 +2,8 @@
 
 This repository hosts the `elastic-integration-ai-sentinel` project: a defensive Elastic integration package for ingesting AgentGuard / AI Sentinel NDJSON findings into Elastic Security.
 
+> **Important:** this integration currently collects AgentGuard findings. It does not itself scan the endpoint. Active scanning is planned as the separate AgentGuard Sensor component.
+
 ## Deployment modes
 
 This package can be deployed through:
