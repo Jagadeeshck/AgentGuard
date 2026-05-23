@@ -1,0 +1,14 @@
+output:
+  path: ./tmp/findings.ndjson
+  format: ndjson
+watch:
+  interval: 60s
+  state_file: ./tmp/state.json
+  emit_resolved: true
+privacy:
+  redact_secrets: true
+  collect_prompt_content: false
+  collect_clipboard: false
+  collect_browser_history: false
+  collect_private_file_contents: false
+  decrypt_traffic: false

@@ -1,0 +1,16 @@
+output:
+  path: C:\ProgramData\AgentGuard\logs\findings.ndjson
+  format: ndjson
+watch:
+  interval: 60s
+  state_file: C:\ProgramData\AgentGuard\state.json
+  emit_resolved: true
+allowlist:
+  path: C:\ProgramData\AgentGuard\allowlist.yml
+privacy:
+  redact_secrets: true
+  collect_prompt_content: false
+  collect_clipboard: false
+  collect_browser_history: false
+  collect_private_file_contents: false
+  decrypt_traffic: false

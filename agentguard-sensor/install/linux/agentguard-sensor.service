@@ -1,0 +1,14 @@
+[Unit]
+Description=AgentGuard Sensor
+After=network.target
+
+[Service]
+Type=simple
+User=agentguard
+Group=agentguard
+ExecStart=/usr/local/bin/agentguard-sensor --config /etc/agentguard/config.yml watch
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
