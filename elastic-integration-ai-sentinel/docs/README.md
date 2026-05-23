@@ -2,6 +2,8 @@
 
 AgentGuard / AI Sentinel is a defensive endpoint visibility product that emits ECS-compatible NDJSON findings about AI-related activity such as AI API connections, MCP server configuration, local LLM services, browser extensions, and startup items.
 
+> **Important:** this integration currently collects AgentGuard findings. It does not itself scan the endpoint. Active scanning is planned as the separate AgentGuard Sensor component.
+
 This repository contains **only** the Elastic integration package. It is not the AgentGuard endpoint scanner and it does not include scanner collection logic. The package can be deployed through Fleet-managed Elastic Agent or standalone Elastic Agent. It reads already-produced AgentGuard / AI Sentinel NDJSON findings from disk, parses them into ECS-compatible fields, and ships Elastic package assets such as fields and ingest pipelines, while keeping dashboard placeholders and draft rule references under `_dev/` until they are converted to supported package asset formats. It does not perform endpoint scanning, decrypt traffic, collect private prompt content, collect clipboard content, collect browsing history, or store secrets.
 
 ## Data streams
