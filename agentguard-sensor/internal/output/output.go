@@ -9,18 +9,8 @@ import (
 )
 
 func Write(events []findings.Event, path string, toStdout, pretty bool) error {
-	enc := func(e findings.Event) ([]byte, error) {
-		if pretty {
-			return json.MarshalIndent(e, "", "  ")
-		}
-		return json.Marshal(e)
-	}
 	if toStdout {
-		for _, e := range events {
-			b, _ := enc(e)
-			_, _ = os.Stdout.Write(append(b, '\n'))
-		}
-		return nil
+		return writeToStdout(events, pretty)
 	}
 	if path == "" {
 		path = "./findings.ndjson"
@@ -31,9 +21,43 @@ func Write(events []findings.Event, path string, toStdout, pretty bool) error {
 		return err
 	}
 	defer f.Close()
+	return writeEvents(f, events, pretty)
+}
+
+func WriteAppend(events []findings.Event, path string, toStdout, pretty bool) error {
+	if toStdout {
+		return writeToStdout(events, pretty)
+	}
+	if path == "" {
+		path = "./findings.ndjson"
+	}
+	_ = os.MkdirAll(filepath.Dir(path), 0o755)
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	return writeEvents(f, events, pretty)
+}
+
+func writeToStdout(events []findings.Event, pretty bool) error {
+	return writeEvents(os.Stdout, events, pretty)
+}
+func writeEvents(w interface{ Write([]byte) (int, error) }, events []findings.Event, pretty bool) error {
 	for _, e := range events {
-		b, _ := enc(e)
-		_, _ = f.Write(append(b, '\n'))
+		var b []byte
+		var err error
+		if pretty {
+			b, err = json.MarshalIndent(e, "", "  ")
+		} else {
+			b, err = json.Marshal(e)
+		}
+		if err != nil {
+			return err
+		}
+		if _, err = w.Write(append(b, '\n')); err != nil {
+			return err
+		}
 	}
 	return nil
 }

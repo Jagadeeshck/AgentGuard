@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/agentguard/agentguard-sensor/internal/findings"
 	"github.com/agentguard/agentguard-sensor/internal/output"
@@ -23,6 +24,8 @@ func main() {
 	switch os.Args[1] {
 	case "scan":
 		scanCmd(os.Args[2:])
+	case "watch":
+		watchCmd(os.Args[2:])
 	case "generate-test-findings":
 		generateTestFindingsCmd(os.Args[2:])
 	case "validate-output":
@@ -48,6 +51,21 @@ func scanCmd(args []string) {
 	opts := scanner.Options{OutputPath: *output, Stdout: *stdout, Pretty: *pretty, AllowlistPath: *allowlist}
 	if err := scanner.Run(opts); err != nil {
 		fmt.Fprintln(os.Stderr, "scan failed:", err)
+		os.Exit(1)
+	}
+}
+
+func watchCmd(args []string) {
+	fs := flag.NewFlagSet("watch", flag.ExitOnError)
+	output := fs.String("output", "", "output NDJSON path")
+	stdout := fs.Bool("stdout", false, "write findings to stdout")
+	interval := fs.Duration("interval", 60*time.Second, "rescan interval")
+	once := fs.Bool("once", false, "single scan then exit")
+	allowlist := fs.String("allowlist", "", "allowlist YAML path")
+	stateFile := fs.String("state-file", "", "optional state file path")
+	_ = fs.Parse(args)
+	if err := scanner.RunWatch(scanner.WatchOptions{OutputPath: *output, Stdout: *stdout, Interval: *interval, Once: *once, AllowlistPath: *allowlist, StateFile: *stateFile}); err != nil {
+		fmt.Fprintln(os.Stderr, "watch failed:", err)
 		os.Exit(1)
 	}
 }
@@ -117,5 +135,5 @@ func listCmd(kind string) { /* unchanged */
 }
 
 func usage() {
-	fmt.Println("Usage: agentguard-sensor <scan|generate-test-findings|validate-output|version|list-mcp|list-extensions|list-local-ai|list-startup|list-processes>")
+	fmt.Println("Usage: agentguard-sensor <scan|watch|generate-test-findings|validate-output|version|list-mcp|list-extensions|list-local-ai|list-startup|list-processes>")
 }
