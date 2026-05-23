@@ -32,7 +32,11 @@ type EventMeta struct {
 	RiskScore int      `json:"risk_score"`
 	Severity  int      `json:"severity"`
 }
-type Observer struct{ Vendor, Product, Type string }
+type Observer struct {
+	Vendor  string `json:"vendor"`
+	Product string `json:"product"`
+	Type    string `json:"type"`
+}
 type Host struct {
 	Name string `json:"name"`
 }
@@ -43,8 +47,11 @@ type AISentinelData struct {
 	Details map[string]any `json:"details,omitempty"`
 }
 type Finding struct {
-	ID, Type, Name, Status string
-	Confidence             float64
+	ID         string  `json:"id"`
+	Type       string  `json:"type"`
+	Name       string  `json:"name"`
+	Status     string  `json:"status"`
+	Confidence float64 `json:"confidence"`
 }
 type Risk struct {
 	Level   string   `json:"level"`

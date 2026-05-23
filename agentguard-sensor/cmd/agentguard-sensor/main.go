@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bufio"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 
+	"github.com/agentguard/agentguard-sensor/internal/findings"
+	"github.com/agentguard/agentguard-sensor/internal/output"
 	"github.com/agentguard/agentguard-sensor/internal/scanner"
 )
 
@@ -19,6 +23,10 @@ func main() {
 	switch os.Args[1] {
 	case "scan":
 		scanCmd(os.Args[2:])
+	case "generate-test-findings":
+		generateTestFindingsCmd(os.Args[2:])
+	case "validate-output":
+		validateOutputCmd(os.Args[2:])
 	case "version":
 		fmt.Printf("agentguard-sensor %s\n", version)
 	case "list-mcp", "list-extensions", "list-local-ai", "list-startup", "list-processes":
@@ -44,7 +52,60 @@ func scanCmd(args []string) {
 	}
 }
 
-func listCmd(kind string) {
+func generateTestFindingsCmd(args []string) {
+	fs := flag.NewFlagSet("generate-test-findings", flag.ExitOnError)
+	outputPath := fs.String("output", "./findings.ndjson", "output NDJSON path")
+	_ = fs.Parse(args)
+
+	if err := output.Write(findings.SyntheticTestEvents(), *outputPath, false, false); err != nil {
+		fmt.Fprintln(os.Stderr, "generate-test-findings failed:", err)
+		os.Exit(1)
+	}
+	fmt.Printf("wrote synthetic findings to %s\n", *outputPath)
+}
+
+func validateOutputCmd(args []string) {
+	fs := flag.NewFlagSet("validate-output", flag.ExitOnError)
+	inputPath := fs.String("input", "./findings.ndjson", "input NDJSON path")
+	_ = fs.Parse(args)
+
+	f, err := os.Open(*inputPath)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "validate-output failed:", err)
+		os.Exit(1)
+	}
+	defer f.Close()
+
+	s := bufio.NewScanner(f)
+	lineNo := 0
+	for s.Scan() {
+		lineNo++
+		line := s.Bytes()
+		if len(line) == 0 {
+			continue
+		}
+		var event map[string]any
+		if err := json.Unmarshal(line, &event); err != nil {
+			fmt.Fprintf(os.Stderr, "invalid JSON at line %d: %v\n", lineNo, err)
+			os.Exit(1)
+		}
+		if err := findings.ValidateContractMap(event); err != nil {
+			fmt.Fprintf(os.Stderr, "contract validation failed at line %d: %v\n", lineNo, err)
+			os.Exit(1)
+		}
+	}
+	if err := s.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "validate-output failed:", err)
+		os.Exit(1)
+	}
+	if lineNo == 0 {
+		fmt.Fprintln(os.Stderr, "validate-output failed: no events found")
+		os.Exit(1)
+	}
+	fmt.Printf("validated %d event(s) from %s\n", lineNo, *inputPath)
+}
+
+func listCmd(kind string) { /* unchanged */
 	results, err := scanner.List(kind)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -56,5 +117,5 @@ func listCmd(kind string) {
 }
 
 func usage() {
-	fmt.Println("Usage: agentguard-sensor <scan|version|list-mcp|list-extensions|list-local-ai|list-startup|list-processes>")
+	fmt.Println("Usage: agentguard-sensor <scan|generate-test-findings|validate-output|version|list-mcp|list-extensions|list-local-ai|list-startup|list-processes>")
 }
