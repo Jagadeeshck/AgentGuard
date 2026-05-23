@@ -2,7 +2,7 @@
 
 AgentGuard / AI Sentinel is a defensive endpoint visibility product that emits ECS-compatible NDJSON findings about AI-related activity such as AI API connections, MCP server configuration, local LLM services, browser extensions, and startup items.
 
-> **Important:** this integration currently collects AgentGuard findings. It does not itself scan the endpoint. Active scanning is planned as the separate AgentGuard Sensor component.
+> **Important:** Elastic Agent collects AgentGuard Sensor findings through this integration. It does not itself scan the endpoint. Active scanning is planned as the separate AgentGuard Sensor component.
 
 This repository contains **only** the Elastic integration package. It is not the AgentGuard endpoint scanner and it does not include scanner collection logic. The package can be deployed through Fleet-managed Elastic Agent or standalone Elastic Agent. It reads already-produced AgentGuard / AI Sentinel NDJSON findings from disk, parses them into ECS-compatible fields, and ships Elastic package assets such as fields and ingest pipelines, while keeping dashboard placeholders and draft rule references under `_dev/` until they are converted to supported package asset formats. It does not perform endpoint scanning, decrypt traffic, collect private prompt content, collect clipboard content, collect browsing history, or store secrets.
 
@@ -149,3 +149,10 @@ Version 0.3.0 adds an end-to-end validation pack so this Elastic integration can
 - Invalid JSON tags: inspect events tagged `ai_sentinel_invalid_json`; each line must be a single valid JSON object.
 - Missing dashboards or rules: placeholder dashboards and TOML rule drafts are development references only until converted to package-supported saved-object JSON assets.
 - Unexpected secrets: disable `preserve_original_event`, verify AI Sentinel scanner-side redaction, and review fields that contain commands, URLs, headers, or config paths.
+
+
+## Roadmap
+
+- Current: Elastic Agent collects AgentGuard findings via filestream.
+- Next: Fleet-managed sidecar configuration alignment for AgentGuard Sensor settings and paths.
+- Future: Native Elastic Agent custom input/component to run AgentGuard Sensor directly, if supported.
