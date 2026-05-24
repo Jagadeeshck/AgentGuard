@@ -24,7 +24,7 @@ Draft Kibana saved-object JSON for six dashboards and six saved searches are sto
 
 ## Promotion criteria
 
-Draft assets can be moved to package directories (`kibana/dashboard`, `kibana/visualization`, `kibana/search`) only after:
+Draft assets can be moved to package directories (`dev-assets/elastic-integration-ai-sentinel/kibana_dashboards`, `kibana/visualization`, `kibana/search`) only after:
 
 1. Saved-object format and references are validated.
 2. `elastic-package lint` passes with the assets in place.

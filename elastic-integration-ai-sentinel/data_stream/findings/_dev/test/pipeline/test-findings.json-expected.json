@@ -1,0 +1,12 @@
+{
+  "expected": [
+    {
+      "event": {"kind": "event", "category": ["threat"], "action": "service_detection"},
+      "agentguard": {"finding": {"category": "service", "severity": "medium"}}
+    },
+    {
+      "event": {"kind": "event", "category": ["threat"], "action": "browser_extension_detection"},
+      "agentguard": {"finding": {"category": "extension", "severity": "high"}}
+    }
+  ]
+}

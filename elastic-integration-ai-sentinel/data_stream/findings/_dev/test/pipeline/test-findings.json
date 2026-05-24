@@ -1,32 +1,10 @@
 {
-  "docs": [
+  "events": [
     {
-      "_source": {
-        "@timestamp": "2026-05-20T10:11:12Z",
-        "host": {"name": "macbook-pro-01"},
-        "finding_type": "service_detection",
-        "finding_category": "service",
-        "severity": "medium",
-        "agentguard": {
-          "finding": {"description": "Detected local AI service listener"},
-          "target": {"service": {"name": "ollama", "port": 11434}, "path": "/usr/local/bin/ollama"},
-          "policy": {"matched": true, "action": "monitor"}
-        }
-      }
+      "message": "{\"@timestamp\":\"2026-05-20T10:11:12Z\",\"host\":{\"name\":\"macbook-pro-01\"},\"finding_type\":\"service_detection\",\"finding_category\":\"service\",\"severity\":\"medium\",\"agentguard\":{\"finding\":{\"description\":\"Detected local AI service listener\"},\"target\":{\"service\":{\"name\":\"ollama\",\"port\":11434},\"path\":\"/usr/local/bin/ollama\"},\"policy\":{\"matched\":true,\"action\":\"monitor\"}}}"
     },
     {
-      "_source": {
-        "@timestamp": "2026-05-20T10:15:12Z",
-        "host": {"name": "macbook-pro-01"},
-        "finding_type": "browser_extension_detection",
-        "finding_category": "extension",
-        "severity": "high",
-        "agentguard": {
-          "finding": {"description": "Detected extension with elevated permissions", "source": "browser_scan"},
-          "target": {"extension": {"id": "abcdefghijklmnop", "name": "AI Helper"}, "process": {"name": "Google Chrome"}},
-          "policy": {"matched": true, "action": "alert"}
-        }
-      }
+      "message": "{\"@timestamp\":\"2026-05-20T10:15:12Z\",\"host\":{\"name\":\"macbook-pro-01\"},\"finding_type\":\"browser_extension_detection\",\"finding_category\":\"extension\",\"severity\":\"high\",\"agentguard\":{\"finding\":{\"description\":\"Detected extension with elevated permissions\",\"source\":\"browser_scan\"},\"target\":{\"extension\":{\"id\":\"abcdefghijklmnop\",\"name\":\"AI Helper\"},\"process\":{\"name\":\"Google Chrome\"}},\"policy\":{\"matched\":true,\"action\":\"alert\"}}}"
     }
   ]
 }

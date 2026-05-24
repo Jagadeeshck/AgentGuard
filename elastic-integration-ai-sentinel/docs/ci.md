@@ -59,3 +59,13 @@ elastic-package stack down
 
 Development-only assets must live outside the package directory at `repo-root/dev-assets/elastic-integration-ai-sentinel/`.
 Do not add `dev-assets/` inside `elastic-integration-ai-sentinel/`; this violates Elastic package-spec directory rules.
+
+
+Legacy compatibility: `ai_sentinel.*` fields may still be accepted as legacy input by downstream tooling, but `agentguard.*` is the canonical namespace for current contracts.
+
+
+Package contract baseline:
+- Package name: `agentguard_ai_sentinel`
+- Dataset: `agentguard_ai_sentinel.findings`
+- Data stream: `logs-agentguard_ai_sentinel.findings-default`
+- Canonical custom namespace: `agentguard.*`

@@ -1,0 +1,1 @@
+{"expected":[{"event":{"kind":"event","category":["threat"],"action":"allowed_finding"},"agentguard":{"finding":{"type":"allowed_finding","category":"policy","severity":"low"}}}]}
