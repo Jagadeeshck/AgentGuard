@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SAMPLE_FILE="$ROOT_DIR/dev-assets/e2e/agentguard-sensor-findings.ndjson"
+REPO_ROOT="$(cd "$ROOT_DIR/.." && pwd)"
+SAMPLE_FILE="$REPO_ROOT/dev-assets/e2e/agentguard-sensor-findings.ndjson"
 ES_URL="${ES_URL:-http://localhost:9200}"
 ES_USER="${ES_USER:-elastic}"
 ES_PASS="${ES_PASS:-changeme}"

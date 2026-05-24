@@ -1,179 +1,162 @@
-# AI Sentinel Security Rule Reference
+# AgentGuard Elastic Security Detection Rules
 
-The TOML rule drafts were moved to `repo-root/dev-assets/security_rules_toml/` because Elastic package security rule assets require package-supported saved-object JSON. This page preserves the rule names and KQL queries for operators until valid package assets are generated.
+This document defines production-style Elastic Security detection rules for AgentGuard / AI Sentinel findings.
 
-## AI Agent Writing Exploit-like Files
+## Packaging status
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_exploit_like_files.toml`
-- Severity: `high`
-- Risk score: `88`
-- Description: Detects AI agent findings that indicate exploit-like file creation or modification based on metadata, file names, and behavioural labels.
+As of this milestone, these rules are committed as **draft rule definitions** in `dev-assets/security_rules/` at the repository root.
 
-```kql
-event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: "ai_exploit_development_activity" and (file.name: ("*exploit*" or "*poc*" or "*payload*" or "*rop*") or ai_sentinel.cyber_agent.activity_type: "exploit_development" or ai_sentinel.cyber_agent.suspicious_keywords: ("exploit" or "poc" or "payload" or "rop" or "cve"))
-```
+They are not yet added under `kibana/security_rule/` because Elastic package security rule saved objects must match strict package-compatible saved object formatting. A follow-up task should convert these drafts into validated package assets once formatting is confirmed with asset validation.
 
-## AI Agent Sandbox Escape Research Indicators
+## Common rule metadata
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_sandbox_escape_research.toml`
-- Severity: `high`
-- Risk score: `86`
-- Description: Detects AI agent sandbox escape research indicators from metadata such as activity type, target paths, or behavioural keywords.
+All rules share the following baseline metadata:
 
-```kql
-event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: "ai_sandbox_escape_research" and (ai_sentinel.cyber_agent.activity_type: "sandbox_escape_research" or ai_sentinel.cyber_agent.suspicious_keywords: ("sandbox_escape" or "container_escape" or "jailbreak" or "namespace" or "seccomp") or ai_sentinel.cyber_agent.target_paths: ("*/proc/*" or "*/sys/*" or "*/var/run/docker.sock"))
-```
+- `type`: `query`
+- `language`: `kuery`
+- `index`: `["logs-ai_sentinel.findings-*"]`
+- `interval`: `5m`
+- `from`: `now-10m`
+- `enabled`: `false`
+- `author`: `["AgentGuard"]`
+- `tags`:
+  - `AgentGuard`
+  - `AI Sentinel`
+  - `AI Activity`
+  - `MCP`
+  - `Elastic Security`
+- `references`:
+  - `https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme`
 
-## AI Agent Scanning Sensitive Source Code
+## Rule definitions
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_sensitive_source_scan.toml`
-- Severity: `high`
-- Risk score: `78`
-- Description: Detects untrusted AI agent findings for sensitive source repository scanning, such as security-critical paths, infra-as-code, auth code, or secrets-related filenames.
+### 1) AgentGuard Critical Finding
 
-```kql
-event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: "ai_agent_sensitive_repo_scan" and (ai_sentinel.cyber_agent.target_paths: ("*auth*" or "*security*" or "*crypto*" or "*terraform*" or "*kubernetes*" or "*.env*" or "*secrets*") or ai_sentinel.cyber_agent.suspicious_keywords: ("credential" or "secret" or "token" or "auth" or "crypto"))
-```
+- **Purpose**: Detects any critical AgentGuard / AI Sentinel finding.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.risk.level: "critical"`
+- **Severity**: `critical`
+- **Risk score**: `90`
+- **Expected false positives**: High-risk but approved internal red-team or security engineering simulations.
+- **Tuning guidance**: Mark known-approved workflows with `ai_sentinel.allowed: true` to suppress expected events.
+- **Sample event type**: `ai_sentinel.risk.level: "critical"`
 
-## AI Agent With Shell and Filesystem MCP Access
+### 2) Untrusted MCP Server With Shell or Filesystem Access
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/ai_agent_shell_filesystem_mcp.toml`
-- Severity: `high`
-- Risk score: `85`
-- Description: Detects AI agent findings with both shell and filesystem MCP capabilities, which can enable autonomous codebase inspection and tool execution.
+- **Purpose**: Detects untrusted MCP servers with potentially dangerous host interaction capability.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.finding.type: "mcp_server" and not ai_sentinel.allowed: true and ai_sentinel.mcp.capabilities: ("shell" or "filesystem")`
+- **Severity**: `high`
+- **Risk score**: `80`
+- **Expected false positives**: Known MCP servers used by approved internal AI tooling.
+- **Tuning guidance**: Allowlist known MCP config paths and set trusted MCP findings to `ai_sentinel.allowed: true`.
+- **Sample event type**: `ai_sentinel.finding.type: "mcp_server"`
 
-```kql
-event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: ("ai_agent_shell_tool_use" or "ai_security_tool_mcp_server" or "ai_cyber_agent_activity") and ai_sentinel.cyber_agent.capabilities: "shell" and ai_sentinel.cyber_agent.capabilities: "filesystem"
-```
+### 3) AI Agent With Shell Tool Use
 
-## AI Browser Extension With Broad Permissions
+- **Purpose**: Detects untrusted AI agent shell execution behavior.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_agent_shell_tool_use" and not ai_sentinel.allowed: true`
+- **Severity**: `high`
+- **Risk score**: `82`
+- **Expected false positives**: Approved automation agents that legitimately execute shell commands.
+- **Tuning guidance**: Allowlist approved process executable paths and automation identities; mark expected behavior with `ai_sentinel.allowed: true`.
+- **Sample event type**: `ai_sentinel.finding.type: "ai_agent_shell_tool_use"`
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/ai_browser_extension_broad_permissions.toml`
-- Severity: `medium`
-- Risk score: `55`
-- Description: Detects ai browser extension with broad permissions from AI Sentinel findings.
+### 4) Browser AI Extension With Broad Permissions
 
-```kql
-event.module: "ai_sentinel" and ai_sentinel.finding.type: "browser_extension" and ai_sentinel.extension.permissions: ("<all_urls>" or "scripting" or "webRequest" or "clipboardRead" or "nativeMessaging")
-```
+- **Purpose**: Detects AI browser extensions with broad or sensitive permissions.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.finding.type: "browser_extension" and not ai_sentinel.allowed: true and ai_sentinel.extension.permissions: ("<all_urls>" or "scripting" or "webRequest" or "clipboardRead" or "nativeMessaging")`
+- **Severity**: `medium`
+- **Risk score**: `65`
+- **Expected false positives**: Approved browser extensions required for enterprise workflows.
+- **Tuning guidance**: Allowlist known extension IDs and set approved extensions as allowed.
+- **Sample event type**: `ai_sentinel.finding.type: "browser_extension"`
 
-## AI Sentinel Critical Finding
+### 5) Local LLM Service Exposed Beyond Loopback
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/ai_sentinel_critical_finding.toml`
-- Severity: `critical`
-- Risk score: `90`
-- Description: Detects ai sentinel critical finding from AI Sentinel findings.
+- **Purpose**: Detects local AI/LLM services exposed beyond loopback interfaces.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.finding.type: "local_llm_service" and ai_sentinel.ai.local_service: true and not destination.ip: ("127.0.0.1" or "::1" or "localhost")`
+- **Severity**: `high`
+- **Risk score**: `78`
+- **Expected false positives**: Intentional shared local inference services in lab networks.
+- **Tuning guidance**: Allowlist approved local LLM ports and known safe non-loopback exposure scenarios (for example controlled subnet service endpoints).
+- **Sample event type**: `ai_sentinel.finding.type: "local_llm_service"`
 
-```kql
-event.module: "ai_sentinel" and ai_sentinel.risk.level: "critical"
-```
+### 6) AI Tool Added to Startup
 
-## AI Tool Added to Startup
+- **Purpose**: Detects untrusted persistence behavior via startup registration.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.finding.type: "startup_item" and not ai_sentinel.allowed: true`
+- **Severity**: `medium`
+- **Risk score**: `60`
+- **Expected false positives**: Approved internal AI tooling installed for managed persistence.
+- **Tuning guidance**: Allowlist approved process executable paths and startup locations; mark known-good with `ai_sentinel.allowed: true`.
+- **Sample event type**: `ai_sentinel.finding.type: "startup_item"`
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/ai_tool_added_startup.toml`
-- Severity: `medium`
-- Risk score: `50`
-- Description: Detects ai tool added to startup from AI Sentinel findings.
+### 7) Possible Mythos-like AI Cyber-Agent Activity
 
-```kql
-event.module: "ai_sentinel" and ai_sentinel.finding.type: "startup_item" and not ai_sentinel.allowed: true
-```
+- **Purpose**: Detects high-risk AI cyber-agent behaviors associated with vulnerability research, exploit development, or sandbox-escape style activity.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.finding.type: ("ai_cyber_agent_activity" or "ai_vulnerability_research_agent" or "ai_exploit_development_activity" or "ai_sandbox_escape_research") and not ai_sentinel.allowed: true and ai_sentinel.risk.level: ("high" or "critical")`
+- **Severity**: `critical`
+- **Risk score**: `92`
+- **Expected false positives**: Approved security researcher activity and sanctioned purple-team exercises.
+- **Tuning guidance**: Mark sanctioned research with `ai_sentinel.allowed: true` and scope additional environment-based allowlists.
+- **Sample event type**: `ai_sentinel.finding.type: "ai_cyber_agent_activity"`
 
-## Critical AI Cyber-Agent Activity
+### 8) AI Agent Scanning Sensitive Repositories
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/critical_ai_cyber_agent_activity.toml`
-- Severity: `critical`
-- Risk score: `95`
-- Description: Detects critical AI cyber-agent findings across vulnerability research, exploit-development, sandbox escape, shell use, fuzzing, reverse-engineering, and mass codebase analysis behaviours.
+- **Purpose**: Detects untrusted AI agent scanning of sensitive repositories.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_agent_sensitive_repo_scan" and not ai_sentinel.allowed: true`
+- **Severity**: `high`
+- **Risk score**: `84`
+- **Expected false positives**: Approved code indexing and SAST automation.
+- **Tuning guidance**: Allowlist approved automation and repository scanners; mark expected scans with `ai_sentinel.allowed: true`.
+- **Sample event type**: `ai_sentinel.finding.type: "ai_agent_sensitive_repo_scan"`
 
-```kql
-event.module: "ai_sentinel" and ai_sentinel.finding.type: ("ai_cyber_agent_activity" or "ai_vulnerability_research_agent" or "ai_sandbox_escape_research" or "ai_fuzzing_activity" or "ai_reverse_engineering_activity" or "ai_exploit_development_activity" or "ai_security_tool_mcp_server" or "ai_agent_shell_tool_use" or "ai_agent_sensitive_repo_scan" or "ai_agent_mass_codebase_analysis") and (ai_sentinel.risk.level: "critical" or event.severity >= 99 or event.risk_score >= 90)
-```
+### 9) AI Agent Running Security Tools
 
-## Local LLM Service Exposed Beyond Localhost
+- **Purpose**: Detects untrusted AI agents orchestrating security tooling.
+- **KQL**: `event.module: "ai_sentinel" and ai_sentinel.cyber_agent.security_tools: * and not ai_sentinel.allowed: true`
+- **Severity**: `high`
+- **Risk score**: `85`
+- **Expected false positives**: Approved security researcher activity and sanctioned internal assessments.
+- **Tuning guidance**: Maintain allowlists for approved security toolchains and automation identities.
+- **Sample event type**: `ai_sentinel.cyber_agent.security_tools: *`
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/local_llm_exposed.toml`
-- Severity: `high`
-- Risk score: `73`
-- Description: Detects local llm service exposed beyond localhost from AI Sentinel findings.
+### 10) AgentGuard Pipeline Failure
 
-```kql
-event.module: "ai_sentinel" and ai_sentinel.ai.local_service: true and destination.port: (11434 or 1234 or 7860 or 8000 or 8080) and not destination.ip: ("127.0.0.1" or "::1" or "localhost")
-```
+- **Purpose**: Detects failures in the AgentGuard ingest pipeline so SOC teams know telemetry may be degraded.
+- **KQL**: `event.module: "ai_sentinel" and tags: "ai_sentinel_pipeline_failure"`
+- **Severity**: `medium`
+- **Risk score**: `50`
+- **Expected false positives**: Short-lived deployment windows or controlled pipeline tests.
+- **Tuning guidance**: Suppress during approved maintenance windows and ensure known test events are allowlisted.
+- **Sample event type**: `tags: "ai_sentinel_pipeline_failure"`
 
-## Multiple AI API Connections From Same Process
+## MITRE ATT&CK tactic mapping (broad)
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/multiple_ai_api_connections_threshold.toml`
-- Severity: `medium`
-- Risk score: `65`
-- Description: Detects 10 or more untrusted AI API connection findings from the same host, process, and provider in five minutes.
+To avoid overclaiming, mapping is limited to broad tactics only where relevant:
 
-```kql
-event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_api_connection" and not ai_sentinel.allowed: true
-```
+- **Discovery**: rules 2, 7, 8, 9
+- **Execution**: rules 2, 3, 7, 9
+- **Persistence**: rule 6
+- **Command and Control**: rules 2, 5
+- **Collection**: rules 8, 9
 
-## New or Modified MCP Config
+## Global false-positive guidance
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/new_modified_mcp_config.toml`
-- Severity: `medium`
-- Risk score: `47`
-- Description: Detects new or modified mcp config from AI Sentinel findings.
+- Approved internal AI tooling.
+- Approved security researcher activity.
+- Known MCP servers.
+- Local-only Ollama service.
+- Approved browser extensions.
+- Allowlisted automation.
 
-```kql
-event.module: "ai_sentinel" and event.action: ("mcp_config_created" or "mcp_config_modified")
-```
+## Global tuning guidance
 
-## Possible Mythos-like Vulnerability Research Agent
+- Use `ai_sentinel.allowed: true` for known-good activity.
+- Allowlist known extension IDs.
+- Allowlist known MCP config paths.
+- Allowlist approved process executable paths.
+- Allowlist approved local LLM ports.
 
-- Source draft: `repo-root/dev-assets/security_rules_toml/possible_mythos_like_vulnerability_research_agent.toml`
-- Severity: `high`
-- Risk score: `82`
-- Description: Detects Mythos-like AI vulnerability research behaviour using multiple behavioural signals. The word mythos is treated only as a weak supporting signal and is never sufficient by itself.
+## TODO
 
-```kql
-event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: "ai_vulnerability_research_agent" and (ai_sentinel.cyber_agent.activity_type: ("vulnerability_research" or "exploit_development" or "sandbox_escape_research") or ai_sentinel.cyber_agent.security_tools: * or ai_sentinel.cyber_agent.suspicious_keywords: ("cve" or "vulnerability" or "poc" or "sandbox_escape" or "mythos")) and (ai_sentinel.cyber_agent.capabilities: ("shell" or "filesystem" or "mcp") or ai_sentinel.cyber_agent.target_paths: *)
-```
-
-## Unknown Process Connecting to AI API
-
-- Source draft: `repo-root/dev-assets/security_rules_toml/unknown_process_ai_api.toml`
-- Severity: `medium`
-- Risk score: `55`
-- Description: Detects unknown process connecting to ai api from AI Sentinel findings.
-
-```kql
-event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_api_connection" and not ai_sentinel.allowed: true and ai_sentinel.ai.provider: *
-```
-
-## Untrusted AI Agent Using MCP Browser/Shell Tools
-
-- Source draft: `repo-root/dev-assets/security_rules_toml/untrusted_ai_agent_mcp_browser_shell.toml`
-- Severity: `high`
-- Risk score: `84`
-- Description: Detects untrusted AI agent use of MCP browser or shell tooling based on declared capabilities and tool metadata.
-
-```kql
-event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: ("ai_security_tool_mcp_server" or "ai_agent_shell_tool_use" or "ai_cyber_agent_activity") and ai_sentinel.cyber_agent.capabilities: "mcp" and ai_sentinel.cyber_agent.capabilities: ("browser" or "shell")
-```
-
-## Untrusted AI Agent Running Security Tools
-
-- Source draft: `repo-root/dev-assets/security_rules_toml/untrusted_ai_agent_security_tools.toml`
-- Severity: `high`
-- Risk score: `80`
-- Description: Detects untrusted AI agent findings that indicate security tool orchestration or security research capabilities. Behaviour-based and does not rely on an agent name.
-
-```kql
-event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: ("ai_security_tool_mcp_server" or "ai_cyber_agent_activity" or "ai_vulnerability_research_agent") and ai_sentinel.cyber_agent.security_tools: *
-```
-
-## Untrusted MCP Server With Shell or Filesystem Access
-
-- Source draft: `repo-root/dev-assets/security_rules_toml/untrusted_mcp_shell_filesystem.toml`
-- Severity: `high`
-- Risk score: `75`
-- Description: Detects untrusted mcp server with shell or filesystem access from AI Sentinel findings.
-
-```kql
-event.module: "ai_sentinel" and ai_sentinel.finding.type: "mcp_server" and not ai_sentinel.allowed: true and ai_sentinel.mcp.capabilities: ("shell" or "filesystem")
-```
+Convert `repo-root/dev-assets/security_rules/*.json` into package-compatible saved-object assets under `kibana/security_rule/` once asset-test-compatible formatting is validated against Elastic package security rule requirements.

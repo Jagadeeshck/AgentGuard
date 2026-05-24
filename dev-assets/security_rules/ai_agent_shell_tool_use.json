@@ -1,0 +1,37 @@
+{
+  "type": "query",
+  "language": "kuery",
+  "index": [
+    "logs-ai_sentinel.findings-*"
+  ],
+  "interval": "5m",
+  "from": "now-10m",
+  "enabled": false,
+  "tags": [
+    "AgentGuard",
+    "AI Sentinel",
+    "AI Activity",
+    "MCP",
+    "Elastic Security"
+  ],
+  "references": [
+    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+  ],
+  "author": [
+    "AgentGuard"
+  ],
+  "rule_id": "ai-agent-shell-tool-use",
+  "name": "AI Agent With Shell Tool Use",
+  "description": "Detects untrusted AI agent shell tool execution behavior.",
+  "severity": "high",
+  "risk_score": 82,
+  "query": "event.module: \"ai_sentinel\" and ai_sentinel.finding.type: \"ai_agent_shell_tool_use\" and not ai_sentinel.allowed: true",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Execution"
+      }
+    }
+  ]
+}

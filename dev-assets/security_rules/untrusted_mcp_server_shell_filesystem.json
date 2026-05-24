@@ -1,0 +1,49 @@
+{
+  "type": "query",
+  "language": "kuery",
+  "index": [
+    "logs-ai_sentinel.findings-*"
+  ],
+  "interval": "5m",
+  "from": "now-10m",
+  "enabled": false,
+  "tags": [
+    "AgentGuard",
+    "AI Sentinel",
+    "AI Activity",
+    "MCP",
+    "Elastic Security"
+  ],
+  "references": [
+    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+  ],
+  "author": [
+    "AgentGuard"
+  ],
+  "rule_id": "untrusted-mcp-server-shell-filesystem",
+  "name": "Untrusted MCP Server With Shell or Filesystem Access",
+  "description": "Detects untrusted MCP servers with shell or filesystem capability.",
+  "severity": "high",
+  "risk_score": 80,
+  "query": "event.module: \"ai_sentinel\" and ai_sentinel.finding.type: \"mcp_server\" and not ai_sentinel.allowed: true and ai_sentinel.mcp.capabilities: (\"shell\" or \"filesystem\")",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Discovery"
+      }
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Execution"
+      }
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "name": "Command and Control"
+      }
+    }
+  ]
+}
