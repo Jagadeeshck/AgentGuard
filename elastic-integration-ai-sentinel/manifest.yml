@@ -1,28 +1,31 @@
-format_version: 3.0.3
-name: ai_sentinel
-title: AgentGuard / AI Sentinel
-version: 0.3.0
-description: Collect AgentGuard / AI Sentinel ECS-compatible NDJSON findings from disk with Elastic Agent filestream and ingest them into Elastic Security.
+format_version: 3.1.3
+name: agentguard_ai_sentinel
+title: AgentGuard AI Sentinel
+version: 0.1.0
+description: AI activity observability and detection for Elastic Agent - discovers AI-related artefacts and activity signals on endpoints
 type: integration
 categories:
   - security
-  - custom
+  - endpoint_security
 conditions:
   kibana:
-    version: ^8.13.0 || ^9.0.0
+    version: ^8.13.0
 icons:
   - src: /img/logo.svg
-    title: AgentGuard / AI Sentinel logo
+    title: AgentGuard AI Sentinel logo
     size: 32x32
     type: image/svg+xml
 owner:
-  github: elastic/security-service-integrations
+  github: Jagadeeshck
   type: community
+license: Apache-2.0
 policy_templates:
-  - name: ai_sentinel
-    title: AgentGuard / AI Sentinel findings
-    description: Collect AgentGuard / AI Sentinel NDJSON findings from disk using the Elastic Agent filestream input.
+  - name: findings
+    title: AgentGuard Findings
+    description: Collect AgentGuard findings NDJSON events from endpoint files.
     inputs:
-      - type: filestream
-        title: AgentGuard / AI Sentinel findings logs
-        description: Collect AgentGuard / AI Sentinel ECS-compatible NDJSON finding events from configured files.
+      - type: logfile
+        title: AgentGuard findings logfile input
+        description: Reads AgentGuard findings NDJSON output files.
+    data_streams:
+      - findings

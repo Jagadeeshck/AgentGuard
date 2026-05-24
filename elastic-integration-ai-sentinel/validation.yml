@@ -1,0 +1,3 @@
+errors:
+  - code: SVG001
+    level: warning
