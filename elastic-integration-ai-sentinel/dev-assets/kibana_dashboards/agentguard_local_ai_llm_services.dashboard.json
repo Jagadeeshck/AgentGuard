@@ -1,0 +1,14 @@
+{
+  "title": "AgentGuard Local AI / LLM Services Dashboard",
+  "type": "dashboard-spec-draft",
+  "index_pattern": "logs-ai_sentinel.findings-*",
+  "panels": [
+    "Local LLM services by host","Exposed non-loopback services","Ports used by AI services",
+    "Processes backing local AI services","Local AI service risk table"
+  ],
+  "fields": [
+    "ai_sentinel.finding.type","ai_sentinel.ai.local_service","ai_sentinel.ai.provider",
+    "ai_sentinel.ai.endpoint","destination.ip","destination.port","process.name",
+    "process.executable","host.name","ai_sentinel.risk.level"
+  ]
+}

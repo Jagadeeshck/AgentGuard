@@ -1,0 +1,16 @@
+{
+  "title": "AgentGuard MCP Security Dashboard",
+  "type": "dashboard-spec-draft",
+  "index_pattern": "logs-ai_sentinel.findings-*",
+  "panels": [
+    "MCP servers by host","MCP clients discovered","MCP capabilities distribution",
+    "MCP servers with shell capability","MCP servers with filesystem capability",
+    "MCP servers with browser/database/code repository capability",
+    "Recently changed MCP configs","Untrusted high-risk MCP servers table"
+  ],
+  "fields": [
+    "ai_sentinel.mcp.client.name","ai_sentinel.mcp.server.name","ai_sentinel.mcp.server.command",
+    "ai_sentinel.mcp.config.path","ai_sentinel.mcp.tools","ai_sentinel.mcp.capabilities",
+    "ai_sentinel.mcp.risk_reasons","host.name","ai_sentinel.allowed","ai_sentinel.risk.level"
+  ]
+}
