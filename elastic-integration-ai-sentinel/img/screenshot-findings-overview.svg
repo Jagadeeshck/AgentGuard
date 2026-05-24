@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="AgentGuard Findings Overview placeholder screenshot">
+  <rect width="1200" height="675" fill="#0b1020"/>
+  <rect x="40" y="40" width="1120" height="595" rx="12" fill="#11182b" stroke="#2a3b63"/>
+  <text x="80" y="110" fill="#d7e3ff" font-size="36" font-family="Arial, sans-serif">AgentGuard Findings Overview</text>
+  <text x="80" y="155" fill="#9bb0dc" font-size="20" font-family="Arial, sans-serif">Placeholder visualization asset for package docs/PR compatibility.</text>
+  <rect x="80" y="200" width="500" height="180" rx="8" fill="#1a2440"/>
+  <rect x="620" y="200" width="500" height="180" rx="8" fill="#1a2440"/>
+  <rect x="80" y="410" width="1040" height="180" rx="8" fill="#1a2440"/>
+</svg>

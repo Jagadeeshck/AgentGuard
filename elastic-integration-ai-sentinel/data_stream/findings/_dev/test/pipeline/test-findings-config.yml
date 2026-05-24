@@ -1,0 +1,3 @@
+processors:
+  - ingest_pipeline:
+      name: default

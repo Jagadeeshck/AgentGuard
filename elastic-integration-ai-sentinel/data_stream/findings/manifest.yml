@@ -1,182 +1,26 @@
-title: AgentGuard / AI Sentinel findings
+title: AgentGuard Findings
 type: logs
-dataset: ai_sentinel.findings
+dataset: agentguard_ai_sentinel.findings
 streams:
-  - input: filestream
-    title: AgentGuard / AI Sentinel findings logs
-    description: Collect AgentGuard / AI Sentinel finding events from ECS-compatible NDJSON files on disk.
-    template_path: filestream.yml.hbs
+  - input: logfile
+    title: AgentGuard findings logfile
+    description: Collect AgentGuard findings NDJSON events from local paths.
+    template_path: stream.yml.hbs
     vars:
       - name: paths
         type: text
         title: Paths
-        description: One or more AgentGuard / AI Sentinel NDJSON finding files for Elastic Agent filestream to read.
         multi: true
         required: true
         show_user: true
         default:
           - /var/log/agentguard/findings.ndjson
-          - /var/log/ai-sentinel/findings.ndjson
-          - /Library/Logs/AgentGuard/findings.ndjson
-          - /Library/Logs/AI-Sentinel/findings.ndjson
-          - 'C:\ProgramData\AgentGuard\logs\findings.ndjson'
-          - 'C:\ProgramData\AI-Sentinel\logs\findings.ndjson'
-      - name: sensor_mode
-        type: text
-        title: Sensor mode
-        description: Deployment mode hint. Use sidecar for Fleet-managed collection of externally running AgentGuard Sensor.
-        required: true
-        show_user: true
-        default: sidecar
-      - name: sensor_output_path
-        type: text
-        title: Sensor output path
-        description: Path where AgentGuard Sensor writes findings.ndjson.
-        required: false
-        show_user: true
-        default: ""
-      - name: sensor_interval
-        type: text
-        title: Sensor scan interval
-        description: Recommended AgentGuard Sensor watch interval (for operator alignment). Elastic Agent does not execute sensor scans in sidecar mode.
-        required: false
-        show_user: true
-        default: 60s
-      - name: sensor_state_file
-        type: text
-        title: Sensor state file
-        description: Recommended AgentGuard Sensor state file path used by sidecar service.
-        required: false
-        show_user: true
-        default: ""
-      - name: sensor_emit_resolved
-        type: bool
-        title: Sensor emit resolved findings
-        description: Recommended AgentGuard Sensor setting for resolved finding emission in sidecar mode.
-        required: false
-        show_user: true
-        default: true
-      - name: collect_mcp
-        type: bool
-        title: Sensor collect MCP
-        description: Recommended AgentGuard Sensor scan.mcp setting for sidecar configuration alignment.
-        required: false
-        show_user: true
-        default: true
-      - name: collect_browser_extensions
-        type: bool
-        title: Sensor collect browser extensions
-        description: Recommended AgentGuard Sensor scan.browser_extensions setting for sidecar configuration alignment.
-        required: false
-        show_user: true
-        default: true
-      - name: collect_local_llm
-        type: bool
-        title: Sensor collect local LLM
-        description: Recommended AgentGuard Sensor scan.local_llm setting for sidecar configuration alignment.
-        required: false
-        show_user: true
-        default: true
-      - name: collect_startup_items
-        type: bool
-        title: Sensor collect startup items
-        description: Recommended AgentGuard Sensor scan.startup_items setting for sidecar configuration alignment.
-        required: false
-        show_user: true
-        default: true
-      - name: collect_processes
-        type: bool
-        title: Sensor collect processes
-        description: Recommended AgentGuard Sensor scan.processes setting for sidecar configuration alignment.
-        required: false
-        show_user: true
-        default: true
-      - name: preserve_original_event
-        type: bool
-        title: Preserve original event
-        description: Preserve the raw NDJSON line in event.original by adding the preserve_original_event tag. Disabled by default to avoid retaining raw input.
-        required: true
-        show_user: true
-        default: false
       - name: tags
         type: text
         title: Tags
-        description: Tags added to collected AgentGuard / AI Sentinel finding events.
         multi: true
         required: false
         show_user: true
         default:
-          - ai_sentinel
           - agentguard
-          - ai_activity
-          - mcp_monitoring
-          - endpoint_visibility
-      - name: processors
-        type: yaml
-        title: Processors
-        description: Optional Elastic Agent processors to run before sending events to Elasticsearch.
-        required: false
-        show_user: true
-        default: ""
-      - name: timezone
-        type: text
-        title: Time zone
-        description: Time zone metadata for collectors that need local timestamp context.
-        required: true
-        show_user: true
-        default: UTC
-      - name: data_stream.dataset
-        type: text
-        title: Data stream dataset
-        description: Dataset name for the findings data stream. Keep as ai_sentinel.findings unless you intentionally route to another dataset.
-        required: true
-        show_user: true
-        default: ai_sentinel.findings
-      - name: pipeline
-        type: text
-        title: Ingest pipeline
-        description: Ingest pipeline to apply to collected findings.
-        required: true
-        show_user: true
-        default: logs-ai_sentinel.findings-default
-      - name: ignore_older
-        type: text
-        title: Ignore older
-        description: Optional filestream ignore_older duration, such as 72h. Leave empty to read all matching files.
-        required: false
-        show_user: true
-        default: ""
-      - name: close_inactive
-        type: text
-        title: Close inactive
-        description: Optional filestream close.on_state_change.inactive duration, such as 5m. Leave empty to use the Elastic Agent default.
-        required: false
-        show_user: true
-        default: ""
-      - name: exclude_files
-        type: text
-        title: Exclude files
-        description: Optional regular expressions for files to exclude.
-        multi: true
-        required: false
-        show_user: true
-        default: []
-      - name: include_files
-        type: text
-        title: Include files
-        description: Optional regular expressions for files to include.
-        multi: true
-        required: false
-        show_user: true
-        default: []
-      - name: parsers
-        type: yaml
-        title: Parsers
-        description: Filestream parsers. Defaults to NDJSON with target at the event root.
-        required: false
-        show_user: true
-        default: |
-          - ndjson:
-              target: ""
-              add_error_key: true
-              overwrite_keys: true
+          - ai_sentinel
