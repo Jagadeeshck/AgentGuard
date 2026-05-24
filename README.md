@@ -1,40 +1,117 @@
-# AgentGuard / AI Sentinel Elastic integration
+# AgentGuard
 
-This repository hosts the `elastic-integration-ai-sentinel` project: a defensive Elastic integration package for ingesting AgentGuard / AI Sentinel NDJSON findings into Elastic Security.
+AgentGuard is an AI activity observability platform focused on endpoint-side visibility and backend analysis workflows.
 
-> **Important:** Elastic Agent collects AgentGuard Sensor findings through this integration. It does not itself scan the endpoint. Active scanning is planned as the separate AgentGuard Sensor component.
+This repository is the product home for AgentGuard and currently contains:
 
-## Deployment modes
+- `agentguard-sensor/` (endpoint-side producer)
+- `elastic-integration-ai-sentinel/` (first backend integration for Elastic)
+- `dev-assets/` (development assets, examples, placeholders, test data)
 
-This package can be deployed through:
+Elastic is the first supported backend integration in this repository, not the full product boundary.
 
-- Fleet-managed Elastic Agent
-- Standalone Elastic Agent
+## Overview
 
-In both modes, Elastic Agent uses the `filestream` input to read ECS-compatible NDJSON findings written by AgentGuard / AI Sentinel and sends them to the `logs-ai_sentinel.findings-default` data stream through the package ingest pipeline.
+AgentGuard currently implements an observability-first MVP:
 
-## What this repository is
+1. The sensor module discovers AI-related runtime and configuration signals on endpoints.
+2. Findings are emitted as structured NDJSON events.
+3. Backend integration modules ingest, normalize, and operationalize those findings.
+4. Security and operations teams investigate in their SIEM/observability tooling.
 
-- An Elastic integration package with Fleet manifests, field definitions, ingest pipeline assets, development dashboard/rule references, sample events, and `elastic-package` tests.
-- A package that reads already-produced AgentGuard / AI Sentinel finding logs from configured file paths through Elastic Agent `filestream`.
-- A schema and normalization layer for ECS-compatible metadata under `ai_sentinel.*`.
+The current backend path is Elastic via the `elastic-integration-ai-sentinel` module.
 
-## What this repository is not
+## Current status
 
-- It is **not** the AgentGuard endpoint scanner.
-- It does **not** add endpoint scanning code or perform host inspection.
-- It does **not** add process scanning code, browser inspection code, or network capture code.
-- It does **not** collect prompt content, secrets, decrypted traffic, clipboard content, or browsing history.
+- Endpoint producer logic is under active development in `agentguard-sensor/`.
+- Elastic integration package assets are maintained in `elastic-integration-ai-sentinel/`.
+- CI currently validates both sensor (Go tests/build) and Elastic package workflows.
+- Sidecar-aligned deployment direction is documented and in progress for Elastic Agent integration patterns.
 
-The AgentGuard / AI Sentinel endpoint product is a separate producer that writes the NDJSON findings consumed by this integration. See [`elastic-integration-ai-sentinel/docs/README.md`](elastic-integration-ai-sentinel/docs/README.md) for Fleet-managed and standalone installation documentation, field mapping, dashboard/rule references, privacy model, validation-pack documentation, and local `elastic-package` testing instructions. The event schema is documented in [`elastic-integration-ai-sentinel/docs/event-schema-v0.1.md`](elastic-integration-ai-sentinel/docs/event-schema-v0.1.md), and the producer contract is documented in [`elastic-integration-ai-sentinel/docs/agentguard-to-elastic-contract-v0.1.md`](elastic-integration-ai-sentinel/docs/agentguard-to-elastic-contract-v0.1.md).
+## Repository modules
 
-## v0.3.0 validation pack
+### `agentguard-sensor/`
+Endpoint-side scanner/sensor component that emits findings as NDJSON events designed for downstream ingestion.
 
-Version 0.3.0 adds validation assets, synthetic test data, a detection rule test matrix, Fleet-managed and standalone Elastic Agent deployment documentation, and the scanner-to-Elastic producer contract. This repository remains the Elastic integration only; the endpoint scanner is a separate future project. The package ingests NDJSON findings and does not include endpoint scanner, process enumeration, browser inspection, network capture, prompt collection, clipboard collection, browsing history collection, traffic decryption, or secret storage logic.
+### `elastic-integration-ai-sentinel/`
+Elastic package module that consumes sensor output using Elastic Agent collection patterns (currently `filestream`-based) and maps findings into ECS-aligned fields, ingest pipelines, and package assets.
 
+### `dev-assets/`
+Supporting assets such as placeholder dashboards, detection-rule drafts, examples, synthetic test data, and validation helpers.
 
-## Roadmap
+## Architecture summary
 
-- Current: Elastic Agent collects AgentGuard findings via filestream.
-- Next: Fleet-managed sidecar configuration alignment for AgentGuard Sensor settings and paths.
-- Future: Native Elastic Agent custom input/component to run AgentGuard Sensor directly, if supported.
+- **Producer:** `agentguard-sensor/`
+- **Transport/data shape:** file-based NDJSON structured findings
+- **Current consumer/backend module:** `elastic-integration-ai-sentinel/`
+- **Analyst workflow:** ingest -> normalize -> search/dashboard/detection
+
+This separation keeps producer behavior independent from backend-specific integration logic.
+
+## Privacy model
+
+AgentGuard follows a metadata-first privacy posture in the current implementation:
+
+- no prompt capture by default
+- no clipboard capture by default
+- no browsing history collection by default
+- no decrypted traffic inspection
+- no secret/credential capture intent
+
+See `docs/privacy-model.md` for the current model and guardrails.
+
+## Current MVP scope
+
+In-scope today:
+
+- endpoint metadata collection for AI-related signals
+- structured findings output
+- Elastic ingestion and normalization path
+- draft detection/dashboard assets for iterative validation
+
+Out-of-scope today:
+
+- full browser activity instrumentation beyond currently implemented metadata sources
+- deep timeline/session correlation across all event classes
+- broad multi-backend parity
+
+## Roadmap themes
+
+- stabilize producer/consumer contracts
+- harden sensor coverage and event quality
+- mature Elastic package dashboards and detection workflows
+- add browser AI visibility incrementally
+- add policy/risk and correlation layers
+- add additional backend/export integrations
+
+See `docs/roadmap.md` and `docs/mvp-backlog.md`.
+
+## Current structure
+
+```text
+.
+├── agentguard-sensor/
+├── elastic-integration-ai-sentinel/
+├── dev-assets/
+├── .github/workflows/
+├── contracts/
+└── docs/
+```
+
+## Recommended future structure
+
+No top-level directories are renamed in this change. A future evolution can add module growth without breaking existing paths:
+
+```text
+.
+├── agentguard-sensor/
+├── elastic-integration-ai-sentinel/
+├── integrations/
+│   └── <future-backend-modules>
+├── contracts/
+├── docs/
+├── dev-assets/
+└── .github/workflows/
+```
+
+The `elastic-integration-ai-sentinel` name remains unchanged and is treated as the first backend integration module.
