@@ -6,6 +6,7 @@ import (
 )
 
 var prohibitedFieldPaths = []string{
+	"agentguard.prompt",
 	"ai_sentinel.prompt",
 	"ai_sentinel.prompts",
 	"ai_sentinel.prompt_content",
@@ -48,18 +49,18 @@ func SyntheticTestEvents() []Event {
 
 func ValidateContractMap(event map[string]any) error {
 	required := []string{
-		"@timestamp", "ecs.version", "event.module", "event.dataset", "event.kind", "event.category", "event.type", "event.action", "event.outcome", "host.name", "observer.vendor", "observer.product", "observer.type", "ai_sentinel.finding.id", "ai_sentinel.finding.type", "ai_sentinel.risk.score", "ai_sentinel.allowed",
+		"@timestamp", "ecs.version", "event.module", "event.dataset", "event.kind", "event.category", "event.type", "event.action", "event.outcome", "host.name", "observer.vendor", "observer.product", "observer.type", "agentguard.schema.version", "agentguard.finding.id", "agentguard.finding.type", "agentguard.risk.score",
 	}
 	for _, p := range required {
 		if !hasPath(event, p) {
 			return fmt.Errorf("missing required field: %s", p)
 		}
 	}
-	if v, ok := getPath(event, "event.module"); !ok || v != "ai_sentinel" {
-		return fmt.Errorf("event.module must be ai_sentinel")
+	if v, ok := getPath(event, "event.module"); !ok || v != "agentguard" {
+		return fmt.Errorf("event.module must be agentguard")
 	}
-	if v, ok := getPath(event, "event.dataset"); !ok || v != "ai_sentinel.findings" {
-		return fmt.Errorf("event.dataset must be ai_sentinel.findings")
+	if v, ok := getPath(event, "event.dataset"); !ok || v != "agentguard.findings" {
+		return fmt.Errorf("event.dataset must be agentguard.findings")
 	}
 	for _, p := range prohibitedFieldPaths {
 		if hasPath(event, p) {
