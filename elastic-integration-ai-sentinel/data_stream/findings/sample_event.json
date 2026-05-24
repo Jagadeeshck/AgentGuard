@@ -14,7 +14,9 @@
     "action": "ai_security_tool_mcp_server",
     "outcome": "success",
     "severity": 73,
-    "risk_score": 84
+    "risk_score": 84,
+    "module": "agentguard",
+    "dataset": "agentguard.findings"
   },
   "host": {
     "name": "workstation-01",
@@ -40,8 +42,8 @@
     "protocol": "tls"
   },
   "observer": {
-    "vendor": "AI Sentinel",
-    "product": "AI Sentinel",
+    "vendor": "AgentGuard",
+    "product": "AgentGuard Sensor",
     "type": "endpoint"
   },
   "ai_sentinel": {
@@ -99,5 +101,23 @@
     "ai_activity",
     "endpoint_visibility",
     "cyber_agent_activity"
-  ]
+  ],
+  "agentguard": {
+    "schema": {
+      "version": "1.0.0-draft"
+    },
+    "finding": {
+      "id": "ais-20260514-0008",
+      "type": "agentguard.process.detected",
+      "name": "Untrusted AI agent security tool MCP server"
+    },
+    "risk": {
+      "level": "high",
+      "score": 84,
+      "reasons": [
+        "security_tool_mcp",
+        "untrusted_agent"
+      ]
+    }
+  }
 }

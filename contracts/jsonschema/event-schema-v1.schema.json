@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentguard.dev/contracts/event-schema-v1.schema.json",
+  "title": "AgentGuard Event Contract v1",
+  "type": "object",
+  "required": [
+    "@timestamp",
+    "event",
+    "observer",
+    "host",
+    "agentguard"
+  ],
+  "properties": {
+    "@timestamp": {"type": "string", "format": "date-time"},
+    "ecs": {
+      "type": "object",
+      "properties": {"version": {"type": "string"}},
+      "additionalProperties": true
+    },
+    "event": {
+      "type": "object",
+      "required": ["module", "dataset", "kind", "category", "type", "action", "outcome"],
+      "properties": {
+        "module": {"const": "agentguard"},
+        "dataset": {"const": "agentguard.findings"},
+        "kind": {"enum": ["alert", "signal"]},
+        "category": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "type": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "action": {"type": "string", "minLength": 1},
+        "outcome": {"type": "string", "enum": ["success", "failure", "unknown"]}
+      },
+      "additionalProperties": true
+    },
+    "observer": {
+      "type": "object",
+      "required": ["vendor", "product"],
+      "properties": {
+        "vendor": {"const": "AgentGuard"},
+        "product": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "host": {
+      "type": "object",
+      "properties": {"name": {"type": "string", "minLength": 1}},
+      "required": ["name"],
+      "additionalProperties": true
+    },
+    "agentguard": {
+      "type": "object",
+      "required": ["schema", "finding", "risk"],
+      "properties": {
+        "schema": {
+          "type": "object",
+          "required": ["version"],
+          "properties": {"version": {"const": "1.0.0-draft"}}
+        },
+        "finding": {
+          "type": "object",
+          "required": ["id", "type", "name"],
+          "properties": {
+            "id": {"type": "string", "minLength": 1},
+            "type": {
+              "enum": [
+                "agentguard.finding.detected",
+                "agentguard.service.detected",
+                "agentguard.browser_extension.detected",
+                "agentguard.process.detected",
+                "agentguard.persistence.detected",
+                "agentguard.policy.match"
+              ]
+            },
+            "name": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": true
+        },
+        "risk": {
+          "type": "object",
+          "required": ["level", "score", "reasons"],
+          "properties": {
+            "level": {"enum": ["low", "medium", "high", "critical"]},
+            "score": {"type": "number", "minimum": 0, "maximum": 100},
+            "reasons": {"type": "array", "items": {"type": "string"}}
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "not": {
+        "anyOf": [
+          {"required": ["prompt"]},
+          {"required": ["prompts"]},
+          {"required": ["completion"]},
+          {"required": ["browser_history"]}
+        ]
+      }
+    }
+  ],
+  "additionalProperties": true
+}
