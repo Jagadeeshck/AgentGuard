@@ -12,31 +12,48 @@ processors:
             field: _parse_failed
             value: true
 
-  # ── Step 2: Invalid-JSON error path ─────────────────────────────────────
+  # ── Step 2: Determine processing path and set an internal _path flag ────
+  # _path = 'error'       → invalid/unparseable JSON
+  # _path = 'legacy'      → valid JSON but no ai_sentinel.finding (agentguard / legacy namespace)
+  # _path = 'ai_sentinel' → canonical ai_sentinel.finding present
   - set:
-      field: event.kind
-      value: event
-      if: "ctx['_parse_failed'] == true"
-  - set:
-      field: event.module
-      value: ai_sentinel
-      if: "ctx['_parse_failed'] == true"
-  - set:
-      field: event.dataset
-      value: ai_sentinel.findings
-      if: "ctx['_parse_failed'] == true"
-  - append:
-      field: event.type
+      field: _path
       value: error
       if: "ctx['_parse_failed'] == true"
   - set:
+      field: _path
+      value: legacy
+      if: "ctx['_parse_failed'] != true && (ctx['ai_sentinel'] == null || ctx['ai_sentinel']['finding'] == null)"
+  - set:
+      field: _path
+      value: ai_sentinel
+      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+
+  # ── Step 3: Invalid-JSON error path ─────────────────────────────────────
+  - set:
+      field: event.kind
+      value: event
+      if: "ctx['_path'] == 'error'"
+  - set:
+      field: event.module
+      value: ai_sentinel
+      if: "ctx['_path'] == 'error'"
+  - set:
+      field: event.dataset
+      value: ai_sentinel.findings
+      if: "ctx['_path'] == 'error'"
+  - append:
+      field: event.type
+      value: error
+      if: "ctx['_path'] == 'error'"
+  - set:
       field: event.outcome
       value: failure
-      if: "ctx['_parse_failed'] == true"
+      if: "ctx['_path'] == 'error'"
   - set:
       field: ecs.version
       value: "8.17.0"
-      if: "ctx['_parse_failed'] == true"
+      if: "ctx['_path'] == 'error'"
   - append:
       field: tags
       value:
@@ -46,96 +63,96 @@ processors:
         - mcp_monitoring
         - endpoint_visibility
       allow_duplicates: false
-      if: "ctx['_parse_failed'] == true"
+      if: "ctx['_path'] == 'error'"
   - set:
       field: observer.vendor
       value: AI Sentinel
-      if: "ctx['_parse_failed'] == true"
+      if: "ctx['_path'] == 'error'"
   - set:
       field: observer.product
       value: AI Sentinel
-      if: "ctx['_parse_failed'] == true"
+      if: "ctx['_path'] == 'error'"
   - set:
       field: observer.type
       value: endpoint
-      if: "ctx['_parse_failed'] == true"
+      if: "ctx['_path'] == 'error'"
   - set:
       field: ai_sentinel.ingest.error.message
       value: Invalid JSON payload
-      if: "ctx['_parse_failed'] == true"
+      if: "ctx['_path'] == 'error'"
 
-  # ── Step 3: Parse @timestamp ─────────────────────────────────────────────
+  # ── Step 4: Parse @timestamp (non-error paths only) ─────────────────────
   - date:
       field: '@timestamp'
       formats:
         - ISO8601
-      if: "ctx['@timestamp'] != null && ctx['_parse_failed'] != true"
+      if: "ctx['_path'] != 'error' && ctx['@timestamp'] != null"
 
-  # ── Step 4a: Minimal path — agentguard / legacy namespace ────────────────
-  # Runs when ai_sentinel.finding is NOT present (and parse did not fail)
+  # ── Step 5a: Minimal path — agentguard / legacy namespace ────────────────
   - rename:
       field: finding_type
       target_field: agentguard.finding.type
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true && (ctx['ai_sentinel'] == null || ctx['ai_sentinel']['finding'] == null)"
+      if: "ctx['_path'] == 'legacy'"
   - rename:
       field: finding_category
       target_field: agentguard.finding.category
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true && (ctx['ai_sentinel'] == null || ctx['ai_sentinel']['finding'] == null)"
+      if: "ctx['_path'] == 'legacy'"
   - rename:
       field: severity
       target_field: agentguard.finding.severity
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true && (ctx['ai_sentinel'] == null || ctx['ai_sentinel']['finding'] == null)"
+      if: "ctx['_path'] == 'legacy'"
   - set:
       field: event.kind
       value: event
-      if: "ctx['_parse_failed'] != true && (ctx['ai_sentinel'] == null || ctx['ai_sentinel']['finding'] == null)"
+      if: "ctx['_path'] == 'legacy'"
   - set:
       field: event.category
       value:
         - threat
-      if: "ctx['_parse_failed'] != true && (ctx['ai_sentinel'] == null || ctx['ai_sentinel']['finding'] == null)"
+      if: "ctx['_path'] == 'legacy'"
   - set:
       field: event.action
       copy_from: agentguard.finding.type
       ignore_empty_value: true
-      if: "ctx['_parse_failed'] != true && (ctx['ai_sentinel'] == null || ctx['ai_sentinel']['finding'] == null) && ctx['agentguard'] != null && ctx['agentguard']['finding'] != null && ctx['agentguard']['finding']['type'] != null"
+      if: "ctx['_path'] == 'legacy' && ctx['agentguard'] != null && ctx['agentguard']['finding'] != null && ctx['agentguard']['finding']['type'] != null"
 
-  # ── Step 4b: Full AI Sentinel path ──────────────────────────────────────
-  # Runs when ai_sentinel.finding IS present (and parse did not fail)
+  # ── Step 5b: Full AI Sentinel enrichment path ───────────────────────────
   - set:
       field: event.kind
       value: alert
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - set:
       field: event.module
       value: ai_sentinel
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - set:
       field: event.dataset
       value: ai_sentinel.findings
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - set:
       field: event.outcome
       value: success
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - set:
       field: event.action
       copy_from: ai_sentinel.finding.type
       ignore_empty_value: true
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null && ctx['ai_sentinel']['finding']['type'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['ai_sentinel']['finding']['type'] != null"
   - set:
       field: event.risk_score
       copy_from: ai_sentinel.risk.score
       ignore_empty_value: true
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['risk'] != null && ctx['ai_sentinel']['risk']['score'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['ai_sentinel']['risk'] != null && ctx['ai_sentinel']['risk']['score'] != null"
 
-  # Map event.category and event.type based on finding type
+  # Map event.category and event.type based on finding type.
+  # Categories: network (API/LLM connections), configuration (browser extensions, MCP servers, startup items),
+  # file (repository scans), process (cyber-agent and suspicious process activity).
   - script:
       lang: painless
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null && ctx['ai_sentinel']['finding']['type'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['ai_sentinel']['finding']['type'] != null"
       source: |
         if (ctx['event'] == null) ctx['event'] = new HashMap();
         String ft = ctx['ai_sentinel']['finding']['type'];
@@ -162,10 +179,12 @@ processors:
           ctx['event']['type'] = ['info'];
         }
 
-  # Map event.severity from risk level
+  # Map risk level to ECS event.severity.
+  # Values align with Elastic Common Schema severity bands:
+  #   critical → 99 (P1), high → 73 (P2), medium → 47 (P3), low → 21 (P4).
   - script:
       lang: painless
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null && ctx['ai_sentinel']['risk'] != null && ctx['ai_sentinel']['risk']['level'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['ai_sentinel']['risk'] != null && ctx['ai_sentinel']['risk']['level'] != null"
       source: |
         if (ctx['event'] == null) ctx['event'] = new HashMap();
         String level = ctx['ai_sentinel']['risk']['level'];
@@ -182,7 +201,7 @@ processors:
   - set:
       field: ecs.version
       value: "8.17.0"
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - append:
       field: tags
       value:
@@ -191,70 +210,69 @@ processors:
         - mcp_monitoring
         - endpoint_visibility
       allow_duplicates: false
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - append:
       field: tags
       value: cyber_agent_activity
       allow_duplicates: false
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['cyber_agent'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['ai_sentinel']['cyber_agent'] != null"
   - set:
       field: observer.vendor
       value: AI Sentinel
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - set:
       field: observer.product
       value: AI Sentinel
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - set:
       field: observer.type
       value: endpoint
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null"
+      if: "ctx['_path'] == 'ai_sentinel'"
   - append:
       field: related.hosts
       value: '{{{host.name}}}'
       allow_duplicates: false
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null && ctx['host'] != null && ctx['host']['name'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['host'] != null && ctx['host']['name'] != null"
   - append:
       field: related.user
       value: '{{{user.name}}}'
       allow_duplicates: false
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null && ctx['user'] != null && ctx['user']['name'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['user'] != null && ctx['user']['name'] != null"
   - append:
       field: related.ip
       value: '{{{destination.ip}}}'
       allow_duplicates: false
-      if: "ctx['_parse_failed'] != true && ctx['ai_sentinel'] != null && ctx['ai_sentinel']['finding'] != null && ctx['destination'] != null && ctx['destination']['ip'] != null"
+      if: "ctx['_path'] == 'ai_sentinel' && ctx['destination'] != null && ctx['destination']['ip'] != null"
 
-  # ── Step 5: Redaction ────────────────────────────────────────────────────
-  # process.command_line: --flag value patterns
+  # ── Step 6: Redaction — secret values in common sensitive fields ─────────
+  # Patterns covered:
+  #   --flag value   (space-separated CLI flags)
+  #   key=value      (equals-separated inline values)
+  #   ?key=value     (URL query parameters)
   - gsub:
       field: process.command_line
       pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+\S+'
       replacement: '$1 [REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
-  # process.command_line: key=value patterns
+      if: "ctx['_path'] != 'error'"
   - gsub:
       field: process.command_line
       pattern: '(\b(?:api[-_]?key|token|secret|password)=)\S+'
       replacement: '$1[REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
-  # ai_sentinel.ai.endpoint query-string secrets
+      if: "ctx['_path'] != 'error'"
   - gsub:
       field: ai_sentinel.ai.endpoint
       pattern: '([?&])(api[-_]?key|api[-_]?secret|key|token|secret|password)=[^&#\s]+'
       replacement: '$1$2=[REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
-  # ai_sentinel.mcp.server.command --flag value patterns
+      if: "ctx['_path'] != 'error'"
   - gsub:
       field: ai_sentinel.mcp.server.command
       pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+\S+'
       replacement: '$1 [REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
-  # ai_sentinel.mcp.server.args array elements: --flag=value patterns
+      if: "ctx['_path'] != 'error'"
   - foreach:
       field: ai_sentinel.mcp.server.args
       processor:
@@ -263,22 +281,19 @@ processors:
           pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password|access[-_]?token)=)\S+'
           replacement: '$1[REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
-  # ai_sentinel.mcp.config.path query-string secrets
+      if: "ctx['_path'] != 'error'"
   - gsub:
       field: ai_sentinel.mcp.config.path
       pattern: '([?&])(api[-_]?key|api[-_]?secret|token|secret|access[-_]?token|password)=[^&#\s]+'
       replacement: '$1$2=[REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
-  # ai_sentinel.startup.command --flag value patterns
+      if: "ctx['_path'] != 'error'"
   - gsub:
       field: ai_sentinel.startup.command
       pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+\S+'
       replacement: '$1 [REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
-  # ai_sentinel.cyber_agent.target_paths array elements: query-string secrets
+      if: "ctx['_path'] != 'error'"
   - foreach:
       field: ai_sentinel.cyber_agent.target_paths
       processor:
@@ -287,33 +302,35 @@ processors:
           pattern: '([?&])(api[-_]?key|api[-_]?secret|key|token|secret|access[-_]?token|password)=[^&#\s]+'
           replacement: '$1$2=[REDACTED]'
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
+      if: "ctx['_path'] != 'error'"
 
-  # ── Step 6: Remove sensitive fields ─────────────────────────────────────
+  # ── Step 7: Remove sensitive fields ─────────────────────────────────────
   - remove:
       field: clipboard
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
+      if: "ctx['_path'] != 'error'"
   - remove:
       field: ai_sentinel.prompt
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
+      if: "ctx['_path'] != 'error'"
   - remove:
       field: ai_sentinel.secret
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
+      if: "ctx['_path'] != 'error'"
   - remove:
       field: http.request.body.content
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
+      if: "ctx['_path'] != 'error'"
   - remove:
       field: ai_sentinel.cyber_agent.prompt_content
       ignore_missing: true
-      if: "ctx['_parse_failed'] != true"
+      if: "ctx['_path'] != 'error'"
 
   # ── Cleanup internal flags ───────────────────────────────────────────────
   - remove:
-      field: _parse_failed
+      field:
+        - _parse_failed
+        - _path
       ignore_missing: true
 
 on_failure:
