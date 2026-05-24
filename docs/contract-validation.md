@@ -36,3 +36,13 @@ cd agentguard-sensor && go test ./...
 2. Add at least one fixture line in `examples/sample-findings/v1-sample-events.ndjson`.
 3. Update sensor emission mapping/tests as needed.
 4. Ensure Elastic integration sample/pipeline tests still pass with unchanged data stream names.
+
+
+Legacy compatibility: `ai_sentinel.*` fields may still be accepted as legacy input by downstream tooling, but `agentguard.*` is the canonical namespace for current contracts.
+
+
+Canonical contract values:
+- Package name: `agentguard_ai_sentinel`
+- Dataset: `agentguard_ai_sentinel.findings`
+- Data stream: `logs-agentguard_ai_sentinel.findings-default`
+- Canonical custom namespace: `agentguard.*`

@@ -54,10 +54,11 @@ jobs:
           docker version
           docker compose version || true
 
-      - name: Run Elastic package checks
+      - name: Lint and build Elastic package
         run: |
           cd "$PACKAGE_DIR"
-          elastic-package check
+          elastic-package lint
+          elastic-package build
 
       - name: Start Elasticsearch for pipeline tests
         timeout-minutes: 10

@@ -53,3 +53,13 @@ Confirm redaction occurs for sensitive values in:
 - bearer tokens
 - MCP/server argument lists
 - AI endpoint URLs carrying secrets
+
+
+Legacy compatibility: `ai_sentinel.*` fields may still be accepted as legacy input by downstream tooling, but `agentguard.*` is the canonical namespace for current contracts.
+
+
+Package contract baseline for tests:
+- Package name: `agentguard_ai_sentinel`
+- Dataset: `agentguard_ai_sentinel.findings`
+- Data stream: `logs-agentguard_ai_sentinel.findings-default`
+- Canonical custom namespace: `agentguard.*`
