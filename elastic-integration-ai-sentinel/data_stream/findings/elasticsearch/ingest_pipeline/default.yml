@@ -251,7 +251,7 @@ processors:
   #   ?key=value     (URL query parameters)
   - gsub:
       field: process.command_line
-      pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+\S+'
+      pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+(?:["''].*?["'']|\S+)'
       replacement: '$1 [REDACTED]'
       ignore_missing: true
       if: "ctx['_path'] != 'error'"
@@ -269,7 +269,7 @@ processors:
       if: "ctx['_path'] != 'error'"
   - gsub:
       field: ai_sentinel.mcp.server.command
-      pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+\S+'
+      pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+(?:["''].*?["'']|\S+)'
       replacement: '$1 [REDACTED]'
       ignore_missing: true
       if: "ctx['_path'] != 'error'"
@@ -290,7 +290,7 @@ processors:
       if: "ctx['_path'] != 'error'"
   - gsub:
       field: ai_sentinel.startup.command
-      pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+\S+'
+      pattern: '(--(?:api[-_]?key|api[-_]?secret|token|secret|password))\s+(?:["''].*?["'']|\S+)'
       replacement: '$1 [REDACTED]'
       ignore_missing: true
       if: "ctx['_path'] != 'error'"
