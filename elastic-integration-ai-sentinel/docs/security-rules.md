@@ -4,7 +4,7 @@ This document defines production-style Elastic Security detection rules for Agen
 
 ## Packaging status
 
-As of this milestone, these rules are committed as **draft rule definitions** in `elastic-integration-ai-sentinel/dev-assets/security_rules/`.
+As of this milestone, these rules are committed as **draft rule definitions** in `dev-assets/security_rules/` at the repository root.
 
 They are not yet added under `kibana/security_rule/` because Elastic package security rule saved objects must match strict package-compatible saved object formatting. A follow-up task should convert these drafts into validated package assets once formatting is confirmed with asset validation.
 
@@ -159,4 +159,4 @@ To avoid overclaiming, mapping is limited to broad tactics only where relevant:
 
 ## TODO
 
-Convert `dev-assets/security_rules/*.json` into package-compatible saved-object assets under `kibana/security_rule/` once asset-test-compatible formatting is validated against Elastic package security rule requirements.
+Convert `repo-root/dev-assets/security_rules/*.json` into package-compatible saved-object assets under `kibana/security_rule/` once asset-test-compatible formatting is validated against Elastic package security rule requirements.
