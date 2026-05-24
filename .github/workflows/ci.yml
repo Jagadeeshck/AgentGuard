@@ -69,6 +69,7 @@ jobs:
         run: |
           cd "$PACKAGE_DIR"
           elastic-package stack up -d --services=elasticsearch
+          echo "ELASTIC_STACK_STARTED=true" >> "$GITHUB_ENV"
 
       - name: Run pipeline tests
         timeout-minutes: 15
@@ -79,5 +80,9 @@ jobs:
       - name: Stop Elastic stack
         if: always()
         run: |
-          cd "$PACKAGE_DIR"
-          elastic-package stack down || true
+          if [ "${ELASTIC_STACK_STARTED:-false}" = "true" ]; then
+            cd "$PACKAGE_DIR"
+            elastic-package stack down || true
+          else
+            echo "Elastic stack was not started; skipping stack down."
+          fi

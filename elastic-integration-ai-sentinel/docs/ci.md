@@ -16,9 +16,9 @@ Pipeline tests run after starting Elasticsearch only:
 
 - `elastic-package stack up -d --services=elasticsearch`
 
-The workflow always performs cleanup:
+The workflow performs guarded cleanup:
 
-- `elastic-package stack down`
+- `elastic-package stack down` only when the stack-start step succeeded and set `ELASTIC_STACK_STARTED=true`.
 
 ## Optional/manual workflows
 
@@ -53,3 +53,9 @@ elastic-package stack up -d --services=elasticsearch
 elastic-package test pipeline
 elastic-package stack down
 ```
+
+
+## Package-spec hygiene
+
+Development-only assets must live outside the package directory at `repo-root/dev-assets/elastic-integration-ai-sentinel/`.
+Do not add `dev-assets/` inside `elastic-integration-ai-sentinel/`; this violates Elastic package-spec directory rules.

@@ -8,19 +8,19 @@ This document captures the **design specification** for AgentGuard / AI Sentinel
 - No endpoint scanner changes.
 - No CI workflow changes.
 - No ingest pipeline changes in this milestone.
-- Saved objects remain in `dev-assets/kibana_dashboards/` until they are validated as package-compatible.
+- Saved objects remain in `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/` until they are validated as package-compatible.
 
 ## Draft assets
 
 Draft Kibana saved-object JSON for six dashboards and six saved searches are stored in:
 
-- `dev-assets/kibana_dashboards/agentguard_ai_activity_overview.dashboard.json`
-- `dev-assets/kibana_dashboards/agentguard_mcp_security.dashboard.json`
-- `dev-assets/kibana_dashboards/agentguard_local_ai_llm_services.dashboard.json`
-- `dev-assets/kibana_dashboards/agentguard_browser_ai_extension_risk.dashboard.json`
-- `dev-assets/kibana_dashboards/agentguard_ai_cyber_agent_activity.dashboard.json`
-- `dev-assets/kibana_dashboards/agentguard_integration_health.dashboard.json`
-- `dev-assets/kibana_dashboards/saved_searches.json`
+- `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/agentguard_ai_activity_overview.dashboard.json`
+- `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/agentguard_mcp_security.dashboard.json`
+- `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/agentguard_local_ai_llm_services.dashboard.json`
+- `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/agentguard_browser_ai_extension_risk.dashboard.json`
+- `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/agentguard_ai_cyber_agent_activity.dashboard.json`
+- `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/agentguard_integration_health.dashboard.json`
+- `dev-assets/elastic-integration-ai-sentinel/kibana_dashboards/saved_searches.json`
 
 ## Promotion criteria
 
