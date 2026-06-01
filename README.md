@@ -1,14 +1,12 @@
 # AgentGuard
 
-AgentGuard is an AI activity observability platform focused on endpoint-side visibility and backend analysis workflows.
+AgentGuard is a full **AI activity observability platform** — not just an Elastic integration. It provides endpoint-side visibility into AI agent activity, structured findings output, and a pluggable backend integration layer. Elastic is the first supported backend, not the product itself.
 
-This repository is the product home for AgentGuard and currently contains:
+This repository contains:
 
-- `agentguard-sensor/` (endpoint-side producer)
-- `elastic-integration-ai-sentinel/` (first backend integration for Elastic)
-- `dev-assets/` (development assets, examples, placeholders, test data)
-
-Elastic is the first supported backend integration in this repository, not the full product boundary.
+- `agentguard-sensor/` — endpoint-side producer that discovers AI-related runtime signals
+- `elastic-integration-ai-sentinel/` — first backend integration (Elastic SIEM)
+- `dev-assets/` — development assets, examples, and test data
 
 ## Overview
 
