@@ -1,1 +1,26 @@
-{"expected":[{"event":{"kind":"event","category":["threat"],"action":"critical_risk"},"agentguard":{"finding":{"type":"critical_risk","category":"mcp","severity":"critical"}},"ai_sentinel":{"finding_type":"critical_risk","finding_category":"mcp","severity":"critical"}}]}
+{
+  "expected": [
+    {
+      "event": {
+        "kind": "event",
+        "category": [
+          "threat"
+        ],
+        "action": "critical_risk"
+      },
+      "agentguard": {
+        "finding": {
+          "type": "critical_risk",
+          "category": "mcp",
+          "severity": "critical"
+        }
+      },
+      "ai_sentinel": {
+        "finding_type": "critical_risk",
+        "finding_category": "mcp",
+        "severity": "critical"
+      },
+      "@timestamp": "2026-05-24T00:00:00.000Z"
+    }
+  ]
+}
