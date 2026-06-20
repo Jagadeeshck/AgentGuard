@@ -1,48 +1,12 @@
-# Contract validation workflow (v1)
+# AgentGuard contract validation
 
-## Canonical contract sources
+Canonical fields use the AgentGuard namespace.
 
-- Human-readable schema: `contracts/event-schema-v1.md`
-- Producer/consumer compatibility rules: `contracts/producer-consumer-contract-v1.md`
-- Machine-readable stub schema: `contracts/jsonschema/event-schema-v1.schema.json`
+Required values:
 
-## Canonical fixtures
+- Package name: agentguard
+- Dataset: agentguard.findings
+- Data stream: logs-agentguard.findings-default
+- Custom namespace: agentguard
 
-- Shared fixture set: `examples/sample-findings/v1-sample-events.ndjson`
-- Fixture events intentionally remain metadata-only and avoid prompt/body/history payloads.
-
-## How sensor and integrations should use the contract
-
-- `agentguard-sensor` emits contract-aligned `agentguard.*` fields.
-- For backward compatibility, sensor events still include `ai_sentinel.*` mirror fields expected by the Elastic package.
-- Elastic integration sample events include both namespaces to document current compatibility behavior.
-
-## Validation tests
-
-- `agentguard-sensor/internal/contract/validator_test.go`
-  - validates shared fixtures
-  - validates sensor-generated event shape
-  - rejects prohibited sensitive-content fields
-
-Run with:
-
-```bash
-cd agentguard-sensor && go test ./...
-```
-
-## Safely adding a new event type
-
-1. Add the new event type in `contracts/event-schema-v1.md` and the JSON schema enum.
-2. Add at least one fixture line in `examples/sample-findings/v1-sample-events.ndjson`.
-3. Update sensor emission mapping/tests as needed.
-4. Ensure Elastic integration sample/pipeline tests still pass with unchanged data stream names.
-
-
-Legacy compatibility: `ai_sentinel.*` fields may still be accepted as legacy input by downstream tooling, but `agentguard.*` is the canonical namespace for current contracts.
-
-
-Canonical contract values:
-- Package name: `agentguard_ai_sentinel`
-- Dataset: `agentguard_ai_sentinel.findings`
-- Data stream: `logs-agentguard_ai_sentinel.findings-default`
-- Canonical custom namespace: `agentguard.*`
+Run sensor checks with: cd agentguard-sensor && go test ./...
