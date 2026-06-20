@@ -23,6 +23,13 @@ processors:
         - set:
             field: event.outcome
             value: failure
+        - set:
+            field: agentguard.ingest.error.message
+            value: Invalid JSON payload
+        - append:
+            field: tags
+            value: agentguard_invalid_json
+            allow_duplicates: false
 
   - set:
       field: event.module
