@@ -18,3 +18,7 @@ policy_templates:
     description: AgentGuard findings.
     data_streams:
       - findings
+    inputs:
+      - type: logfile
+        title: Collect AgentGuard findings from log file
+        description: Collect AgentGuard findings NDJSON events from local paths.
