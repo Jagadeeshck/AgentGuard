@@ -12,7 +12,7 @@ import (
 func TestSampleFixturesValidate(t *testing.T) {
 	_, thisFile, _, _ := runtime.Caller(0)
 	path := filepath.Clean(filepath.Join(filepath.Dir(thisFile), "..", "..", "..", "examples", "sample-findings", "v1-sample-events.ndjson"))
-	if err := ValidateNDJSONFile(path); err != nil {
+	if _, err := ValidateNDJSONFile(path); err != nil {
 		t.Fatalf("fixtures failed validation: %v", err)
 	}
 }

@@ -15,7 +15,7 @@ This document describes the current module architecture in this repository and t
 ## 2) Event shape: structured NDJSON findings
 
 - Findings are emitted as machine-readable event records.
-- ECS-compatible fields and `ai_sentinel.*` custom fields are used for downstream normalization.
+- ECS-compatible fields and canonical `agentguard.*` custom fields are used for downstream normalization; `ai_sentinel.*` is legacy Elastic compatibility only.
 - Contract and schema alignment are currently evolving and partially documented in module-specific docs.
 
 ## 3) Consumer/backend module: `elastic-integration-ai-sentinel/`
