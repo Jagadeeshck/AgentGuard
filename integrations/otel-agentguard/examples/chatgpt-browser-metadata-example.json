@@ -1,0 +1,30 @@
+{
+  "agentguard.schema.version": "1.0.0",
+  "event.module": "agentguard",
+  "event.dataset": "agentguard.ai_activity",
+  "observer.vendor": "AgentGuard",
+  "observer.product": "AgentGuard",
+  "agentguard.privacy.prompt_capture_enabled": false,
+  "agentguard.privacy.content_capture_enabled": false,
+  "agentguard.privacy.redaction_status": "metadata_only",
+  "@timestamp": "2026-06-20T11:00:00Z",
+  "agentguard.source.type": "browser_metadata",
+  "agentguard.source.name": "chatgpt_browser_metadata",
+  "agentguard.provider.name": "openai",
+  "agentguard.provider.category": "commercial_ai",
+  "agentguard.activity.type": "ai_web_session",
+  "agentguard.finding.id": "ag-example-chatgpt-001",
+  "agentguard.finding.type": "web_ai_session",
+  "agentguard.risk.level": "low",
+  "agentguard.risk.score": 10,
+  "agentguard.session.id": "sess_synth_chatgpt_001",
+  "agentguard.user.hash": "user_hash_002",
+  "agentguard.team.name": "engineering",
+  "agentguard.network.destination.domain": "chatgpt.com",
+  "agentguard.attributes": {
+    "browser": "managed_chrome",
+    "profile": "work",
+    "workspace_approved": true,
+    "session_action": "start"
+  }
+}

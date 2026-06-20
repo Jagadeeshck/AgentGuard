@@ -1,0 +1,91 @@
+extensions:
+  basicauth/agentguard_bearer:
+    htpasswd:
+      inline: "agentguard:${AGENTGUARD_OTEL_AUTH_TOKEN}"
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+        auth:
+          authenticator: basicauth/agentguard_bearer
+      http:
+        endpoint: 0.0.0.0:4318
+        auth:
+          authenticator: basicauth/agentguard_bearer
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 512
+    spike_limit_mib: 128
+  resource/agentguard:
+    attributes:
+      - key: service.namespace
+        value: agentguard
+        action: upsert
+      - key: deployment.environment
+        value: ${AGENTGUARD_ENVIRONMENT}
+        action: upsert
+      - key: agentguard.org
+        value: ${AGENTGUARD_ORG}
+        action: upsert
+      - key: observer.vendor
+        value: AgentGuard
+        action: upsert
+      - key: observer.product
+        value: AgentGuard
+        action: upsert
+  attributes/agentguard_defaults:
+    actions:
+      - key: event.module
+        value: agentguard
+        action: upsert
+      - key: event.dataset
+        value: agentguard.ai_activity
+        action: upsert
+      - key: agentguard.schema.version
+        value: "1.0.0"
+        action: upsert
+      - key: agentguard.privacy.prompt_capture_enabled
+        value: false
+        action: upsert
+      - key: agentguard.privacy.content_capture_enabled
+        value: false
+        action: upsert
+      - key: agentguard.privacy.redaction_status
+        value: metadata_only
+        action: upsert
+  batch:
+    timeout: 5s
+    send_batch_size: 1024
+
+exporters:
+  debug:
+    verbosity: detailed
+  file/ndjson:
+    path: /var/log/agentguard/agentguard-ai-activity.ndjson
+  otlphttp/generic:
+    endpoint: ${OTLP_EXPORTER_ENDPOINT}
+  elasticsearch/optional:
+    endpoints: [${ELASTICSEARCH_ENDPOINT}]
+    api_key: ${ELASTICSEARCH_API_KEY}
+    logs_index: logs-agentguard.ai_activity-default
+    pipeline: agentguard-ai-activity-default
+
+service:
+  extensions: [basicauth/agentguard_bearer]
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource/agentguard, attributes/agentguard_defaults, batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource/agentguard, batch]
+      exporters: [debug]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource/agentguard, batch]
+      exporters: [debug]

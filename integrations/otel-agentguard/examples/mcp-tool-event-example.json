@@ -1,0 +1,31 @@
+{
+  "agentguard.schema.version": "1.0.0",
+  "event.module": "agentguard",
+  "event.dataset": "agentguard.ai_activity",
+  "observer.vendor": "AgentGuard",
+  "observer.product": "AgentGuard",
+  "agentguard.privacy.prompt_capture_enabled": false,
+  "agentguard.privacy.content_capture_enabled": false,
+  "agentguard.privacy.redaction_status": "metadata_only",
+  "@timestamp": "2026-06-20T12:00:00Z",
+  "agentguard.source.type": "mcp_runtime",
+  "agentguard.source.name": "mcp_runtime_adapter",
+  "agentguard.provider.name": "unknown",
+  "agentguard.provider.category": "mcp",
+  "agentguard.activity.type": "mcp_tool_invocation",
+  "agentguard.finding.id": "ag-example-mcp-001",
+  "agentguard.finding.type": "tool_invocation",
+  "agentguard.risk.level": "medium",
+  "agentguard.risk.score": 55,
+  "agentguard.mcp.server.name": "internal-filesystem-mcp",
+  "agentguard.mcp.tool.name": "read_file",
+  "agentguard.mcp.transport": "stdio",
+  "agentguard.tool.name": "read_file",
+  "agentguard.tool.type": "filesystem",
+  "agentguard.tool.category": "file_access",
+  "agentguard.tool.decision": "review",
+  "agentguard.tool.parameters": {
+    "target_path_classification": "source_code",
+    "path_prefix": "/repo/src"
+  }
+}

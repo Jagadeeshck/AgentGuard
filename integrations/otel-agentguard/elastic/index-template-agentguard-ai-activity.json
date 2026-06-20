@@ -1,0 +1,23 @@
+{
+  "index_patterns": [
+    "logs-agentguard.ai_activity-*"
+  ],
+  "template": {
+    "settings": {
+      "index.default_pipeline": "agentguard-ai-activity-default"
+    },
+    "mappings": {
+      "dynamic": true
+    },
+    "aliases": {}
+  },
+  "composed_of": [
+    "agentguard-ai-activity-fields"
+  ],
+  "priority": 250,
+  "data_stream": {},
+  "_meta": {
+    "description": "Optional Elastic backend template for AgentGuard AI activity events",
+    "dataset": "agentguard.ai_activity"
+  }
+}

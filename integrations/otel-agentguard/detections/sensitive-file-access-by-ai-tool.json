@@ -1,0 +1,27 @@
+{
+  "id": "sensitive-file-access-by-ai-tool",
+  "name": "AI tool accesses sensitive file path",
+  "status": "draft",
+  "backend_neutral": true,
+  "dataset": "agentguard.ai_activity",
+  "severity": "medium",
+  "related_rules": [
+    "AI tool accesses sensitive file path"
+  ],
+  "query_model": {
+    "where": "tool category file_access and target classification secret, credential, regulated, or source_control",
+    "required_fields": [
+      "agentguard.activity.type",
+      "agentguard.risk.score",
+      "agentguard.provider.name"
+    ]
+  },
+  "response": "Review source adapter, confirm business approval, and tune allowlists or policy thresholds.",
+  "elastic_example": {
+    "index": [
+      "logs-agentguard.ai_activity-*"
+    ],
+    "language": "kuery",
+    "query": "event.dataset: agentguard.ai_activity"
+  }
+}

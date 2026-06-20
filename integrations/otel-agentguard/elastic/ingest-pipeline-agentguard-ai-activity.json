@@ -1,0 +1,62 @@
+{
+  "description": "Optional Elastic ingest pipeline for AgentGuard AI activity metadata",
+  "processors": [
+    {
+      "set": {
+        "field": "event.module",
+        "value": "agentguard",
+        "override": false
+      }
+    },
+    {
+      "set": {
+        "field": "event.dataset",
+        "value": "agentguard.ai_activity",
+        "override": false
+      }
+    },
+    {
+      "set": {
+        "field": "observer.vendor",
+        "value": "AgentGuard",
+        "override": false
+      }
+    },
+    {
+      "set": {
+        "field": "observer.product",
+        "value": "AgentGuard",
+        "override": false
+      }
+    },
+    {
+      "set": {
+        "field": "agentguard.privacy.prompt_capture_enabled",
+        "value": false,
+        "override": false
+      }
+    },
+    {
+      "set": {
+        "field": "agentguard.privacy.content_capture_enabled",
+        "value": false,
+        "override": false
+      }
+    },
+    {
+      "set": {
+        "field": "agentguard.privacy.redaction_status",
+        "value": "metadata_only",
+        "override": false
+      }
+    }
+  ],
+  "on_failure": [
+    {
+      "set": {
+        "field": "error.message",
+        "value": "{{ _ingest.on_failure_message }}"
+      }
+    }
+  ]
+}
