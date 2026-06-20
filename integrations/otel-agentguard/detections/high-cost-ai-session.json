@@ -1,0 +1,27 @@
+{
+  "id": "high-cost-ai-session",
+  "name": "High-cost AI session",
+  "status": "draft",
+  "backend_neutral": true,
+  "dataset": "agentguard.ai_activity",
+  "severity": "medium",
+  "related_rules": [
+    "High-cost AI session"
+  ],
+  "query_model": {
+    "where": "estimated cost or token count exceeds policy threshold",
+    "required_fields": [
+      "agentguard.activity.type",
+      "agentguard.risk.score",
+      "agentguard.provider.name"
+    ]
+  },
+  "response": "Review source adapter, confirm business approval, and tune allowlists or policy thresholds.",
+  "elastic_example": {
+    "index": [
+      "logs-agentguard.ai_activity-*"
+    ],
+    "language": "kuery",
+    "query": "event.dataset: agentguard.ai_activity"
+  }
+}

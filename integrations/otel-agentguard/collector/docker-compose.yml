@@ -1,0 +1,20 @@
+services:
+  agentguard-otel-gateway:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otelcol/otel-collector-config.yaml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      AGENTGUARD_OTEL_AUTH_TOKEN: ${AGENTGUARD_OTEL_AUTH_TOKEN:-change-me}
+      AGENTGUARD_ENVIRONMENT: ${AGENTGUARD_ENVIRONMENT:-dev}
+      AGENTGUARD_ORG: ${AGENTGUARD_ORG:-example-org}
+      AGENTGUARD_BACKEND: ${AGENTGUARD_BACKEND:-debug}
+      ELASTICSEARCH_ENDPOINT: ${ELASTICSEARCH_ENDPOINT:-http://elasticsearch:9200}
+      ELASTICSEARCH_API_KEY: ${ELASTICSEARCH_API_KEY:-}
+      OTLP_EXPORTER_ENDPOINT: ${OTLP_EXPORTER_ENDPOINT:-http://otel-backend:4318}
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/otel-collector-config.yaml:ro
+      - agentguard-otel-logs:/var/log/agentguard
+volumes:
+  agentguard-otel-logs: {}

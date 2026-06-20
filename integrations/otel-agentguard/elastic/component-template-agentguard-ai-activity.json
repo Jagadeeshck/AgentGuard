@@ -1,0 +1,92 @@
+{
+  "template": {
+    "mappings": {
+      "dynamic": true,
+      "properties": {
+        "agentguard": {
+          "properties": {
+            "cost": {
+              "properties": {
+                "estimated_usd": {
+                  "type": "float"
+                }
+              }
+            },
+            "tokens": {
+              "properties": {
+                "input": {
+                  "type": "long"
+                },
+                "output": {
+                  "type": "long"
+                },
+                "total": {
+                  "type": "long"
+                }
+              }
+            },
+            "duration": {
+              "properties": {
+                "ms": {
+                  "type": "long"
+                }
+              }
+            },
+            "risk": {
+              "properties": {
+                "score": {
+                  "type": "integer"
+                },
+                "level": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "privacy": {
+              "properties": {
+                "prompt_capture_enabled": {
+                  "type": "boolean"
+                },
+                "content_capture_enabled": {
+                  "type": "boolean"
+                },
+                "redaction_status": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "attributes": {
+              "type": "flattened"
+            },
+            "tool": {
+              "properties": {
+                "parameters": {
+                  "type": "flattened"
+                }
+              }
+            },
+            "source": {
+              "properties": {
+                "raw_metadata": {
+                  "type": "flattened"
+                }
+              }
+            }
+          }
+        },
+        "event": {
+          "properties": {
+            "module": {
+              "type": "constant_keyword",
+              "value": "agentguard"
+            },
+            "dataset": {
+              "type": "constant_keyword",
+              "value": "agentguard.ai_activity"
+            }
+          }
+        }
+      }
+    }
+  }
+}

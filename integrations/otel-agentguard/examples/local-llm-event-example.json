@@ -1,0 +1,28 @@
+{
+  "agentguard.schema.version": "1.0.0",
+  "event.module": "agentguard",
+  "event.dataset": "agentguard.ai_activity",
+  "observer.vendor": "AgentGuard",
+  "observer.product": "AgentGuard",
+  "agentguard.privacy.prompt_capture_enabled": false,
+  "agentguard.privacy.content_capture_enabled": false,
+  "agentguard.privacy.redaction_status": "metadata_only",
+  "@timestamp": "2026-06-20T13:00:00Z",
+  "agentguard.source.type": "endpoint_sensor",
+  "agentguard.source.name": "agentguard-sensor",
+  "agentguard.provider.name": "local",
+  "agentguard.provider.category": "local_llm",
+  "agentguard.activity.type": "local_llm_service_detected",
+  "agentguard.finding.id": "ag-example-ollama-001",
+  "agentguard.finding.type": "local_llm_exposure",
+  "agentguard.risk.level": "high",
+  "agentguard.risk.score": 75,
+  "agentguard.model.name": "llama3.1",
+  "agentguard.app.name": "ollama",
+  "agentguard.network.destination.domain": "workstation-22.example.internal",
+  "agentguard.attributes": {
+    "listen_address": "0.0.0.0",
+    "listen_port": 11434,
+    "host": "synthetic-host-22"
+  }
+}

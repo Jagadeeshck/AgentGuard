@@ -1,0 +1,27 @@
+{
+  "id": "local-llm-exposed-network",
+  "name": "Local LLM exposed to network",
+  "status": "draft",
+  "backend_neutral": true,
+  "dataset": "agentguard.ai_activity",
+  "severity": "medium",
+  "related_rules": [
+    "Local LLM service exposed to network"
+  ],
+  "query_model": {
+    "where": "local LLM listens on non-loopback interface",
+    "required_fields": [
+      "agentguard.activity.type",
+      "agentguard.risk.score",
+      "agentguard.provider.name"
+    ]
+  },
+  "response": "Review source adapter, confirm business approval, and tune allowlists or policy thresholds.",
+  "elastic_example": {
+    "index": [
+      "logs-agentguard.ai_activity-*"
+    ],
+    "language": "kuery",
+    "query": "event.dataset: agentguard.ai_activity"
+  }
+}
