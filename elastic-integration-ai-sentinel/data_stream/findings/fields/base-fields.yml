@@ -6,7 +6,7 @@
   value: logs
 - name: data_stream.dataset
   type: constant_keyword
-  value: agentguard_ai_sentinel.findings
+  value: agentguard.findings
 - name: data_stream.namespace
   type: constant_keyword
 - name: message
