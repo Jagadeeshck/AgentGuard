@@ -7,25 +7,25 @@ outputs:
       - /etc/elastic-agent/certs/http_ca.crt
 
 inputs:
-  - id: agentguard-ai-sentinel-findings-linux
+  - id: agentguard-agentguard-findings-linux
     type: filestream
     streams:
-      - id: agentguard-ai-sentinel-findings-linux-stream
+      - id: agentguard-agentguard-findings-linux-stream
         data_stream:
           type: logs
-          dataset: ai_sentinel.findings
+          dataset: agentguard.findings
           namespace: default
         paths:
           - /var/log/agentguard/findings.ndjson
-          - /var/log/ai-sentinel/findings.ndjson
+          - /var/log/agentguard/findings.ndjson
         parsers:
           - ndjson:
               target: ""
               add_error_key: true
               overwrite_keys: true
-        pipeline: logs-ai_sentinel.findings-default
+        pipeline: logs-agentguard.findings-default
         tags:
-          - ai_sentinel
+          - agentguard
           - agentguard
           - ai_activity
           - mcp_monitoring

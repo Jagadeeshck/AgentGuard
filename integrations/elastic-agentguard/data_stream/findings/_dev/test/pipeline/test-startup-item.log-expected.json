@@ -1,0 +1,71 @@
+{
+  "expected": [
+    {
+      "@timestamp": "2026-05-14T10:03:00.000Z",
+      "host": {
+        "name": "host-c"
+      },
+      "file": {
+        "path": "/Users/alice/Library/LaunchAgents/com.ai.helper.plist",
+        "name": "com.ai.helper.plist"
+      },
+      "agentguard": {
+        "finding": {
+          "id": "f-startup-1",
+          "type": "startup_item",
+          "name": "AI helper startup item",
+          "status": "open",
+          "confidence": 0.72
+        },
+        "risk": {
+          "level": "medium",
+          "score": 49,
+          "reasons": [
+            "ai_tool_persistence"
+          ]
+        },
+        "startup": {
+          "type": "launch_agent",
+          "name": "com.ai.helper",
+          "path": "/Users/alice/Library/LaunchAgents/com.ai.helper.plist",
+          "command": "/usr/local/bin/ai-helper --token [REDACTED]",
+          "enabled": true
+        },
+        "allowed": false
+      },
+      "tags": [
+        "agentguard",
+        "ai_activity",
+        "endpoint_visibility"
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "event": {
+        "module": "agentguard",
+        "dataset": "agentguard.findings",
+        "kind": "alert",
+        "category": [
+          "configuration"
+        ],
+        "type": [
+          "creation"
+        ],
+        "action": "startup_item",
+        "outcome": "success",
+        "risk_score": 49,
+        "severity": 47
+      },
+      "observer": {
+        "vendor": "AgentGuard",
+        "product": "AgentGuard Sensor",
+        "type": "endpoint"
+      },
+      "related": {
+        "hosts": [
+          "host-c"
+        ]
+      }
+    }
+  ]
+}

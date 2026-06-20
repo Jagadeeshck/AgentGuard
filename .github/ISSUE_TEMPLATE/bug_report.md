@@ -12,7 +12,7 @@ A clear and concise description of what the bug is in AgentGuard.
 
 **Component**
 - [ ] agentguard-sensor
-- [ ] elastic-integration-ai-sentinel
+- [ ] integrations/elastic-agentguard
 - [ ] contracts / schema
 - [ ] CI/CD pipeline
 - [ ] Documentation

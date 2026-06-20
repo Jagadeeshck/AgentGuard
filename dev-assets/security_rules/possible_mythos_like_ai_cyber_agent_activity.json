@@ -2,20 +2,19 @@
   "type": "query",
   "language": "kuery",
   "index": [
-    "logs-ai_sentinel.findings-*"
+    "logs-agentguard.findings-*"
   ],
   "interval": "5m",
   "from": "now-10m",
   "enabled": false,
   "tags": [
     "AgentGuard",
-    "AI Sentinel",
     "AI Activity",
     "MCP",
     "Elastic Security"
   ],
   "references": [
-    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+    "https://github.com/Jagadeeshck/integrations/elastic-agentguard#readme"
   ],
   "author": [
     "AgentGuard"
@@ -25,7 +24,7 @@
   "description": "Detects high-risk untrusted AI cyber-agent activity findings.",
   "severity": "critical",
   "risk_score": 92,
-  "query": "event.module: \"ai_sentinel\" and ai_sentinel.finding.type: (\"ai_cyber_agent_activity\" or \"ai_vulnerability_research_agent\" or \"ai_exploit_development_activity\" or \"ai_sandbox_escape_research\") and not ai_sentinel.allowed: true and ai_sentinel.risk.level: (\"high\" or \"critical\")",
+  "query": "event.module: \"agentguard\" and agentguard.finding.type: (\"ai_cyber_agent_activity\" or \"ai_vulnerability_research_agent\" or \"ai_exploit_development_activity\" or \"ai_sandbox_escape_research\") and not agentguard.allowed: true and agentguard.risk.level: (\"high\" or \"critical\")",
   "threat": [
     {
       "framework": "MITRE ATT&CK",

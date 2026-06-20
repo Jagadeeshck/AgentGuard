@@ -1,15 +1,15 @@
 [rule]
-author = ["AI Sentinel"]
-description = "Detects ai tool added to startup from AI Sentinel findings."
+author = ["AgentGuard"]
+description = "Detects ai tool added to startup from AgentGuard findings."
 from = "now-5m"
-index = ["logs-ai_sentinel.findings-*"]
+index = ["logs-agentguard.findings-*"]
 language = "kuery"
 license = "Elastic License v2"
 name = "AI Tool Added to Startup"
-query = '''event.module: "ai_sentinel" and ai_sentinel.finding.type: "startup_item" and not ai_sentinel.allowed: true'''
+query = '''event.module: "agentguard" and agentguard.finding.type: "startup_item" and not agentguard.allowed: true'''
 references = []
 risk_score = 50
-rule_id = "ai_sentinel_006"
+rule_id = "agentguard_006"
 severity = "medium"
-tags = ["AI Sentinel", "Elastic Security", "AI Security"]
+tags = ["AgentGuard", "Elastic Security", "AI Security"]
 type = "query"

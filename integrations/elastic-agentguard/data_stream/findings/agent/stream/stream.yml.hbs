@@ -1,0 +1,11 @@
+paths:
+{{#each paths}}
+  - {{this}}
+{{/each}}
+tags:
+{{#if tags}}
+{{#each tags}}
+  - {{this}}
+{{/each}}
+{{/if}}
+data_stream.dataset: agentguard.findings

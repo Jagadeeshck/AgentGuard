@@ -1,15 +1,15 @@
 [rule]
-author = ["AI Sentinel"]
-description = "Detects unknown process connecting to ai api from AI Sentinel findings."
+author = ["AgentGuard"]
+description = "Detects unknown process connecting to ai api from AgentGuard findings."
 from = "now-5m"
-index = ["logs-ai_sentinel.findings-*"]
+index = ["logs-agentguard.findings-*"]
 language = "kuery"
 license = "Elastic License v2"
 name = "Unknown Process Connecting to AI API"
-query = '''event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_api_connection" and not ai_sentinel.allowed: true and ai_sentinel.ai.provider: *'''
+query = '''event.module: "agentguard" and agentguard.finding.type: "ai_api_connection" and not agentguard.allowed: true and agentguard.ai.provider: *'''
 references = []
 risk_score = 55
-rule_id = "ai_sentinel_003"
+rule_id = "agentguard_003"
 severity = "medium"
-tags = ["AI Sentinel", "Elastic Security", "AI Security"]
+tags = ["AgentGuard", "Elastic Security", "AI Security"]
 type = "query"

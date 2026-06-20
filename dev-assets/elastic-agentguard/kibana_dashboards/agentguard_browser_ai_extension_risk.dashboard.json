@@ -1,0 +1,15 @@
+{
+  "title": "AgentGuard Browser AI Extension Risk Dashboard",
+  "type": "dashboard-spec-draft",
+  "index_pattern": "logs-agentguard.findings-*",
+  "panels": [
+    "Extensions by browser","Extensions with all_urls access","Extensions with nativeMessaging",
+    "Extensions with clipboardRead","Extensions with scripting/webRequest","High-risk extension table"
+  ],
+  "fields": [
+    "agentguard.browser.name","agentguard.browser.profile","agentguard.extension.id",
+    "agentguard.extension.name","agentguard.extension.version","agentguard.extension.permissions",
+    "agentguard.extension.host_permissions","agentguard.extension.risk_reasons","host.name",
+    "agentguard.risk.level"
+  ]
+}

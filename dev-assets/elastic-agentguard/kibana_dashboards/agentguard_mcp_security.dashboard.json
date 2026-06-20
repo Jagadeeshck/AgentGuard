@@ -1,0 +1,16 @@
+{
+  "title": "AgentGuard MCP Security Dashboard",
+  "type": "dashboard-spec-draft",
+  "index_pattern": "logs-agentguard.findings-*",
+  "panels": [
+    "MCP servers by host","MCP clients discovered","MCP capabilities distribution",
+    "MCP servers with shell capability","MCP servers with filesystem capability",
+    "MCP servers with browser/database/code repository capability",
+    "Recently changed MCP configs","Untrusted high-risk MCP servers table"
+  ],
+  "fields": [
+    "agentguard.mcp.client.name","agentguard.mcp.server.name","agentguard.mcp.server.command",
+    "agentguard.mcp.config.path","agentguard.mcp.tools","agentguard.mcp.capabilities",
+    "agentguard.mcp.risk_reasons","host.name","agentguard.allowed","agentguard.risk.level"
+  ]
+}

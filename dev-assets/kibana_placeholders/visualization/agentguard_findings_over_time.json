@@ -1,0 +1,14 @@
+{
+  "id": "agentguard_findings_over_time",
+  "type": "visualization",
+  "attributes": {
+    "title": "Findings Over Time",
+    "description": "Placeholder visualization for AgentGuard dashboard content.",
+    "visState": "{\"title\":\"Findings Over Time\",\"type\":\"markdown\",\"params\":{\"markdown\":\"Configure this panel with Lens after installing sample data.\"},\"aggs\":[]}",
+    "uiStateJSON": "{}",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: agentguard\",\"language\":\"kuery\"},\"filter\":[]}"
+    }
+  },
+  "references": []
+}

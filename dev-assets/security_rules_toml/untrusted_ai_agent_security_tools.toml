@@ -1,15 +1,15 @@
 [rule]
-author = ["AI Sentinel"]
+author = ["AgentGuard"]
 description = "Detects untrusted AI agent findings that indicate security tool orchestration or security research capabilities. Behaviour-based and does not rely on an agent name."
 from = "now-5m"
-index = ["logs-ai_sentinel.findings-*"]
+index = ["logs-agentguard.findings-*"]
 language = "kuery"
 license = "Elastic License v2"
 name = "Untrusted AI Agent Running Security Tools"
-query = '''event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: ("ai_security_tool_mcp_server" or "ai_cyber_agent_activity" or "ai_vulnerability_research_agent") and ai_sentinel.cyber_agent.security_tools: *'''
+query = '''event.module: "agentguard" and not agentguard.allowed: true and agentguard.finding.type: ("ai_security_tool_mcp_server" or "ai_cyber_agent_activity" or "ai_vulnerability_research_agent") and agentguard.cyber_agent.security_tools: *'''
 references = []
 risk_score = 80
-rule_id = "ai_sentinel_009"
+rule_id = "agentguard_009"
 severity = "high"
-tags = ["AI Sentinel", "Elastic Security", "AI Security", "AI Cyber-Agent"]
+tags = ["AgentGuard", "Elastic Security", "AI Security", "AI Cyber-Agent"]
 type = "query"

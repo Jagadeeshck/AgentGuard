@@ -2,20 +2,19 @@
   "type": "query",
   "language": "kuery",
   "index": [
-    "logs-ai_sentinel.findings-*"
+    "logs-agentguard.findings-*"
   ],
   "interval": "5m",
   "from": "now-10m",
   "enabled": false,
   "tags": [
     "AgentGuard",
-    "AI Sentinel",
     "AI Activity",
     "MCP",
     "Elastic Security"
   ],
   "references": [
-    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+    "https://github.com/Jagadeeshck/integrations/elastic-agentguard#readme"
   ],
   "author": [
     "AgentGuard"
@@ -25,7 +24,7 @@
   "description": "Detects AI browser extensions with broad/high-risk permissions.",
   "severity": "medium",
   "risk_score": 65,
-  "query": "event.module: \"ai_sentinel\" and ai_sentinel.finding.type: \"browser_extension\" and not ai_sentinel.allowed: true and ai_sentinel.extension.permissions: (\"<all_urls>\" or \"scripting\" or \"webRequest\" or \"clipboardRead\" or \"nativeMessaging\")",
+  "query": "event.module: \"agentguard\" and agentguard.finding.type: \"browser_extension\" and not agentguard.allowed: true and agentguard.extension.permissions: (\"<all_urls>\" or \"scripting\" or \"webRequest\" or \"clipboardRead\" or \"nativeMessaging\")",
   "threat": [
     {
       "framework": "MITRE ATT&CK",

@@ -1,0 +1,14 @@
+{
+  "id": "agentguard_findings_by_host",
+  "type": "visualization",
+  "attributes": {
+    "title": "Findings By Host",
+    "description": "Placeholder visualization for AgentGuard dashboard content.",
+    "visState": "{\"title\":\"Findings By Host\",\"type\":\"markdown\",\"params\":{\"markdown\":\"Configure this panel with Lens after installing sample data.\"},\"aggs\":[]}",
+    "uiStateJSON": "{}",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: agentguard\",\"language\":\"kuery\"},\"filter\":[]}"
+    }
+  },
+  "references": []
+}

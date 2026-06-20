@@ -1,0 +1,48 @@
+{
+  "expected": [
+    {
+      "agentguard": {
+        "finding": {
+          "id": "f-5",
+          "type": "local_llm_service"
+        },
+        "risk": {
+          "level": "critical",
+          "score": 99
+        },
+        "ai": {
+          "local_service": true,
+          "provider": "ollama"
+        }
+      },
+      "tags": [
+        "agentguard",
+        "ai_activity",
+        "endpoint_visibility"
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "event": {
+        "module": "agentguard",
+        "dataset": "agentguard.findings",
+        "kind": "alert",
+        "category": [
+          "network"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "local_llm_service",
+        "outcome": "success",
+        "risk_score": 99,
+        "severity": 99
+      },
+      "observer": {
+        "vendor": "AgentGuard",
+        "product": "AgentGuard Sensor",
+        "type": "endpoint"
+      }
+    }
+  ]
+}

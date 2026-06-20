@@ -16,7 +16,7 @@ Fixes # (issue number)
 ## Component(s) Affected
 
 - [ ] agentguard-sensor
-- [ ] elastic-integration-ai-sentinel
+- [ ] integrations/elastic-agentguard
 - [ ] contracts / schema
 - [ ] API / gRPC
 - [ ] Documentation

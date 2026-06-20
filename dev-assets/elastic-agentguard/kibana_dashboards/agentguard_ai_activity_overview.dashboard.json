@@ -1,0 +1,20 @@
+{
+  "title": "AgentGuard AI Activity Overview",
+  "type": "dashboard-spec-draft",
+  "index_pattern": "logs-agentguard.findings-*",
+  "panels": [
+    "Findings over time",
+    "Findings by risk level",
+    "Findings by host",
+    "Findings by type",
+    "Top AI providers",
+    "Top risky processes",
+    "Critical/high findings table",
+    "Allowlisted vs untrusted findings"
+  ],
+  "fields": [
+    "@timestamp","host.name","agentguard.finding.type","agentguard.finding.name",
+    "agentguard.risk.level","agentguard.risk.score","agentguard.allowed",
+    "process.name","process.executable","agentguard.ai.provider","event.action"
+  ]
+}

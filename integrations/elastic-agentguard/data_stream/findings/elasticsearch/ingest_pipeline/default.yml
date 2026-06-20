@@ -1,0 +1,86 @@
+---
+description: Pipeline for processing AgentGuard findings
+processors:
+  - json:
+      field: message
+      add_to_root: true
+      add_to_root_conflict_strategy: replace
+      if: "ctx.message instanceof String"
+      on_failure:
+        - set:
+            field: event.kind
+            value: event
+        - set:
+            field: event.module
+            value: agentguard
+        - set:
+            field: event.dataset
+            value: agentguard.findings
+        - append:
+            field: event.type
+            value: error
+            allow_duplicates: false
+        - set:
+            field: event.outcome
+            value: failure
+
+  - set:
+      field: event.module
+      value: agentguard
+      if: "ctx.event == null || ctx.event.module == null"
+
+  - set:
+      field: event.dataset
+      value: agentguard.findings
+      if: "ctx.event == null || ctx.event.dataset == null"
+
+  - set:
+      field: observer.vendor
+      value: AgentGuard
+      if: "ctx.observer == null || ctx.observer.vendor == null"
+
+  - set:
+      field: observer.product
+      value: AgentGuard Sensor
+      if: "ctx.observer == null || ctx.observer.product == null"
+
+  - set:
+      field: observer.type
+      value: endpoint
+      if: "ctx.observer == null || ctx.observer.type == null"
+
+  - set:
+      field: ecs.version
+      value: "8.17.0"
+      if: "ctx.ecs == null || ctx.ecs.version == null"
+
+  - append:
+      field: tags
+      value: agentguard
+      allow_duplicates: false
+
+  - append:
+      field: tags
+      value: ai_activity
+      allow_duplicates: false
+
+  - append:
+      field: tags
+      value: endpoint_visibility
+      allow_duplicates: false
+
+  - date:
+      field: '@timestamp'
+      formats:
+        - ISO8601
+      ignore_failure: true
+      if: "ctx['@timestamp'] != null"
+
+on_failure:
+  - set:
+      field: error.message
+      value: "{{{ _ingest.on_failure_message }}}"
+  - append:
+      field: tags
+      value: agentguard_pipeline_error
+      allow_duplicates: false

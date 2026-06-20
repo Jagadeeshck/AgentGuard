@@ -2,7 +2,7 @@
 
 AgentGuard is an AI activity observability platform with:
 - `agentguard-sensor/` = endpoint-side producer
-- `elastic-integration-ai-sentinel/` = Elastic integration package
+- `integrations/elastic-agentguard/` = Elastic integration package
 - `contracts/` = producer/consumer contracts
 - `docs/` = product, privacy, roadmap, and implementation guidance
 - `dev-assets/` and `examples/` = fixtures, samples, and validation helpers

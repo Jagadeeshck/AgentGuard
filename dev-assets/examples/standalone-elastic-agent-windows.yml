@@ -7,13 +7,13 @@ outputs:
       - 'C:\Program Files\Elastic\Agent\certs\http_ca.crt'
 
 inputs:
-  - id: agentguard-ai-sentinel-findings-windows
+  - id: agentguard-agentguard-findings-windows
     type: filestream
     streams:
-      - id: agentguard-ai-sentinel-findings-windows-stream
+      - id: agentguard-agentguard-findings-windows-stream
         data_stream:
           type: logs
-          dataset: ai_sentinel.findings
+          dataset: agentguard.findings
           namespace: default
         paths:
           - 'C:\ProgramData\AgentGuard\logs\findings.ndjson'
@@ -23,9 +23,9 @@ inputs:
               target: ""
               add_error_key: true
               overwrite_keys: true
-        pipeline: logs-ai_sentinel.findings-default
+        pipeline: logs-agentguard.findings-default
         tags:
-          - ai_sentinel
+          - agentguard
           - agentguard
           - ai_activity
           - mcp_monitoring

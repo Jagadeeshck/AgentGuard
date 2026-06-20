@@ -1,0 +1,14 @@
+{
+  "id": "agentguard_broad_extension_permissions",
+  "type": "visualization",
+  "attributes": {
+    "title": "Broad Extension Permissions",
+    "description": "Placeholder visualization for AgentGuard dashboard content.",
+    "visState": "{\"title\":\"Broad Extension Permissions\",\"type\":\"markdown\",\"params\":{\"markdown\":\"Configure this panel with Lens after installing sample data.\"},\"aggs\":[]}",
+    "uiStateJSON": "{}",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: agentguard\",\"language\":\"kuery\"},\"filter\":[]}"
+    }
+  },
+  "references": []
+}

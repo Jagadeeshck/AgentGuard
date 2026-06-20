@@ -12,7 +12,7 @@ Validate the generated NDJSON locally:
 agentguard-sensor validate-output --input findings.ndjson
 ```
 
-The generated file contains synthetic canonical `agentguard.*` findings with `ai_sentinel.*` compatibility mirrors for:
+The generated file contains synthetic canonical `agentguard.*` findings for:
 
 - `mcp_server`
 - `browser_extension`
@@ -20,6 +20,6 @@ The generated file contains synthetic canonical `agentguard.*` findings with `ai
 - `startup_item`
 - `suspicious_agent_process`
 
-Elastic Agent collects `findings.ndjson` via `filestream`, and the AI Sentinel package ingest pipeline parses, normalizes, and maps the findings into the default data stream:
+Elastic Agent collects `findings.ndjson` via `filestream`, and the AgentGuard package ingest pipeline parses, normalizes, and maps the findings into the default data stream:
 
 - `logs-agentguard.findings-default`

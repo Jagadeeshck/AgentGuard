@@ -3,13 +3,13 @@
   "type": "dashboard",
   "attributes": {
     "title": "Sensitive Repository Scanning",
-    "description": "Placeholder dashboard for AI Sentinel cyber-agent detection pack. Import the package and replace with Lens panels as schemas stabilize.",
+    "description": "Placeholder dashboard for AgentGuard cyber-agent detection pack. Import the package and replace with Lens panels as schemas stabilize.",
     "panelsJSON": "[]",
     "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}",
     "version": 1,
     "timeRestore": false,
     "kibanaSavedObjectMeta": {
-      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: ai_sentinel and ai_sentinel.finding.type: ai_agent_sensitive_repo_scan\",\"language\":\"kuery\"},\"filter\":[]}"
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: agentguard and agentguard.finding.type: ai_agent_sensitive_repo_scan\",\"language\":\"kuery\"},\"filter\":[]}"
     }
   },
   "references": []
