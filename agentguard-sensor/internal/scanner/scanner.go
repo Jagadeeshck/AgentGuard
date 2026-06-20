@@ -41,8 +41,6 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		if contains(al.MCPConfigPaths, s.ConfigPath) || contains(al.FindingIDs, id) {
 			e.AgentGuard.Allowed = true
 			e.AgentGuard.Finding.Status = "allowed"
-			e.AIS.Allowed = true
-			e.AIS.Finding.Status = "allowed"
 			e.Event.Action = "finding_allowed"
 		}
 		events = append(events, e)
@@ -57,8 +55,6 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 			if contains(al.ProcessPaths, p.Executable) || contains(al.FindingIDs, id) {
 				e.AgentGuard.Allowed = true
 				e.AgentGuard.Finding.Status = "allowed"
-				e.AIS.Allowed = true
-				e.AIS.Finding.Status = "allowed"
 				e.Event.Action = "finding_allowed"
 			}
 			events = append(events, e)
@@ -71,8 +67,6 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		if containsInt(al.LocalPorts, s.Port) || contains(al.FindingIDs, id) {
 			e.AgentGuard.Allowed = true
 			e.AgentGuard.Finding.Status = "allowed"
-			e.AIS.Allowed = true
-			e.AIS.Finding.Status = "allowed"
 			e.Event.Action = "finding_allowed"
 		}
 		events = append(events, e)
@@ -90,8 +84,6 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		if contains(al.BrowserExtensionIDs, ext.ID) || contains(al.FindingIDs, id) {
 			e.AgentGuard.Allowed = true
 			e.AgentGuard.Finding.Status = "allowed"
-			e.AIS.Allowed = true
-			e.AIS.Finding.Status = "allowed"
 			e.Event.Action = "finding_allowed"
 		}
 		events = append(events, e)
