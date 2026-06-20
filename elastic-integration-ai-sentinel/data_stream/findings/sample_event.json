@@ -5,119 +5,40 @@
   },
   "event": {
     "kind": "alert",
-    "category": [
-      "process"
-    ],
-    "type": [
-      "info"
-    ],
-    "action": "ai_security_tool_mcp_server",
+    "category": ["process"],
+    "type": ["info"],
+    "action": "agentguard_process_detected",
     "outcome": "success",
-    "severity": 73,
-    "risk_score": 84,
+    "severity": 40,
+    "risk_score": 40,
     "module": "agentguard",
     "dataset": "agentguard.findings"
   },
   "host": {
-    "name": "workstation-01",
-    "os": {
-      "type": "macos"
-    }
-  },
-  "process": {
-    "name": "node",
-    "executable": "/usr/local/bin/node",
-    "pid": 4312
-  },
-  "user": {
-    "name": "analyst"
-  },
-  "destination": {
-    "domain": "api.openai.com",
-    "address": "api.openai.com",
-    "port": 443
-  },
-  "network": {
-    "transport": "tcp",
-    "protocol": "tls"
+    "name": "workstation-01"
   },
   "observer": {
     "vendor": "AgentGuard",
     "product": "AgentGuard Sensor",
     "type": "endpoint"
   },
-  "ai_sentinel": {
-    "finding": {
-      "id": "ais-20260514-0008",
-      "type": "ai_security_tool_mcp_server",
-      "name": "Untrusted AI agent security tool MCP server",
-      "status": "open",
-      "confidence": 0.91,
-      "first_seen": "2026-05-14T09:55:00.000Z",
-      "last_seen": "2026-05-14T10:00:00.000Z"
-    },
-    "risk": {
-      "level": "high",
-      "score": 84,
-      "reasons": [
-        "security_tool_mcp",
-        "untrusted_agent"
-      ]
-    },
-    "allowed": false,
-    "cyber_agent": {
-      "name": "research-agent",
-      "framework": "langchain",
-      "model_hint": "claude-family",
-      "provider": "anthropic",
-      "activity_type": "security_tool_use",
-      "capabilities": [
-        "mcp",
-        "shell",
-        "filesystem"
-      ],
-      "target_paths": [
-        "/workspace/project/src/security"
-      ],
-      "security_tools": [
-        "semgrep",
-        "gitleaks"
-      ],
-      "codebase_scan_volume": 340,
-      "suspicious_keywords": [
-        "cve",
-        "auth"
-      ],
-      "mitre_tactics": [
-        "TA0007"
-      ],
-      "mitre_techniques": [
-        "T1083"
-      ]
-    }
-  },
-  "tags": [
-    "ai_sentinel",
-    "ai_activity",
-    "endpoint_visibility",
-    "cyber_agent_activity"
-  ],
   "agentguard": {
     "schema": {
       "version": "1.0.0-draft"
     },
     "finding": {
-      "id": "ais-20260514-0008",
+      "id": "ag-20260514-0008",
       "type": "agentguard.process.detected",
-      "name": "Untrusted AI agent security tool MCP server"
+      "name": "AI-related process detected",
+      "status": "open",
+      "confidence": 0.91
     },
     "risk": {
-      "level": "high",
-      "score": 84,
-      "reasons": [
-        "security_tool_mcp",
-        "untrusted_agent"
-      ]
-    }
-  }
+      "level": "medium",
+      "score": 40,
+      "reasons": ["local_ai_activity"]
+    },
+    "allowed": false
+  },
+  "tags": ["agentguard"]
 }
