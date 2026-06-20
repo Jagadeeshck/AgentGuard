@@ -8,7 +8,7 @@ Define a practical canonical event model for AgentGuard MVP findings emitted by 
 
 - Applies to structured NDJSON finding events.
 - Covers common required fields and category/type conventions.
-- Complements backend-specific mappings (for example Elastic package details).
+- Complements backend-specific mappings, for example Elastic package details.
 
 ## Versioning
 
@@ -41,7 +41,7 @@ Each event must include:
 
 - Keep ECS-standard fields at ECS paths (`host.*`, `process.*`, `user.*`, `file.*`, `network.*`, `source.*`, `destination.*`).
 - Keep AgentGuard custom fields under `agentguard.*`.
-- For Elastic compatibility modules, map `agentguard.*` to backend-expected namespaces as needed while preserving semantics.
+- Backend integrations may transform transport-specific fields while preserving AgentGuard semantics.
 
 ## Event categories and example event types
 
@@ -74,12 +74,9 @@ Canonical event types (initial set):
 {"@timestamp":"2026-01-01T00:02:00Z","event":{"module":"agentguard","dataset":"agentguard.findings","kind":"signal","category":["policy"],"type":["indicator"],"action":"policy_match","outcome":"success"},"observer":{"vendor":"AgentGuard","product":"AgentGuard Sensor"},"host":{"name":"host-c"},"agentguard":{"schema":{"version":"1.0.0-draft"},"finding":{"id":"f-003","type":"agentguard.policy.match","name":"unapproved_mcp_capability"},"risk":{"level":"high","score":82,"reasons":["policy_violation"]},"policy":{"id":"pol-001","name":"MCP capability baseline","result":"match"}}}
 ```
 
+## Elastic package alignment
 
-Legacy compatibility: `ai_sentinel.*` fields may still be accepted as legacy input by downstream tooling, but `agentguard.*` is the canonical namespace for current contracts.
-
-
-Elastic package alignment:
-- Package name: `agentguard_ai_sentinel`
-- Dataset: `agentguard_ai_sentinel.findings`
-- Data stream: `logs-agentguard_ai_sentinel.findings-default`
+- Package name: `agentguard`
+- Dataset: `agentguard.findings`
+- Data stream: `logs-agentguard.findings-default`
 - Canonical custom namespace: `agentguard.*`
