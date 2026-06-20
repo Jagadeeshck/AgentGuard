@@ -1,6 +1,6 @@
 title: AgentGuard Findings
 type: logs
-dataset: agentguard_ai_sentinel.findings
+dataset: agentguard.findings
 streams:
   - input: logfile
     title: AgentGuard findings logfile
@@ -23,4 +23,3 @@ streams:
         show_user: true
         default:
           - agentguard
-          - ai_sentinel
