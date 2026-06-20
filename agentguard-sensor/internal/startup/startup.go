@@ -17,6 +17,10 @@ var keywords = []string{"claude", "cursor", "ollama", "lmstudio", "mcp", "agent"
 func Scan() []Item {
 	home, _ := os.UserHomeDir()
 	paths := []string{filepath.Join(home, ".config/autostart"), "/etc/xdg/autostart", filepath.Join(home, ".config/systemd/user"), "/etc/systemd/system"}
+	return scanPaths(paths)
+}
+
+func scanPaths(paths []string) []Item {
 	out := []Item{}
 	for _, p := range paths {
 		_ = filepath.Walk(p, func(path string, info os.FileInfo, err error) error {

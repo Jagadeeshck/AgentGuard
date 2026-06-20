@@ -1,11 +1,20 @@
 package rules
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestRedactSecrets(t *testing.T) {
-	got, found := RedactSecrets("token=abc123")
-	if !found || got == "token=abc123" {
+	got, found := RedactSecrets("--token=sk-supersecret123 --config=/etc/app.yml")
+	if !found {
 		t.Fatal("expected redaction")
+	}
+	if strings.Contains(got, "sk-supersecret123") {
+		t.Fatalf("secret value was not removed: %q", got)
+	}
+	if !strings.Contains(got, "/etc/app.yml") {
+		t.Fatalf("non-secret value should remain untouched: %q", got)
 	}
 }
 func TestRiskScoring(t *testing.T) {

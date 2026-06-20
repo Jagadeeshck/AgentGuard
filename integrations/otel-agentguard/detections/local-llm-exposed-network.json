@@ -22,6 +22,6 @@
       "logs-agentguard.ai_activity-*"
     ],
     "language": "kuery",
-    "query": "event.dataset: agentguard.ai_activity"
+    "query": "event.dataset: agentguard.ai_activity and agentguard.activity.type: local_llm and agentguard.risk.score >= 60"
   }
 }

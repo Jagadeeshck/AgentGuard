@@ -19,7 +19,11 @@ func Scan() []Proc {
 	if err != nil {
 		return nil
 	}
-	s := bufio.NewScanner(strings.NewReader(string(out)))
+	return ParsePSOutput(string(out))
+}
+
+func ParsePSOutput(out string) []Proc {
+	s := bufio.NewScanner(strings.NewReader(out))
 	res := []Proc{}
 	for s.Scan() {
 		l := strings.TrimSpace(s.Text())

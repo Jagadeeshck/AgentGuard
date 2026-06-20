@@ -22,6 +22,6 @@
       "logs-agentguard.ai_activity-*"
     ],
     "language": "kuery",
-    "query": "event.dataset: agentguard.ai_activity"
+    "query": "event.dataset: agentguard.ai_activity and (agentguard.privacy.prompt_capture_enabled: true or agentguard.privacy.content_capture_enabled: true)"
   }
 }

@@ -57,3 +57,7 @@ agentguard.privacy.redaction_status=metadata_only
 - `elastic/`: optional Elastic backend assets only.
 - `detections/`: backend-neutral detection drafts represented as JSON.
 - `docs/`: architecture, privacy, adapters, exporters, and roadmap.
+
+## Collector exporters
+
+The sample collector writes logs to both `debug` and `file/ndjson` by default so it is useful without an external backend. To send logs to another backend, add `otlphttp/generic` or `elasticsearch/optional` to `service.pipelines.logs.exporters` in `collector/otel-collector-config.yaml` and provide the matching environment variables.
