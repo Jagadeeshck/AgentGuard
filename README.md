@@ -1,11 +1,11 @@
 # AgentGuard
 
-AgentGuard is a full **AI activity observability platform** — not just an Elastic integration. It provides endpoint-side visibility into AI agent activity, structured findings output, and a pluggable backend integration layer. Elastic is the first supported backend, not the product itself.
+AgentGuard is a full **AI activity observability platform**. It provides endpoint-side visibility into AI agent activity, structured findings output, and a pluggable backend integration layer. Elastic is the first supported backend, not the product itself.
 
 This repository contains:
 
 - `agentguard-sensor/` — endpoint-side producer that discovers AI-related runtime signals
-- `elastic-integration-ai-sentinel/` — first backend integration (Elastic SIEM)
+- Elastic integration assets — first backend integration for Elastic Agent and Elastic Security ingestion
 - `dev-assets/` — development assets, examples, and test data
 
 ## Overview
@@ -13,26 +13,26 @@ This repository contains:
 AgentGuard currently implements an observability-first MVP:
 
 1. The sensor module discovers AI-related runtime and configuration signals on endpoints.
-2. Findings are emitted as structured NDJSON events.
+2. Findings are emitted as structured AgentGuard NDJSON events.
 3. Backend integration modules ingest, normalize, and operationalize those findings.
 4. Security and operations teams investigate in their SIEM/observability tooling.
 
-The current backend path is Elastic via the `elastic-integration-ai-sentinel` module.
+The current backend path is Elastic.
 
 ## Current status
 
 - Endpoint producer logic is under active development in `agentguard-sensor/`.
-- Elastic integration package assets are maintained in `elastic-integration-ai-sentinel/`.
+- Elastic integration package assets are maintained for AgentGuard findings.
 - CI currently validates both sensor (Go tests/build) and Elastic package workflows.
 - Sidecar-aligned deployment direction is documented and in progress for Elastic Agent integration patterns.
 
 ## Repository modules
 
 ### `agentguard-sensor/`
-Endpoint-side scanner/sensor component that emits findings as NDJSON events designed for downstream ingestion.
+Endpoint-side scanner/sensor component that emits AgentGuard findings as NDJSON events designed for downstream ingestion.
 
-### `elastic-integration-ai-sentinel/`
-Elastic package module that consumes sensor output using Elastic Agent collection patterns (currently `filestream`-based) and maps findings into ECS-aligned fields, ingest pipelines, and package assets.
+### Elastic integration assets
+Elastic package module that consumes AgentGuard sensor output using Elastic Agent collection patterns and maps findings into ECS-aligned fields, ingest pipelines, and package assets.
 
 ### `dev-assets/`
 Supporting assets such as placeholder dashboards, detection-rule drafts, examples, synthetic test data, and validation helpers.
@@ -40,21 +40,15 @@ Supporting assets such as placeholder dashboards, detection-rule drafts, example
 ## Architecture summary
 
 - **Producer:** `agentguard-sensor/`
-- **Transport/data shape:** file-based NDJSON structured findings
-- **Current consumer/backend module:** `elastic-integration-ai-sentinel/`
+- **Transport/data shape:** file-based AgentGuard NDJSON structured findings
+- **Current consumer/backend module:** Elastic integration assets
 - **Analyst workflow:** ingest -> normalize -> search/dashboard/detection
 
 This separation keeps producer behavior independent from backend-specific integration logic.
 
 ## Privacy model
 
-AgentGuard follows a metadata-first privacy posture in the current implementation:
-
-- no prompt capture by default
-- no clipboard capture by default
-- no browsing history collection by default
-- no decrypted traffic inspection
-- no secret/credential capture intent
+AgentGuard follows a metadata-first privacy posture in the current implementation.
 
 See `docs/privacy-model.md` for the current model and guardrails.
 
@@ -89,7 +83,7 @@ See `docs/roadmap.md` and `docs/mvp-backlog.md`.
 ```text
 .
 ├── agentguard-sensor/
-├── elastic-integration-ai-sentinel/
+├── Elastic integration assets/
 ├── dev-assets/
 ├── .github/workflows/
 ├── contracts/
@@ -98,18 +92,17 @@ See `docs/roadmap.md` and `docs/mvp-backlog.md`.
 
 ## Recommended future structure
 
-No top-level directories are renamed in this change. A future evolution can add module growth without breaking existing paths:
+A future evolution can move backend-specific modules under a neutral `integrations/` directory:
 
 ```text
 .
 ├── agentguard-sensor/
-├── elastic-integration-ai-sentinel/
 ├── integrations/
-│   └── <future-backend-modules>
+│   └── elastic/
 ├── contracts/
 ├── docs/
 ├── dev-assets/
 └── .github/workflows/
 ```
 
-The `elastic-integration-ai-sentinel` name remains unchanged and is treated as the first backend integration module.
+The Elastic backend remains the first supported integration module for AgentGuard findings.
