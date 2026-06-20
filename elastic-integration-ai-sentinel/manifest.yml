@@ -1,30 +1,6 @@
 format_version: 3.1.3
-name: agentguard_ai_sentinel
-title: AgentGuard AI Sentinel
+name: agentguard
+title: AgentGuard
 version: 0.1.0
-description: AI activity observability and detection for Elastic Agent - discovers AI-related artefacts and activity signals on endpoints
+description: AgentGuard package.
 type: integration
-categories:
-  - security
-  - edr_xdr
-conditions:
-  kibana:
-    version: ^8.13.0
-icons:
-  - src: /img/logo.svg
-    title: AgentGuard AI Sentinel logo
-    size: 32x32
-    type: image/svg+xml
-owner:
-  github: Jagadeeshck
-  type: community
-policy_templates:
-  - name: findings
-    title: AgentGuard Findings
-    description: Collect AgentGuard findings NDJSON events from endpoint files.
-    inputs:
-      - type: logfile
-        title: AgentGuard findings logfile input
-        description: Reads AgentGuard findings NDJSON output files.
-    data_streams:
-      - findings
