@@ -1,0 +1,79 @@
+{
+  "expected": [
+    {
+      "@timestamp": "2026-05-14T10:02:00.000Z",
+      "host": {
+        "name": "host-b"
+      },
+      "agentguard": {
+        "finding": {
+          "id": "f-ext-1",
+          "type": "browser_extension",
+          "name": "AI helper extension",
+          "status": "open",
+          "confidence": 0.8
+        },
+        "risk": {
+          "level": "medium",
+          "score": 55,
+          "reasons": [
+            "broad_permissions"
+          ]
+        },
+        "browser": {
+          "name": "chrome",
+          "profile": "Default"
+        },
+        "extension": {
+          "id": "abc",
+          "name": "AI Helper",
+          "version": "1.2.3",
+          "permissions": [
+            "<all_urls>",
+            "nativeMessaging"
+          ],
+          "host_permissions": [
+            "https://*/*"
+          ],
+          "risk_reasons": [
+            "all_sites_access"
+          ]
+        },
+        "allowed": false
+      },
+      "tags": [
+        "agentguard",
+        "ai_activity",
+        "endpoint_visibility"
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "event": {
+        "module": "agentguard",
+        "dataset": "agentguard.findings",
+        "kind": "alert",
+        "category": [
+          "configuration"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "browser_extension",
+        "outcome": "success",
+        "risk_score": 55,
+        "severity": 47
+      },
+      "observer": {
+        "vendor": "AgentGuard",
+        "product": "AgentGuard Sensor",
+        "type": "endpoint"
+      },
+      "related": {
+        "hosts": [
+          "host-b"
+        ]
+      }
+    }
+  ]
+}

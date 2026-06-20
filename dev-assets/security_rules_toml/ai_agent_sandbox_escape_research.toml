@@ -1,15 +1,15 @@
 [rule]
-author = ["AI Sentinel"]
+author = ["AgentGuard"]
 description = "Detects AI agent sandbox escape research indicators from metadata such as activity type, target paths, or behavioural keywords."
 from = "now-5m"
-index = ["logs-ai_sentinel.findings-*"]
+index = ["logs-agentguard.findings-*"]
 language = "kuery"
 license = "Elastic License v2"
 name = "AI Agent Sandbox Escape Research Indicators"
-query = '''event.module: "ai_sentinel" and not ai_sentinel.allowed: true and ai_sentinel.finding.type: "ai_sandbox_escape_research" and (ai_sentinel.cyber_agent.activity_type: "sandbox_escape_research" or ai_sentinel.cyber_agent.suspicious_keywords: ("sandbox_escape" or "container_escape" or "jailbreak" or "namespace" or "seccomp") or ai_sentinel.cyber_agent.target_paths: ("*/proc/*" or "*/sys/*" or "*/var/run/docker.sock"))'''
+query = '''event.module: "agentguard" and not agentguard.allowed: true and agentguard.finding.type: "ai_sandbox_escape_research" and (agentguard.cyber_agent.activity_type: "sandbox_escape_research" or agentguard.cyber_agent.suspicious_keywords: ("sandbox_escape" or "container_escape" or "jailbreak" or "namespace" or "seccomp") or agentguard.cyber_agent.target_paths: ("*/proc/*" or "*/sys/*" or "*/var/run/docker.sock"))'''
 references = []
 risk_score = 86
-rule_id = "ai_sentinel_013"
+rule_id = "agentguard_013"
 severity = "high"
-tags = ["AI Sentinel", "Elastic Security", "AI Security", "Sandbox", "AI Cyber-Agent"]
+tags = ["AgentGuard", "Elastic Security", "AI Security", "Sandbox", "AI Cyber-Agent"]
 type = "query"

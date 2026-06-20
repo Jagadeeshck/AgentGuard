@@ -1,0 +1,5 @@
+- version: "0.1.0"
+  changes:
+    - description: Initial release of AgentGuard AgentGuard integration
+      type: enhancement
+      link: https://github.com/Jagadeeshck/AgentGuard/pull/27

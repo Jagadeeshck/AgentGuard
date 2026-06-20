@@ -7,13 +7,13 @@ outputs:
       - /Library/Elastic/Agent/certs/http_ca.crt
 
 inputs:
-  - id: agentguard-ai-sentinel-findings-macos
+  - id: agentguard-agentguard-findings-macos
     type: filestream
     streams:
-      - id: agentguard-ai-sentinel-findings-macos-stream
+      - id: agentguard-agentguard-findings-macos-stream
         data_stream:
           type: logs
-          dataset: ai_sentinel.findings
+          dataset: agentguard.findings
           namespace: default
         paths:
           - /Library/Logs/AgentGuard/findings.ndjson
@@ -23,9 +23,9 @@ inputs:
               target: ""
               add_error_key: true
               overwrite_keys: true
-        pipeline: logs-ai_sentinel.findings-default
+        pipeline: logs-agentguard.findings-default
         tags:
-          - ai_sentinel
+          - agentguard
           - agentguard
           - ai_activity
           - mcp_monitoring

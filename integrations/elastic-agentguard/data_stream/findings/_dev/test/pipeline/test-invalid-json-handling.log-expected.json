@@ -1,0 +1,37 @@
+{
+  "expected": [
+    {
+      "message": "{\"agentguard\":{\"finding\":{\"id\":\"bad\"}",
+      "event": {
+        "kind": "event",
+        "module": "agentguard",
+        "dataset": "agentguard.findings",
+        "type": [
+          "error"
+        ],
+        "outcome": "failure"
+      },
+      "tags": [
+        "agentguard_invalid_json",
+        "agentguard",
+        "ai_activity",
+        "endpoint_visibility"
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "observer": {
+        "vendor": "AgentGuard",
+        "product": "AgentGuard Sensor",
+        "type": "endpoint"
+      },
+      "agentguard": {
+        "ingest": {
+          "error": {
+            "message": "Invalid JSON payload"
+          }
+        }
+      }
+    }
+  ]
+}

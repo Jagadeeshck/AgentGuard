@@ -1,0 +1,14 @@
+{
+  "id": "agentguard_top_risky_processes",
+  "type": "visualization",
+  "attributes": {
+    "title": "Top Risky Processes",
+    "description": "Placeholder visualization for AgentGuard dashboard content.",
+    "visState": "{\"title\":\"Top Risky Processes\",\"type\":\"markdown\",\"params\":{\"markdown\":\"Configure this panel with Lens after installing sample data.\"},\"aggs\":[]}",
+    "uiStateJSON": "{}",
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"query\":\"event.module: agentguard\",\"language\":\"kuery\"},\"filter\":[]}"
+    }
+  },
+  "references": []
+}

@@ -1,0 +1,1 @@
+{"agentguard":{"finding":{"id":"f-5","type":"local_llm_service"},"risk":{"level":"critical","score":99},"ai":{"local_service":true,"provider":"ollama"}}}

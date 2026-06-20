@@ -1,18 +1,18 @@
 [rule]
-author = ["AI Sentinel"]
+author = ["AgentGuard"]
 description = "Detects 10 or more untrusted AI API connection findings from the same host, process, and provider in five minutes."
 from = "now-5m"
-index = ["logs-ai_sentinel.findings-*"]
+index = ["logs-agentguard.findings-*"]
 language = "kuery"
 license = "Elastic License v2"
 name = "Multiple AI API Connections From Same Process"
-query = '''event.module: "ai_sentinel" and ai_sentinel.finding.type: "ai_api_connection" and not ai_sentinel.allowed: true'''
+query = '''event.module: "agentguard" and agentguard.finding.type: "ai_api_connection" and not agentguard.allowed: true'''
 risk_score = 65
-rule_id = "ai_sentinel_008"
+rule_id = "agentguard_008"
 severity = "medium"
-tags = ["AI Sentinel", "Elastic Security", "AI Security"]
+tags = ["AgentGuard", "Elastic Security", "AI Security"]
 type = "threshold"
 
 [rule.threshold]
-field = ["host.name", "process.executable", "ai_sentinel.ai.provider"]
+field = ["host.name", "process.executable", "agentguard.ai.provider"]
 value = 10

@@ -10,7 +10,7 @@ Endpoint-side producer module.
 - Output: NDJSON findings intended for backend ingestion.
 - Ownership boundary: endpoint collection behavior and producer-side event quality.
 
-## `elastic-integration-ai-sentinel/`
+## `integrations/elastic-agentguard/`
 
 Current backend integration module (Elastic-first).
 
@@ -49,7 +49,7 @@ Automation boundary for CI/validation.
 ```text
 .
 ├── agentguard-sensor/
-├── elastic-integration-ai-sentinel/
+├── integrations/elastic-agentguard/
 ├── integrations/                 # future backend modules (recommended)
 ├── contracts/                    # shared contracts and schemas
 ├── docs/                         # product-level architecture and roadmap docs
@@ -57,4 +57,4 @@ Automation boundary for CI/validation.
 └── .github/workflows/
 ```
 
-The current `elastic-integration-ai-sentinel/` folder name remains unchanged in this repository state.
+The current `integrations/elastic-agentguard/` folder name remains unchanged in this repository state.

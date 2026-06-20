@@ -1,0 +1,11 @@
+{
+  "index_pattern": "logs-agentguard.findings-*",
+  "saved_searches": [
+    {"name": "Critical and High AgentGuard Findings", "kql": "agentguard.risk.level : (\"critical\" or \"high\")"},
+    {"name": "Untrusted MCP Servers", "kql": "agentguard.finding.type : \"mcp_server\" and agentguard.allowed : false"},
+    {"name": "Exposed Local LLM Services", "kql": "agentguard.finding.type : \"local_ai_service\" and not destination.ip : \"127.0.0.1\" and not destination.ip : \"::1\""},
+    {"name": "Risky Browser Extensions", "kql": "agentguard.finding.type : \"browser_extension\" and agentguard.risk.level : (\"high\" or \"critical\")"},
+    {"name": "AI Cyber-Agent Activity", "kql": "agentguard.finding.type : \"cyber_agent_activity\""},
+    {"name": "Pipeline Failures", "kql": "event.outcome : \"failure\" or tags : \"_jsonparsefailure\" or agentguard.ingest.error.message : * or error.message : *"}
+  ]
+}

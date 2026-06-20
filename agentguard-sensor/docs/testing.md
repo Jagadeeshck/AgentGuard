@@ -27,6 +27,6 @@ go build ./cmd/agentguard-sensor
 Use integration-side validation tooling:
 
 ```bash
-cd elastic-integration-ai-sentinel
+cd integrations/elastic-agentguard
 scripts/e2e-validate-sensor-output.sh
 ```

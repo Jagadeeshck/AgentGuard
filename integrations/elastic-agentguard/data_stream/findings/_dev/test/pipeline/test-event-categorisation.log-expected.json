@@ -1,0 +1,44 @@
+{
+  "expected": [
+    {
+      "agentguard": {
+        "finding": {
+          "id": "f-6",
+          "type": "suspicious_agent_process"
+        },
+        "risk": {
+          "level": "high",
+          "score": 75
+        }
+      },
+      "tags": [
+        "agentguard",
+        "ai_activity",
+        "endpoint_visibility"
+      ],
+      "ecs": {
+        "version": "8.17.0"
+      },
+      "event": {
+        "module": "agentguard",
+        "dataset": "agentguard.findings",
+        "kind": "alert",
+        "category": [
+          "process"
+        ],
+        "type": [
+          "info"
+        ],
+        "action": "suspicious_agent_process",
+        "outcome": "success",
+        "risk_score": 75,
+        "severity": 73
+      },
+      "observer": {
+        "vendor": "AgentGuard",
+        "product": "AgentGuard Sensor",
+        "type": "endpoint"
+      }
+    }
+  ]
+}

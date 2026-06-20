@@ -21,10 +21,10 @@ jobs:
             scripts/e2e-validate-sensor-output.sh
           elif [ -f "scripts/e2e-validate-sensor-output.sh" ]; then
             bash scripts/e2e-validate-sensor-output.sh
-          elif [ -x "elastic-integration-ai-sentinel/scripts/e2e-validate-sensor-output.sh" ]; then
-            elastic-integration-ai-sentinel/scripts/e2e-validate-sensor-output.sh
-          elif [ -f "elastic-integration-ai-sentinel/scripts/e2e-validate-sensor-output.sh" ]; then
-            bash elastic-integration-ai-sentinel/scripts/e2e-validate-sensor-output.sh
+          elif [ -x "integrations/elastic-agentguard/scripts/e2e-validate-sensor-output.sh" ]; then
+            integrations/elastic-agentguard/scripts/e2e-validate-sensor-output.sh
+          elif [ -f "integrations/elastic-agentguard/scripts/e2e-validate-sensor-output.sh" ]; then
+            bash integrations/elastic-agentguard/scripts/e2e-validate-sensor-output.sh
           else
             echo "E2E script not present; skipping."
           fi

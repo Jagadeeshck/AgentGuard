@@ -1,0 +1,16 @@
+{
+  "title": "AgentGuard AI Cyber-Agent Activity Dashboard",
+  "type": "dashboard-spec-draft",
+  "index_pattern": "logs-agentguard.findings-*",
+  "panels": [
+    "Cyber-agent activity over time","Findings by cyber-agent activity type","Security tools observed",
+    "Sensitive repository scans","Exploit-development indicators","High/critical cyber-agent findings table"
+  ],
+  "fields": [
+    "agentguard.cyber_agent.activity_type","agentguard.cyber_agent.capabilities",
+    "agentguard.cyber_agent.security_tools","agentguard.cyber_agent.suspicious_keywords",
+    "agentguard.cyber_agent.target_paths","agentguard.cyber_agent.mitre_tactics",
+    "agentguard.cyber_agent.mitre_techniques","agentguard.finding.type","host.name",
+    "process.name","agentguard.risk.level"
+  ]
+}

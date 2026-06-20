@@ -18,8 +18,8 @@ jobs:
       - name: Resolve Elastic package directory
         run: |
           set -euo pipefail
-          if [ -d "elastic-integration-ai-sentinel" ] && [ -f "elastic-integration-ai-sentinel/manifest.yml" ]; then
-            echo "PACKAGE_DIR=elastic-integration-ai-sentinel" >> "$GITHUB_ENV"
+          if [ -d "integrations/elastic-agentguard" ] && [ -f "integrations/elastic-agentguard/manifest.yml" ]; then
+            echo "PACKAGE_DIR=integrations/elastic-agentguard" >> "$GITHUB_ENV"
           elif [ -f "manifest.yml" ]; then
             echo "PACKAGE_DIR=." >> "$GITHUB_ENV"
           else

@@ -15,10 +15,10 @@ This document describes the current module architecture in this repository and t
 ## 2) Event shape: structured NDJSON findings
 
 - Findings are emitted as machine-readable event records.
-- ECS-compatible fields and canonical `agentguard.*` custom fields are used for downstream normalization; `ai_sentinel.*` is legacy Elastic compatibility only.
+- ECS-compatible fields and canonical `agentguard.*` custom fields are used for downstream normalization.
 - Contract and schema alignment are currently evolving and partially documented in module-specific docs.
 
-## 3) Consumer/backend module: `elastic-integration-ai-sentinel/`
+## 3) Consumer/backend module: `integrations/elastic-agentguard/`
 
 - Ingests findings via Elastic Agent collection patterns (currently file-based ingestion).
 - Applies ingest pipeline parsing, ECS alignment, and privacy guardrails.

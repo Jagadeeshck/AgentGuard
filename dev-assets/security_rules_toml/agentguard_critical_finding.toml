@@ -1,0 +1,15 @@
+[rule]
+author = ["AgentGuard"]
+description = "Detects ai sentinel critical finding from AgentGuard findings."
+from = "now-5m"
+index = ["logs-agentguard.findings-*"]
+language = "kuery"
+license = "Elastic License v2"
+name = "AgentGuard Critical Finding"
+query = '''event.module: "agentguard" and agentguard.risk.level: "critical"'''
+references = []
+risk_score = 90
+rule_id = "agentguard_001"
+severity = "critical"
+tags = ["AgentGuard", "Elastic Security", "AI Security"]
+type = "query"

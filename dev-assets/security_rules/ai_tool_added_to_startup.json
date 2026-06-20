@@ -2,20 +2,19 @@
   "type": "query",
   "language": "kuery",
   "index": [
-    "logs-ai_sentinel.findings-*"
+    "logs-agentguard.findings-*"
   ],
   "interval": "5m",
   "from": "now-10m",
   "enabled": false,
   "tags": [
     "AgentGuard",
-    "AI Sentinel",
     "AI Activity",
     "MCP",
     "Elastic Security"
   ],
   "references": [
-    "https://github.com/Jagadeeshck/elastic-integration-ai-sentinel#readme"
+    "https://github.com/Jagadeeshck/integrations/elastic-agentguard#readme"
   ],
   "author": [
     "AgentGuard"
@@ -25,7 +24,7 @@
   "description": "Detects untrusted AI tooling persistence via startup registration.",
   "severity": "medium",
   "risk_score": 60,
-  "query": "event.module: \"ai_sentinel\" and ai_sentinel.finding.type: \"startup_item\" and not ai_sentinel.allowed: true",
+  "query": "event.module: \"agentguard\" and agentguard.finding.type: \"startup_item\" and not agentguard.allowed: true",
   "threat": [
     {
       "framework": "MITRE ATT&CK",

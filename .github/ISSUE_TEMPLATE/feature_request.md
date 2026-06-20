@@ -13,7 +13,7 @@ Ex. I wish AgentGuard could detect [...] when [...]
 
 **Which component(s) would this affect?**
 - [ ] agentguard-sensor (endpoint data collection)
-- [ ] elastic-integration-ai-sentinel (Elasticsearch / Kibana integration)
+- [ ] integrations/elastic-agentguard (Elasticsearch / Kibana integration)
 - [ ] contracts / schema definitions
 - [ ] API / gRPC interface
 - [ ] Documentation
