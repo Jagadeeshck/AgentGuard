@@ -1,16 +1,10 @@
 # AgentGuard Sensor (MVP)
 
-AgentGuard Sensor is an endpoint-side defensive visibility scanner for AI-related activity. It emits ECS-compatible NDJSON findings for the Elastic `ai_sentinel` integration while using the canonical AgentGuard finding contract.
+AgentGuard Sensor is an endpoint-side visibility scanner for AI-related activity. It emits ECS-compatible NDJSON findings using the canonical AgentGuard finding contract.
 
 ## What it does
-- Scans MCP configs, browser extension manifests, local AI service ports, startup items, and suspicious AI-related processes.
+- Scans MCP configs, browser extension manifests, local AI service ports, startup items, and AI-related processes.
 - Emits one JSON event per line (`event.module=agentguard`, `event.dataset=agentguard.findings`).
-
-## What it does NOT do
-No prompt capture, clipboard capture, browser history collection, private document collection, traffic decryption, secret exfiltration, exploitation, persistence, or stealth behavior.
-
-## Privacy model
-Data is metadata-only and secret-like values are redacted.
 
 ## Usage
 - `agentguard-sensor scan --output findings.ndjson`
@@ -20,16 +14,7 @@ Data is metadata-only and secret-like values are redacted.
 - `agentguard-sensor version`
 
 ## Elastic integration compatibility
-Output is designed for `logs-ai_sentinel.findings-default` and compatible with the `elastic-integration-ai-sentinel` package field layout.
-
-## Example NDJSON event
-```json
-{"@timestamp":"2026-01-01T00:00:00Z","ecs":{"version":"8.11.0"},"event":{"module":"agentguard","dataset":"agentguard.findings","kind":"alert","category":["configuration"],"type":["info"],"action":"mcp_server","outcome":"success","risk_score":40,"severity":40},"observer":{"vendor":"AgentGuard","product":"AgentGuard Sensor","type":"endpoint"},"host":{"name":"host1"},"agentguard":{"schema":{"version":"1.0.0-draft"},"finding":{"id":"abc","type":"mcp_server","name":"shell server","status":"open","confidence":0.7},"risk":{"level":"medium","score":40,"reasons":["mcp shell capability"]},"allowed":false}}
-```
-
-## Uninstall/cleanup
-Delete the binary and findings file path.
-
+Output is designed for `logs-agentguard.findings-default` and compatible with the AgentGuard Elastic package field layout.
 
 ## Watch mode
 
