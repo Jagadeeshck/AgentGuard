@@ -3,6 +3,7 @@ package scanner
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/agentguard/agentguard-sensor/internal/browser"
@@ -38,6 +39,8 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		id := findings.StableFindingID("ag-mcp-", s.ConfigPath, s.Name, s.Command)
 		e := findings.NewEvent("mcp_server", id, s.Name, score, reasons, map[string]any{"command": s.Command, "args": s.Args, "capabilities": s.Capabilities, "config_path": s.ConfigPath})
 		if contains(al.MCPConfigPaths, s.ConfigPath) || contains(al.FindingIDs, id) {
+			e.AgentGuard.Allowed = true
+			e.AgentGuard.Finding.Status = "allowed"
 			e.AIS.Allowed = true
 			e.AIS.Finding.Status = "allowed"
 			e.Event.Action = "finding_allowed"
@@ -52,6 +55,8 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 			id := findings.StableFindingID("ag-proc-", p.Executable, red)
 			e := findings.NewEvent("suspicious_agent_process", id, p.Name, score, reasons, map[string]any{"process": map[string]any{"name": p.Name, "pid": p.PID, "ppid": p.PPID, "executable": p.Executable, "command_line": red}})
 			if contains(al.ProcessPaths, p.Executable) || contains(al.FindingIDs, id) {
+				e.AgentGuard.Allowed = true
+				e.AgentGuard.Finding.Status = "allowed"
 				e.AIS.Allowed = true
 				e.AIS.Finding.Status = "allowed"
 				e.Event.Action = "finding_allowed"
@@ -64,6 +69,8 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		id := findings.StableFindingID("ag-llm-", s.Addr, fmt.Sprintf("%d", s.Port), s.ProcessName)
 		e := findings.NewEvent("local_llm_service", id, fmt.Sprintf("port_%d", s.Port), score, reasons, map[string]any{"port": s.Port, "bind": s.Addr, "process_name": s.ProcessName})
 		if containsInt(al.LocalPorts, s.Port) || contains(al.FindingIDs, id) {
+			e.AgentGuard.Allowed = true
+			e.AgentGuard.Finding.Status = "allowed"
 			e.AIS.Allowed = true
 			e.AIS.Finding.Status = "allowed"
 			e.Event.Action = "finding_allowed"
@@ -81,6 +88,8 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		id := findings.StableFindingID("ag-ext-", ext.Browser, ext.Profile, ext.ID)
 		e := findings.NewEvent("browser_extension", id, ext.Name, score, reasons, map[string]any{"browser": ext.Browser, "profile": ext.Profile, "extension_id": ext.ID, "path": ext.Path})
 		if contains(al.BrowserExtensionIDs, ext.ID) || contains(al.FindingIDs, id) {
+			e.AgentGuard.Allowed = true
+			e.AgentGuard.Finding.Status = "allowed"
 			e.AIS.Allowed = true
 			e.AIS.Finding.Status = "allowed"
 			e.Event.Action = "finding_allowed"
@@ -144,19 +153,57 @@ func loadAllowlist(path string) Allowlist {
 			cur = strings.TrimSuffix(ln, ":")
 			continue
 		}
+		if strings.Contains(ln, ":") && !strings.HasPrefix(ln, "-") {
+			parts := strings.SplitN(ln, ":", 2)
+			cur = strings.TrimSpace(parts[0])
+			for _, v := range inlineListValues(parts[1]) {
+				applyAllowlistValue(&a, cur, v)
+			}
+			continue
+		}
 		if strings.HasPrefix(ln, "-") {
 			v := strings.TrimSpace(strings.TrimPrefix(ln, "-"))
-			switch cur {
-			case "process_paths":
-				a.ProcessPaths = append(a.ProcessPaths, v)
-			case "mcp_config_paths":
-				a.MCPConfigPaths = append(a.MCPConfigPaths, v)
-			case "browser_extension_ids":
-				a.BrowserExtensionIDs = append(a.BrowserExtensionIDs, v)
-			case "finding_ids":
-				a.FindingIDs = append(a.FindingIDs, v)
-			}
+			applyAllowlistValue(&a, cur, v)
 		}
 	}
 	return a
+}
+
+func applyAllowlistValue(a *Allowlist, key, value string) {
+	value = strings.Trim(strings.TrimSpace(value), `"'`)
+	if value == "" {
+		return
+	}
+	switch key {
+	case "process_paths":
+		a.ProcessPaths = append(a.ProcessPaths, value)
+	case "mcp_config_paths":
+		a.MCPConfigPaths = append(a.MCPConfigPaths, value)
+	case "browser_extension_ids":
+		a.BrowserExtensionIDs = append(a.BrowserExtensionIDs, value)
+	case "finding_ids":
+		a.FindingIDs = append(a.FindingIDs, value)
+	case "local_ports":
+		port, err := strconv.Atoi(value)
+		if err == nil {
+			a.LocalPorts = append(a.LocalPorts, port)
+		}
+	}
+}
+
+func inlineListValues(raw string) []string {
+	raw = strings.TrimSpace(raw)
+	if !strings.HasPrefix(raw, "[") || !strings.HasSuffix(raw, "]") {
+		return nil
+	}
+	raw = strings.TrimSuffix(strings.TrimPrefix(raw, "["), "]")
+	if strings.TrimSpace(raw) == "" {
+		return nil
+	}
+	parts := strings.Split(raw, ",")
+	values := make([]string, 0, len(parts))
+	for _, part := range parts {
+		values = append(values, strings.TrimSpace(part))
+	}
+	return values
 }

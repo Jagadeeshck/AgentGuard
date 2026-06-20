@@ -1,1 +1,21 @@
-{"expected":[{"event":{"kind":"event","category":["threat"],"action":"allowed_finding"},"agentguard":{"finding":{"type":"allowed_finding","category":"policy","severity":"low"}}}]}
+{
+  "expected": [
+    {
+      "event": {
+        "kind": "event",
+        "category": [
+          "threat"
+        ],
+        "action": "allowed_finding"
+      },
+      "agentguard": {
+        "finding": {
+          "type": "allowed_finding",
+          "category": "policy",
+          "severity": "low"
+        }
+      },
+      "@timestamp": "2026-05-24T00:00:00.000Z"
+    }
+  ]
+}

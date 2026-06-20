@@ -45,6 +45,7 @@ func RunWatch(opts WatchOptions) error {
 				continue
 			}
 			if prev.Fingerprint != fp {
+				e.AgentGuard.Finding.Status = "changed"
 				e.AIS.Finding.Status = "changed"
 				e.Event.Action = "finding_changed"
 				toWrite = append(toWrite, e)
@@ -54,6 +55,7 @@ func RunWatch(opts WatchOptions) error {
 			for id, prev := range st.Findings {
 				if _, ok := cur[id]; !ok {
 					e := findings.NewEvent(prev.Type, prev.ID, prev.ID, prev.LastRisk, []string{"no longer present"}, map[string]any{"resolved": true})
+					e.AgentGuard.Finding.Status = "resolved"
 					e.AIS.Finding.Status = "resolved"
 					e.Event.Action = "finding_resolved"
 					toWrite = append(toWrite, e)

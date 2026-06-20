@@ -27,3 +27,9 @@
       type: boolean
     - name: policy.action
       type: keyword
+- name: ai_sentinel
+  type: group
+  fields:
+    - name: ingest.error.message
+      type: text
+      description: Error message when the ingest pipeline fails to parse the JSON payload.

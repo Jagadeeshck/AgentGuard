@@ -1,7 +1,7 @@
 {
   "expected": [
     {
-      "@timestamp": "2026-05-14T10:00:00Z",
+      "@timestamp": "2026-05-14T10:00:00.000Z",
       "host": {
         "name": "host-a"
       },
@@ -29,8 +29,8 @@
           "name": "AI API connection",
           "status": "open",
           "confidence": 0.9,
-          "first_seen": "2026-05-14T09:59:00Z",
-          "last_seen": "2026-05-14T10:00:00Z"
+          "first_seen": "2026-05-14T09:59:00.000Z",
+          "last_seen": "2026-05-14T10:00:00.000Z"
         },
         "risk": {
           "level": "high",

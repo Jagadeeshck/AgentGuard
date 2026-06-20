@@ -1,12 +1,71 @@
 {
   "expected": [
     {
-      "event": {"kind": "event", "category": ["threat"], "action": "service_detection"},
-      "agentguard": {"finding": {"category": "service", "severity": "medium"}}
+      "@timestamp": "2026-05-20T10:11:12.000Z",
+      "event": {
+        "kind": "event",
+        "category": [
+          "threat"
+        ],
+        "action": "service_detection"
+      },
+      "agentguard": {
+        "finding": {
+          "category": "service",
+          "description": "Detected local AI service listener",
+          "severity": "medium",
+          "type": "service_detection"
+        },
+        "policy": {
+          "action": "monitor",
+          "matched": true
+        },
+        "target": {
+          "path": "/usr/local/bin/ollama",
+          "service": {
+            "name": "ollama",
+            "port": 11434
+          }
+        }
+      },
+      "host": {
+        "name": "macbook-pro-01"
+      }
     },
     {
-      "event": {"kind": "event", "category": ["threat"], "action": "browser_extension_detection"},
-      "agentguard": {"finding": {"category": "extension", "severity": "high"}}
+      "@timestamp": "2026-05-20T10:15:12.000Z",
+      "event": {
+        "kind": "event",
+        "category": [
+          "threat"
+        ],
+        "action": "browser_extension_detection"
+      },
+      "agentguard": {
+        "finding": {
+          "category": "extension",
+          "description": "Detected extension with elevated permissions",
+          "severity": "high",
+          "source": "browser_scan",
+          "type": "browser_extension_detection"
+        },
+        "policy": {
+          "action": "alert",
+          "matched": true
+        },
+        "target": {
+          "extension": {
+            "id": "abcdefghijklmnop",
+            "name": "AI Helper"
+          },
+          "process": {
+            "name": "Google Chrome"
+          }
+        }
+      },
+      "host": {
+        "name": "macbook-pro-01"
+      }
     }
   ]
 }

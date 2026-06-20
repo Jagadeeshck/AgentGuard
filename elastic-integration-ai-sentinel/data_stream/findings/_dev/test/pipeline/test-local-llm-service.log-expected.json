@@ -1,7 +1,7 @@
 {
   "expected": [
     {
-      "@timestamp": "2026-05-14T10:04:00Z",
+      "@timestamp": "2026-05-14T10:04:00.000Z",
       "host": {
         "name": "host-d"
       },

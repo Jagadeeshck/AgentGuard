@@ -5,7 +5,7 @@
       "event": {
         "kind": "event",
         "module": "ai_sentinel",
-        "dataset": "ai_sentinel.findings",
+        "dataset": "agentguard_ai_sentinel.findings",
         "type": [
           "error"
         ],

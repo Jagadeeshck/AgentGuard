@@ -40,7 +40,7 @@ processors:
       if: "ctx['_path'] == 'error'"
   - set:
       field: event.dataset
-      value: ai_sentinel.findings
+      value: agentguard_ai_sentinel.findings
       if: "ctx['_path'] == 'error'"
   - append:
       field: event.type
@@ -323,6 +323,17 @@ processors:
       if: "ctx['_path'] != 'error'"
   - remove:
       field: ai_sentinel.cyber_agent.prompt_content
+      ignore_missing: true
+      if: "ctx['_path'] != 'error'"
+
+  # ── Step 8: Remove raw message for successfully parsed events ───────────
+  # The message field holds the original JSON string.  Once all fields have
+  # been extracted, enriched, and any sensitive values redacted, the raw
+  # payload is no longer needed and would re-expose data that was redacted
+  # from structured fields above.  Keep message only for the error path so
+  # that the unparseable log line remains available for debugging.
+  - remove:
+      field: message
       ignore_missing: true
       if: "ctx['_path'] != 'error'"
 

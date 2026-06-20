@@ -4,12 +4,16 @@ on:
   pull_request:
     paths:
       - 'agentguard-sensor/**'
+      - 'contracts/**'
+      - 'examples/sample-findings/**'
       - '.github/workflows/sensor-ci.yml'
   push:
     branches:
       - main
     paths:
       - 'agentguard-sensor/**'
+      - 'contracts/**'
+      - 'examples/sample-findings/**'
       - '.github/workflows/sensor-ci.yml'
 
 permissions:
@@ -36,3 +40,8 @@ jobs:
 
       - name: Build agentguard-sensor
         run: go build ./cmd/agentguard-sensor
+
+      - name: Generate and validate synthetic findings
+        run: |
+          ./agentguard-sensor generate-test-findings --output /tmp/agentguard-synthetic.ndjson
+          ./agentguard-sensor validate-output --input /tmp/agentguard-synthetic.ndjson
