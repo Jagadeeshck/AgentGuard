@@ -22,6 +22,6 @@
       "logs-agentguard.ai_activity-*"
     ],
     "language": "kuery",
-    "query": "event.dataset: agentguard.ai_activity"
+    "query": "event.dataset: agentguard.ai_activity and agentguard.tool.category: file_access and agentguard.target.classification: (secret or credential or regulated or source_control)"
   }
 }

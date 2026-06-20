@@ -69,7 +69,8 @@ exporters:
   otlphttp/generic:
     endpoint: ${OTLP_EXPORTER_ENDPOINT}
   elasticsearch/optional:
-    endpoints: [${ELASTICSEARCH_ENDPOINT}]
+    endpoints:
+      - ${ELASTICSEARCH_ENDPOINT}
     api_key: ${ELASTICSEARCH_API_KEY}
     logs_index: logs-agentguard.ai_activity-default
     pipeline: agentguard-ai-activity-default
@@ -80,7 +81,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [memory_limiter, resource/agentguard, attributes/agentguard_defaults, batch]
-      exporters: [debug]
+      exporters: [debug, file/ndjson]
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, resource/agentguard, batch]

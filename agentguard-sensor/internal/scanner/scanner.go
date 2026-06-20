@@ -26,6 +26,14 @@ type Allowlist struct {
 	LocalPorts                                                    []int
 }
 
+var (
+	mcpScan     = mcp.Scan
+	processScan = process.Scan
+	localaiScan = localai.Scan
+	startupScan = startup.Scan
+	browserScan = browser.Scan
+)
+
 func Run(opts Options) error {
 	events, _ := ScanFindings(opts.AllowlistPath)
 	return output.Write(events, opts.OutputPath, opts.Stdout, opts.Pretty)
@@ -34,7 +42,7 @@ func Run(opts Options) error {
 func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 	al := loadAllowlist(allowlistPath)
 	events := []findings.Event{}
-	for _, s := range mcp.Scan() {
+	for _, s := range mcpScan() {
 		score, reasons := rules.ComputeScore(rules.ScoreInput{MCPShell: has(s.Capabilities, "shell"), MCPFilesystem: has(s.Capabilities, "filesystem")})
 		id := findings.StableFindingID("ag-mcp-", s.ConfigPath, s.Name, s.Command)
 		e := findings.NewEvent("mcp_server", id, s.Name, score, reasons, map[string]any{"command": s.Command, "args": s.Args, "capabilities": s.Capabilities, "config_path": s.ConfigPath})
@@ -45,7 +53,7 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		}
 		events = append(events, e)
 	}
-	for _, p := range process.Scan() {
+	for _, p := range processScan() {
 		l := strings.ToLower(p.Name + " " + p.CommandLine)
 		if hasAny(l, []string{"ollama", "lmstudio", "claude", "cursor", "open-interpreter", "autogpt", "crewai", "langchain", "llamaindex", "copilot"}) {
 			red, rf := rules.RedactSecrets(p.CommandLine)
@@ -60,7 +68,7 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 			events = append(events, e)
 		}
 	}
-	for _, s := range localai.Scan() {
+	for _, s := range localaiScan() {
 		score, reasons := rules.ComputeScore(rules.ScoreInput{LocalExposed: s.Exposed})
 		id := findings.StableFindingID("ag-llm-", s.Addr, fmt.Sprintf("%d", s.Port), s.ProcessName)
 		e := findings.NewEvent("local_llm_service", id, fmt.Sprintf("port_%d", s.Port), score, reasons, map[string]any{"port": s.Port, "bind": s.Addr, "process_name": s.ProcessName})
@@ -71,13 +79,13 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 		}
 		events = append(events, e)
 	}
-	for _, it := range startup.Scan() {
+	for _, it := range startupScan() {
 		score, reasons := rules.ComputeScore(rules.ScoreInput{Startup: true})
 		id := findings.StableFindingID("ag-startup-", it.Path, it.Command)
 		e := findings.NewEvent("startup_item", id, it.Path, score, reasons, map[string]any{"path": it.Path, "command": it.Command})
 		events = append(events, e)
 	}
-	for _, ext := range browser.Scan() {
+	for _, ext := range browserScan() {
 		score, reasons := rules.ComputeScore(rules.ScoreInput{})
 		id := findings.StableFindingID("ag-ext-", ext.Browser, ext.Profile, ext.ID)
 		e := findings.NewEvent("browser_extension", id, ext.Name, score, reasons, map[string]any{"browser": ext.Browser, "profile": ext.Profile, "extension_id": ext.ID, "path": ext.Path})
@@ -91,7 +99,34 @@ func ScanFindings(allowlistPath string) ([]findings.Event, Allowlist) {
 	return events, al
 }
 
-func List(kind string) ([]string, error) { return []string{"not implemented for MVP"}, nil }
+func List(kind string) ([]string, error) {
+	var results []string
+	switch kind {
+	case "mcp":
+		for _, s := range mcpScan() {
+			results = append(results, fmt.Sprintf("%s	%s	%s", s.Name, s.Command, s.ConfigPath))
+		}
+	case "extensions":
+		for _, ext := range browserScan() {
+			results = append(results, fmt.Sprintf("%s	%s	%s", ext.Browser, ext.ID, ext.Name))
+		}
+	case "local-ai":
+		for _, svc := range localaiScan() {
+			results = append(results, fmt.Sprintf("%s:%d	%s", svc.Addr, svc.Port, svc.ProcessName))
+		}
+	case "startup":
+		for _, it := range startupScan() {
+			results = append(results, it.Path)
+		}
+	case "processes":
+		for _, p := range processScan() {
+			results = append(results, fmt.Sprintf("%d	%s	%s", p.PID, p.Name, p.CommandLine))
+		}
+	default:
+		return nil, fmt.Errorf("unknown list kind %q", kind)
+	}
+	return results, nil
+}
 func has(a []string, k string) bool {
 	for _, x := range a {
 		if x == k {

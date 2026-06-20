@@ -1,18 +1,16 @@
 package rules
 
-import "strings"
+import "regexp"
 
-var secretKeys = []string{"token", "api_key", "apikey", "access_token", "secret", "password", "bearer"}
+var secretPattern = regexp.MustCompile(`(?i)(^|\s)([^=\s]*(?:token|api_key|apikey|access_token|secret|password|bearer))=([^\s]*)`)
 
 func RedactSecrets(s string) (string, bool) {
-	redacted := s
 	found := false
-	for _, k := range secretKeys {
-		if strings.Contains(strings.ToLower(redacted), k) {
-			found = true
-			redacted = strings.ReplaceAll(redacted, "=", "=[REDACTED]")
-		}
-	}
+	redacted := secretPattern.ReplaceAllStringFunc(s, func(match string) string {
+		found = true
+		parts := secretPattern.FindStringSubmatch(match)
+		return parts[1] + parts[2] + "=[REDACTED]"
+	})
 	return redacted, found
 }
 

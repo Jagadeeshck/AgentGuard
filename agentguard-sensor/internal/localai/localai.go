@@ -1,8 +1,8 @@
 package localai
 
 import (
-	"fmt"
 	"net"
+	"strconv"
 )
 
 type Service struct {
@@ -18,7 +18,7 @@ func Scan() []Service {
 	out := []Service{}
 	for _, p := range Ports {
 		for _, a := range []string{"127.0.0.1", "0.0.0.0"} {
-			c, err := net.Dial("tcp", fmt.Sprintf("%s:%d", a, p))
+			c, err := net.Dial("tcp", net.JoinHostPort(a, strconv.Itoa(p)))
 			if err == nil {
 				_ = c.Close()
 				out = append(out, Service{Port: p, Addr: a, Exposed: a != "127.0.0.1", ProcessName: "unknown"})
