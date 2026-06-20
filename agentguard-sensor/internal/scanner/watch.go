@@ -38,15 +38,14 @@ func RunWatch(opts WatchOptions) error {
 		toWrite := []findings.Event{}
 		for _, e := range events {
 			fp := findings.SafeFingerprint(e)
-			prev, ok := st.Findings[e.AIS.Finding.ID]
-			cur[e.AIS.Finding.ID] = stateRecord{ID: e.AIS.Finding.ID, Type: e.AIS.Finding.Type, Fingerprint: fp, LastSeen: now, LastRisk: e.AIS.Risk.Score, LastStatus: e.AIS.Finding.Status}
+			prev, ok := st.Findings[e.AgentGuard.Finding.ID]
+			cur[e.AgentGuard.Finding.ID] = stateRecord{ID: e.AgentGuard.Finding.ID, Type: e.AgentGuard.Finding.Type, Fingerprint: fp, LastSeen: now, LastRisk: e.AgentGuard.Risk.Score, LastStatus: e.AgentGuard.Finding.Status}
 			if !ok {
 				toWrite = append(toWrite, e)
 				continue
 			}
 			if prev.Fingerprint != fp {
 				e.AgentGuard.Finding.Status = "changed"
-				e.AIS.Finding.Status = "changed"
 				e.Event.Action = "finding_changed"
 				toWrite = append(toWrite, e)
 			}
@@ -56,7 +55,6 @@ func RunWatch(opts WatchOptions) error {
 				if _, ok := cur[id]; !ok {
 					e := findings.NewEvent(prev.Type, prev.ID, prev.ID, prev.LastRisk, []string{"no longer present"}, map[string]any{"resolved": true})
 					e.AgentGuard.Finding.Status = "resolved"
-					e.AIS.Finding.Status = "resolved"
 					e.Event.Action = "finding_resolved"
 					toWrite = append(toWrite, e)
 				}
@@ -64,7 +62,9 @@ func RunWatch(opts WatchOptions) error {
 		}
 		st.Findings = cur
 		if opts.StateFile != "" {
-			_ = saveState(opts.StateFile, st)
+			if err := saveState(opts.StateFile, st); err != nil {
+				return err
+			}
 		}
 		if len(toWrite) > 0 {
 			return output.WriteAppend(toWrite, opts.OutputPath, opts.Stdout, false)
